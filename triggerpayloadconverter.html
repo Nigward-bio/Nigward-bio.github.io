@@ -261,7 +261,19 @@
             if (parameters.length === 0) {
                 return `TriggerServerEvent('${eventName}')`;
             }
-            return `TriggerServerEvent('${eventName}',${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(',')})`;
+            return `TriggerServerEvent('${eventName}',${parameters.map(param => {
+                // If the parameter is a stringified array, parse it and convert to individual parameters
+                if (param.startsWith('[') && param.endsWith(']')) {
+                    try {
+                        const parsedArray = JSON.parse(param);
+                        return parsedArray.map(item => typeof item === 'string' ? `'${item}'` : item).join(',');
+                    } catch (error) {
+                        console.error("Error parsing array:", error);
+                        return `'${param}'`;
+                    }
+                }
+                return typeof param === 'string' ? `'${param}'` : param;
+            }).join(',')})`;
         }
 
         // Function to convert TriggerServerEvent into parsed event format
