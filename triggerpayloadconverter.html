@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FiveM Event Parser & Converter</title>
+    <title>FiveM Event Parser & Converter 🚀</title>
     <link rel="icon" href="chomik.jpg" type="image/jpeg"> <!-- Favicon -->
     <style>
         body {
@@ -97,27 +97,19 @@
         #copyButton:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
-        #dynamicTitle {
-            font-size: 32px;
-            font-weight: bold;
-            color: #ffffff; /* Light text */
-            margin-bottom: 20px;
-            display: inline-block;
-            transition: transform 0.5s ease-in-out;
-        }
     </style>
 </head>
 <body>
     <div class="big-text">FUCK JAYTHAAGAMER AND HIS AI PAID SHIT</div>
     <div class="container">
-        <h1 id="dynamicTitle">FiveM Event Parser & Converter 🚀</h1>
+        <h1>FiveM Event Parser & Converter</h1>
         <input type="text" id="inputBox" placeholder="Enter TriggerServerEvent or EventName[params]">
         <button id="convertButton">Convert</button>
         <div id="output"></div>
         <div id="errorMessage" class="error-message"></div>
     </div>
     <a href="https://discord.gg/3pYc4cRCGP" class="discord-link" target="_blank">Join My Discord</a>
-    <a href="Untitled-1.html" class="redirect-link">go back to the main page</a>
+    <a href="Untitled-1.html" class="redirect-link">Go Back to Untitled-1</a>
 
     <script>
         // Function to remove unnecessary spaces
@@ -190,28 +182,26 @@
             return emojis[Math.floor(Math.random() * emojis.length)];
         }
 
-        // Function to update the title with a random emoji
-        function updateTitle() {
-            const titleElement = document.getElementById('dynamicTitle');
+        // Function to update the page title with a random emoji
+        function updatePageTitle() {
             const emoji = getRandomEmoji();
-            titleElement.textContent = `FiveM Event Parser & Converter ${emoji}`;
+            document.title = `FiveM Event Parser & Converter ${emoji}`;
         }
 
-        // Function to animate the title
-        function animateTitle() {
-            const titleElement = document.getElementById('dynamicTitle');
-            titleElement.style.transition = 'transform 0.5s ease-in-out';
-            titleElement.style.transform = 'translateY(-10px)';
+        // Function to animate the page title to the right
+        function animatePageTitle() {
+            const originalTitle = document.title;
+            document.title = `   ${originalTitle}`; // Add spaces to simulate movement to the right
             setTimeout(() => {
-                titleElement.style.transform = 'translateY(0)';
-            }, 500);
+                document.title = originalTitle; // Reset to the original title
+            }, 200); // Faster animation
         }
 
-        // Update the title and animate it every 2 seconds
+        // Update the page title and animate it every 1 second
         setInterval(() => {
-            updateTitle();
-            animateTitle();
-        }, 2000);
+            updatePageTitle();
+            animatePageTitle();
+        }, 1000); // Faster emoji changes
 
         // Event listener for the convert button
         document.getElementById('convertButton').addEventListener('click', function() {
