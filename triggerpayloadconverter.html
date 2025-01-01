@@ -127,7 +127,7 @@
 
             if (triggerMatch) {
                 const eventName = triggerMatch[2];
-                const parameters = triggerMatch[3] ? triggerMatch[3].split(',').map(param => param.trim()) : [];
+                const parameters = triggerMatch[3] ? parseParameters(triggerMatch[3]) : [];
                 return { eventName, parameters, type: 'trigger' };
             }
 
@@ -137,11 +137,34 @@
 
             if (parsedMatch) {
                 const eventName = parsedMatch[1];
-                const parameters = parsedMatch[2].split(',').map(param => param.trim());
+                const parameters = parseParameters(parsedMatch[2]);
                 return { eventName, parameters, type: 'parsed' };
             }
 
             return null;
+        }
+
+        // Function to parse parameters (mixed types: strings, numbers, variables, etc.)
+        function parseParameters(params) {
+            try {
+                // Split parameters by commas, but ignore commas inside quotes or brackets
+                const paramList = params.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g) || [];
+                return paramList.map(param => {
+                    // Remove surrounding quotes if present
+                    if ((param.startsWith('"') && param.endsWith('"')) || (param.startsWith("'") && param.endsWith("'"))) {
+                        return param.slice(1, -1);
+                    }
+                    // Parse numbers
+                    if (!isNaN(param)) {
+                        return parseFloat(param);
+                    }
+                    // Return as-is (e.g., variables like AMOUNT)
+                    return param;
+                });
+            } catch (error) {
+                console.error("Error parsing parameters:", error);
+                return [];
+            }
         }
 
         // Function to convert parsed event into TriggerServerEvent format
@@ -149,7 +172,7 @@
             if (parameters.length === 0) {
                 return `TriggerServerEvent('${eventName}')`;
             }
-            return `TriggerServerEvent('${eventName}',${parameters.join(',')})`;
+            return `TriggerServerEvent('${eventName}',${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(',')})`;
         }
 
         // Function to convert TriggerServerEvent into parsed event format
@@ -157,12 +180,12 @@
             if (parameters.length === 0) {
                 return `${eventName}[]`;
             }
-            return `${eventName}[${parameters.join(',')}]`;
+            return `${eventName}[${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(',')}]`;
         }
 
         // Function to format the output as "Event Name: ... Parameters: [...]"
         function formatEventDetails(eventName, parameters) {
-            return `Event Name: ${eventName}\nParameters: [${parameters.map(param => `'${param}'`).join(', ')}]`;
+            return `Event Name: ${eventName}\nParameters: [${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(', ')}]`;
         }
 
         // Function to copy text to clipboard
@@ -174,35 +197,18 @@
             });
         }
 
-        // Array of random emojis
+        // Array of emojis to loop through
         const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
-
-        // Function to get a random emoji
-        function getRandomEmoji() {
-            return emojis[Math.floor(Math.random() * emojis.length)];
-        }
 
         // Function to update the page title with random emojis
         function updatePageTitle() {
-            const emoji1 = getRandomEmoji();
-            const emoji2 = getRandomEmoji();
+            const emoji1 = emojis[Math.floor(Math.random() * emojis.length)];
+            const emoji2 = emojis[Math.floor(Math.random() * emojis.length)];
             document.title = `${emoji1} FiveM Event Parser & Converter ${emoji2}`;
         }
 
-        // Function to animate the page title to the right
-        function animatePageTitle() {
-            const originalTitle = document.title;
-            document.title = `   ${originalTitle}`; // Add spaces to simulate movement to the right
-            setTimeout(() => {
-                document.title = originalTitle; // Reset to the original title
-            }, 200); // Faster animation
-        }
-
-        // Update the page title and animate it every 1 second
-        setInterval(() => {
-            updatePageTitle();
-            animatePageTitle();
-        }, 500); // Faster emoji changes
+        // Update the page title every 1 second
+        setInterval(updatePageTitle, 500);
 
         // Event listener for the convert button
         document.getElementById('convertButton').addEventListener('click', function() {
@@ -221,7 +227,7 @@
                     // Display event details for TriggerServerEvent input
                     outputText = `<strong>Event Details:</strong>\n${formatEventDetails(result.eventName, result.parameters)}`;
                     // Set copy text to the event details format
-                    copyText = `Event Name: ${result.eventName}\nParameters: [${result.parameters.map(param => `'${param}'`).join(', ')}]`;
+                    copyText = convertedValue;
                 } else if (result.type === 'parsed') {
                     // Convert parsed event to TriggerServerEvent
                     convertedValue = convertToTriggerServerEvent(result.eventName, result.parameters);
