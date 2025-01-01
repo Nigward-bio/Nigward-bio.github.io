@@ -109,7 +109,7 @@
         <div id="errorMessage" class="error-message"></div>
     </div>
     <a href="https://discord.gg/3pYc4cRCGP" class="discord-link" target="_blank">Join My Discord</a>
-    <a href="Untitled-1.html" class="redirect-link">Go Back to Untitled-1</a>
+    <a href="index.html" class="redirect-link">go back to the main page</a>
 
     <script>
         // Function to remove unnecessary spaces
@@ -175,17 +175,18 @@
         }
 
         // Array of random emojis
-        const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾'];
+        const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
 
         // Function to get a random emoji
         function getRandomEmoji() {
             return emojis[Math.floor(Math.random() * emojis.length)];
         }
 
-        // Function to update the page title with a random emoji
+        // Function to update the page title with random emojis
         function updatePageTitle() {
-            const emoji = getRandomEmoji();
-            document.title = `FiveM Event Parser & Converter ${emoji}`;
+            const emoji1 = getRandomEmoji();
+            const emoji2 = getRandomEmoji();
+            document.title = `${emoji1} FiveM Event Parser & Converter ${emoji2}`;
         }
 
         // Function to animate the page title to the right
@@ -201,7 +202,7 @@
         setInterval(() => {
             updatePageTitle();
             animatePageTitle();
-        }, 1000); // Faster emoji changes
+        }, 500); // Faster emoji changes
 
         // Event listener for the convert button
         document.getElementById('convertButton').addEventListener('click', function() {
