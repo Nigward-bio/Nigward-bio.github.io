@@ -214,26 +214,21 @@
         // Function to parse parameters (mixed types: strings, numbers, variables, etc.)
         function parseParameters(params) {
             try {
-                // If the parameter is a stringified array, parse it
-                if (params.startsWith('[') && params.endsWith(']')) {
-                    try {
-                        return JSON.parse(params);
-                    } catch (error) {
-                        console.error("Error parsing array:", error);
-                        return [params]; // Fallback to treating it as a single parameter
-                    }
-                }
-
-                // Split parameters by commas, but ignore commas inside quotes
+                // Split parameters by commas, but ignore commas inside quotes or function calls
                 const paramList = [];
                 let buffer = '';
                 let inString = false;
+                let inFunction = 0;
                 for (let i = 0; i < params.length; i++) {
                     const char = params[i];
                     if (char === '"' || char === "'") {
                         inString = !inString; // Toggle string state
+                    } else if (char === '(' && !inString) {
+                        inFunction++; // Enter function call
+                    } else if (char === ')' && !inString) {
+                        inFunction--; // Exit function call
                     }
-                    if (char === ',' && !inString) {
+                    if (char === ',' && !inString && inFunction === 0) {
                         paramList.push(buffer.trim());
                         buffer = '';
                     } else {
@@ -252,7 +247,7 @@
                     if (!isNaN(param)) {
                         return parseFloat(param);
                     }
-                    // Return as-is (e.g., variables like AMOUNT)
+                    // Return as-is (e.g., variables like AMOUNT or function calls)
                     return param;
                 });
             } catch (error) {
