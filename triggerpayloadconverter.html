@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiveM Event Parser & Converteror</title>
+    <link rel="icon" href="chomik.jpg" type="image/jpeg"> <!-- Favicon -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212; /* Dark background */
+            color: #ffffff; /* Light text */
+        }
+        .container {
+            text-align: center;
+            background-color: #1e1e1e; /* Dark container background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            background-color: #333; /* Dark input background */
+            color: #ffffff; /* Light text */
+            border: 1px solid #444; /* Dark border */
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff; /* Blue button */
+            color: #ffffff; /* Light text */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffffff; /* Light text */
+            text-align: left;
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+        .big-text {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff0000; /* Red color */
+            margin-bottom: 20px;
+        }
+        .discord-link {
+            font-size: 18px;
+            color: #7289da; /* Discord blue color */
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .discord-link:hover {
+            text-decoration: underline;
+        }
+        .redirect-link {
+            font-size: 18px;
+            color: #00ff00; /* Green color */
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .redirect-link:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: #ff0000; /* Red color */
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        #copyButton {
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #007bff; /* Blue button */
+            color: #ffffff; /* Light text */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #copyButton:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="big-text">FUCK JAYTHAAGAMER AND HIS AI PAID SHIT</div>
+    <div class="container">
+        <h1>FiveM Event Parser & Converter</h1>
+        <input type="text" id="inputBox" placeholder="Enter TriggerServerEvent or EventName[params]">
+        <button id="convertButton">Convert</button>
+        <div id="output"></div>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+    <a href="https://discord.gg/3pYc4cRCGP" class="discord-link" target="_blank">Join My Discord</a>
+    <a href="Untitled-1.html" class="redirect-link">Go Back to Untitled-1</a>
+
+    <script>
+        // Function to remove unnecessary spaces
+        function cleanInput(input) {
+            return input.replace(/\s+/g, ''); // Remove all spaces
+        }
+
+        // Function to detect and parse the input
+        function parseInput(input) {
+            const cleanedInput = cleanInput(input);
+
+            // Check if it's already a TriggerServerEvent
+            const triggerRegex = /Trigger(?:Server)?Event\((['"])([^'"]+)\1(?:,([^)]+))?\)/;
+            const triggerMatch = cleanedInput.match(triggerRegex);
+
+            if (triggerMatch) {
+                const eventName = triggerMatch[2];
+                const parameters = triggerMatch[3] ? triggerMatch[3].split(',').map(param => param.trim()) : [];
+                return { eventName, parameters, type: 'trigger' };
+            }
+
+            // Check if it's a parsed event (eventName[params])
+            const parsedRegex = /^([\w:]+)\[([^\]]+)\]$/;
+            const parsedMatch = cleanedInput.match(parsedRegex);
+
+            if (parsedMatch) {
+                const eventName = parsedMatch[1];
+                const parameters = parsedMatch[2].split(',').map(param => param.trim());
+                return { eventName, parameters, type: 'parsed' };
+            }
+
+            return null;
+        }
+
+        // Function to convert parsed event into TriggerServerEvent format
+        function convertToTriggerServerEvent(eventName, parameters) {
+            if (parameters.length === 0) {
+                return `TriggerServerEvent('${eventName}')`;
+            }
+            return `TriggerServerEvent('${eventName}',${parameters.join(',')})`;
+        }
+
+        // Function to convert TriggerServerEvent into parsed event format
+        function convertToParsedEvent(eventName, parameters) {
+            if (parameters.length === 0) {
+                return `${eventName}[]`;
+            }
+            return `${eventName}[${parameters.join(',')}]`;
+        }
+
+        // Function to format the output as "Event Name: ... Parameters: [...]"
+        function formatEventDetails(eventName, parameters) {
+            return `Event Name: ${eventName}\nParameters: [${parameters.map(param => `'${param}'`).join(', ')}]`;
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy. Please manually copy the text.');
+            });
+        }
+
+        // Event listener for the convert button
+        document.getElementById('convertButton').addEventListener('click', function() {
+            const input = document.getElementById('inputBox').value;
+            const output = document.getElementById('output');
+            const errorMessage = document.getElementById('errorMessage');
+            const result = parseInput(input);
+
+            if (result) {
+                let convertedValue;
+                let outputText;
+                let copyText;
+                if (result.type === 'trigger') {
+                    // Convert TriggerServerEvent to parsed event
+                    convertedValue = convertToParsedEvent(result.eventName, result.parameters);
+                    // Display event details for TriggerServerEvent input
+                    outputText = `<strong>Event Details:</strong>\n${formatEventDetails(result.eventName, result.parameters)}`;
+                    // Set copy text to the event details format
+                    copyText = `Event Name: ${result.eventName}\nParameters: [${result.parameters.map(param => `'${param}'`).join(', ')}]`;
+                } else if (result.type === 'parsed') {
+                    // Convert parsed event to TriggerServerEvent
+                    convertedValue = convertToTriggerServerEvent(result.eventName, result.parameters);
+                    // Display TriggerServerEvent for parsed event input
+                    outputText = `<strong>TriggerServerEvent:</strong>\n${convertedValue}`;
+                    // Set copy text to the TriggerServerEvent format
+                    copyText = convertedValue;
+                }
+                // Update the input box with the converted value
+                document.getElementById('inputBox').value = convertedValue;
+                // Display the output and Copy button
+                output.innerHTML = `${outputText}<br><button id="copyButton" style="background-color: #007bff;">Copy</button>`;
+                // Add event listener to the copy button
+                document.getElementById('copyButton').addEventListener('click', function() {
+                    copyToClipboard(copyText);
+                });
+                errorMessage.innerHTML = '';
+            } else {
+                output.innerHTML = '';
+                errorMessage.innerHTML = 'Invalid input. Please enter a valid TriggerServerEvent or EventName[params].';
+            }
+        });
+    </script>
+</body>
+</html>
