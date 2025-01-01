@@ -215,7 +215,29 @@
         function parseParameters(params) {
             try {
                 // Split parameters by commas, but ignore commas inside quotes or brackets
-                const paramList = params.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g) || [];
+                const paramList = [];
+                let buffer = '';
+                let inString = false;
+                let inArray = 0;
+                for (let i = 0; i < params.length; i++) {
+                    const char = params[i];
+                    if (char === '"' || char === "'") {
+                        inString = !inString; // Toggle string state
+                    } else if (char === '[' && !inString) {
+                        inArray++; // Enter array
+                    } else if (char === ']' && !inString) {
+                        inArray--; // Exit array
+                    }
+                    if (char === ',' && !inString && inArray === 0) {
+                        paramList.push(buffer.trim());
+                        buffer = '';
+                    } else {
+                        buffer += char;
+                    }
+                }
+                if (buffer.trim()) {
+                    paramList.push(buffer.trim());
+                }
                 return paramList.map(param => {
                     // Remove surrounding quotes if present
                     if ((param.startsWith('"') && param.endsWith('"')) || (param.startsWith("'") && param.endsWith("'"))) {
