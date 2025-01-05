@@ -6,6 +6,17 @@
     <title>🚀 FiveM Event Parser & Convertor 🚀</title>
     <link rel="icon" href="chomik.jpg" type="image/jpeg"> <!-- Favicon -->
     <style>
+        /* Video Background */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the video covers the entire background */
+            z-index: -1; /* Places the video behind other content */
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,12 +26,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #121212; /* Dark background */
+            background-color: #121212; /* Fallback background color */
             color: #ffffff; /* Light text */
-            background-size: cover;
-            background-position: center;
-            transition: background-image 1s ease-in-out; /* Smooth transition */
         }
+
         .container {
             text-align: center;
             background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark container background */
@@ -30,6 +39,7 @@
             width: 80%; /* Increased width */
             max-width: 800px; /* Optional: Set a maximum width */
         }
+
         input {
             padding: 10px;
             width: 100%; /* Make input take full width of the container */
@@ -40,6 +50,7 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -50,9 +61,11 @@
             cursor: pointer;
             margin: 5px;
         }
+
         button:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
+
         #output {
             margin-top: 20px;
             font-size: 18px;
@@ -60,35 +73,42 @@
             text-align: left;
             white-space: pre-wrap; /* Preserve formatting */
         }
+
         .big-text {
             font-size: 32px;
             font-weight: bold;
             color: #ff0000; /* Red color */
             margin-bottom: 20px;
         }
+
         .discord-link {
             font-size: 18px;
             color: #7289da; /* Discord blue color */
             margin-top: 20px;
             text-decoration: none;
         }
+
         .discord-link:hover {
             text-decoration: underline;
         }
+
         .redirect-link {
             font-size: 18px;
             color: #00ff00; /* Green color */
             margin-top: 10px; /* Reduced margin to bring it closer to the Discord link */
             text-decoration: none;
         }
+
         .redirect-link:hover {
             text-decoration: underline;
         }
+
         .error-message {
             color: #ff0000; /* Red color */
             font-weight: bold;
             margin-top: 10px;
         }
+
         #copyButton {
             padding: 5px 10px;
             font-size: 14px;
@@ -99,6 +119,7 @@
             cursor: pointer;
             margin-top: 10px;
         }
+
         #copyButton:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
@@ -153,6 +174,12 @@
     </style>
 </head>
 <body>
+    <!-- Video Background -->
+    <video id="video-background" autoplay muted loop>
+        <source src="background2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
     <!-- Text Overlay -->
     <div id="text-overlay">
         Click anywhere to start
@@ -164,7 +191,7 @@
     </button>
 
     <!-- Audio Element -->
-    <audio id="background-music" src="jojo.mp3" loop></audio>
+    <audio id="background-music" src="jojo1.mp3" loop></audio>
 
     <div class="container">
         <div class="big-text">𝐅𝐔𝐂𝐊 𝐉𝐀𝐘𝐓𝐇𝐀𝐀𝐆𝐀𝐌𝐄𝐑 𝐀𝐍𝐃 𝐇𝐈𝐒 𝐀𝐈 𝐏𝐀𝐈𝐃 𝐒𝐇𝐈𝐓</div>
@@ -299,32 +326,6 @@
         // Update the page title every 1 second
         setInterval(updatePageTitle, 500);
 
-        // Function to cycle through background GIFs
-        function cycleBackgroundGifs() {
-            const gifs = [
-                'gif1.gif',
-                'gif2.gif',
-                'gif3.gif',
-                'gif4.gif',
-                'gif5.gif',
-                'gif6.gif',
-                'gif7.gif',
-                'gif8.gif'
-            ]; // Paths to the GIFs in the 'loop' folder
-
-            // Set the first GIF immediately
-            document.body.style.backgroundImage = `url('${gifs[0]}')`;
-
-            let index = 1; // Start from the second GIF
-            setInterval(() => {
-                document.body.style.backgroundImage = `url('${gifs[index]}')`;
-                index = (index + 1) % gifs.length; // Loop back to the first GIF after the last one
-            }, 10000); // Change GIF every 10 seconds
-        }
-
-        // Start the background GIF loop
-        cycleBackgroundGifs();
-
         // Event listener for the convert button
         document.getElementById('convertButton').addEventListener('click', function() {
             const input = document.getElementById('inputBox').value;
@@ -369,11 +370,13 @@
         // Overlay and Music
         const overlay = document.getElementById('text-overlay');
         const backgroundMusic = document.getElementById('background-music');
+        const videoBackground = document.getElementById('video-background');
 
         overlay.addEventListener('click', () => {
             console.log('Overlay clicked'); // Debugging
             overlay.classList.add('hidden');
             backgroundMusic.play();
+            videoBackground.play();
         });
 
         // Ensure the overlay is visible on page load
