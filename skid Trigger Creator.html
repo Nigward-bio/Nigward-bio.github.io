@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Chomik Trigger Creator 🚀</title>
+    <link rel="shortcut icon" href="chomik.jpg" type="image/jpeg">
+    <style>
+        @font-face {
+            font-family: Gotham;
+            src: url(Gotham_Bold.otf);
+        }
+
+        /* Video Background */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the video covers the entire background */
+            z-index: -1; /* Places the video behind other content */
+        }
+
+        body {
+            background-color: #121212; /* Fallback background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: Gotham;
+            color: #ffffff; /* Light text */
+            margin: 0;
+        }
+
+        #triggerForm {
+            position: relative; /* Make the container a reference for absolute positioning */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark container background */
+            padding: 20px; /* Reduced padding */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%; /* Adjusted width */
+            max-width: 400px; /* Smaller max-width */
+        }
+
+        h1 {
+            font-family: Gotham, sans-serif; /* Use Gotham font or fallback to sans-serif */
+            font-size: 2em; /* Adjust font size to fit in one line */
+            color: #007fff; /* Blue color to match the theme */
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
+            margin-bottom: 20px; /* Space below the heading */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 2px; /* Add some spacing between letters */
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
+        }
+
+        label {
+            position: relative;
+            right: 7px;
+            color: #ffffff; /* Light text */
+        }
+
+        input {
+            background-color: #333; /* Dark input background */
+            border: none;
+            color: #ffffff; /* Light text */
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Gotham;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #007fff; /* Blue border on focus */
+        }
+
+        button {
+            background-color: #007fff; /* Blue button */
+            color: white;
+            outline: none;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Gotham;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        /* Loop Checkboxes Container */
+        .loop-checkboxes {
+            display: flex;
+            align-items: center; /* Align checkboxes vertically */
+            gap: 20px; /* Add space between checkboxes */
+            margin-bottom: 10px;
+        }
+
+        /* Checkbox Labels */
+        #iloop, #forLoopLabel, #untilCheckmarkLabel {
+            display: flex;
+            align-items: center; /* Align text and checkbox vertically */
+            gap: 5px; /* Add space between checkbox and text */
+            color: #ffffff; /* Light text */
+            cursor: pointer;
+        }
+
+        /* Tooltip Styles */
+        [data-tooltip] {
+            position: relative;
+            cursor: pointer;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip); /* Display the tooltip text */
+            position: absolute;
+            bottom: 100%; /* Position above the label */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(30, 30, 30, 0.9); /* Dark background */
+            color: #ffffff; /* Light text */
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: pre-line; /* Preserve line breaks */
+            opacity: 0; /* Hide by default */
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000; /* Ensure it's on top */
+            min-width: 200px; /* Set a minimum width */
+            text-align: left; /* Align text to the left */
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1; /* Show on hover */
+            visibility: visible;
+        }
+
+        #delay::placeholder {
+            color: rgb(219, 219, 219);
+        }
+
+        #loopCountContainer {
+            margin-bottom: 10px;
+        }
+
+        #loopCount::placeholder {
+            color: rgb(219, 219, 219);
+        }
+
+        #conditionContainer {
+            margin-bottom: 10px;
+        }
+
+        #condition::placeholder {
+            color: rgb(219, 219, 219);
+        }
+
+        p {
+            color: #ffffff; /* Light text */
+            margin: 10px 0;
+            font-size: 14px; /* Smaller text */
+        }
+
+        a {
+            color: #7289da; /* Discord blue color */
+            text-decoration: none;
+            font-size: 14px; /* Smaller text */
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .redirect-link {
+            color: #00ff00; /* Green color */
+            margin-top: 10px;
+            font-size: 14px; /* Smaller text */
+        }
+
+        /* Overlay Styles */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black */
+            backdrop-filter: blur(10px); /* Add blur effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+            z-index: 1000; /* Ensure it's on top */
+            cursor: pointer;
+        }
+
+        #overlay.hidden {
+            display: none; /* Hide the overlay */
+        }
+
+        /* Mute Button */
+        #muteButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(30, 30, 30, 0.8); /* Same as container */
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 10px; /* Same as container */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Same as container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Ensure it's under the overlay but above other content */
+            width: 44px; /* Fixed width for a square button */
+            height: 44px; /* Fixed height for a square button */
+        }
+
+        #muteButton img {
+            width: 24px;
+            height: 24px;
+            display: block; /* Ensure the image is centered */
+            margin: auto; /* Center the image within the button */
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <video id="video-background" autoplay muted loop>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Overlay -->
+    <div id="overlay">
+        Click anywhere to start
+    </div>
+
+    <!-- Mute Button (Moved outside the form) -->
+    <button id="muteButton">
+        <img src="mute.png" alt="Mute">
+    </button>
+
+    <!-- Form -->
+    <form id="triggerForm" autocomplete="off">
+        <!-- Replace Logo with Text -->
+        <h1>Trigger Creator</h1>
+
+        <label for="param1">First Parameter:</label>
+        <input type="text" id="param1" name="param1" required>
+    
+        <br>
+    
+        <label for="param2">Second Parameter:</label>
+        <input type="text" id="param2" name="param2" required>
+    
+        <br>
+
+        <!-- Loop Checkboxes Container -->
+        <div class="loop-checkboxes">
+            <label id="iloop" for="whileLoop" data-tooltip="Repeats indefinitely until manually stopped. Example in Lua:
+while true do
+    -- Code here
+end">
+                <input type="checkbox" id="whileLoop" name="whileLoop">
+                While Loop
+            </label>
+
+            <label id="forLoopLabel" for="forLoop" data-tooltip="Repeats a specific number of times. Example in Lua:
+for i = 1, 10 do
+    -- Code here
+end">
+                <input type="checkbox" id="forLoop" name="forLoop">
+                For Loop
+            </label>
+
+            <label id="untilCheckmarkLabel" for="untilCheckmark" data-tooltip="Repeats until a specific condition is met. Example in Lua:
+repeat
+    -- Code here
+until condition">
+                <input type="checkbox" id="untilCheckmark" name="untilCheckmark">
+                Repeat Until Checkmark
+            </label>
+        </div>
+
+        <!-- Loop Count Input (for For Loop) -->
+        <div id="loopCountContainer" style="display: none;">
+            <label for="loopCount">Number of Repetitions:</label>
+            <input type="number" id="loopCount" name="loopCount" placeholder="Enter number of repetitions">
+        </div>
+
+        <!-- Condition Input (for Repeat Until Checkmark) -->
+        <div id="conditionContainer" style="display: none;">
+            <label for="condition">Condition:</label>
+            <input type="text" id="condition" name="condition" placeholder="Enter condition (e.g., x > 10)">
+        </div>
+    
+        <!-- Delay Input (for While Loop) -->
+        <div class="delay"></div>
+    
+        <br>
+
+        <button type="button" onclick="change()">Generate Trigger</button> <!-- Changed type to "button" -->
+
+        <br>
+
+        <p>A Free Chomik Trigger Creator</p>
+        <p><a target="_blank" href="https://discord.gg/3pYc4cRCGP">Join My Discord</a></p>
+        <p><a href="index.html" class="redirect-link">Return to My Page</a></p>
+    </form>
+
+    <!-- Audio Element -->
+    <audio id="background-music" src="jojo1.mp3" loop></audio>
+
+    <script>
+        // Function to handle checkbox selection
+        function handleCheckboxChange() {
+            let whileLoop = document.getElementById('whileLoop');
+            let forLoop = document.getElementById('forLoop');
+            let untilCheckmark = document.getElementById('untilCheckmark');
+
+            if (this.id === 'whileLoop' && this.checked) {
+                forLoop.checked = false;
+                untilCheckmark.checked = false;
+            } else if (this.id === 'forLoop' && this.checked) {
+                whileLoop.checked = false;
+                untilCheckmark.checked = false;
+            } else if (this.id === 'untilCheckmark' && this.checked) {
+                whileLoop.checked = false;
+                forLoop.checked = false;
+            }
+
+            show(); // Update the visibility of input fields
+        }
+
+        // Attach event listeners to checkboxes
+        document.getElementById('whileLoop').addEventListener('change', handleCheckboxChange);
+        document.getElementById('forLoop').addEventListener('change', handleCheckboxChange);
+        document.getElementById('untilCheckmark').addEventListener('change', handleCheckboxChange);
+
+        // Function to generate the trigger code
+        function change() {
+            let triggerName = document.querySelector('#param1').value;
+            let triggerParams = document.querySelector('#param2').value;
+            let whileLoop = document.getElementById('whileLoop').checked;
+            let forLoop = document.getElementById('forLoop').checked;
+            let untilCheckmark = document.getElementById('untilCheckmark').checked;
+            let loopCountInput = document.getElementById('loopCount');
+            let delayInput = document.getElementById('delay');
+            let conditionInput = document.getElementById('condition');
+
+            if (!triggerName) {
+                return alert('Please enter the first parameter.');
+            } else if (!triggerParams) {
+                return alert('Please enter the second parameter.');
+            }
+
+            let codeGenerated;
+
+            if (whileLoop) {
+                let delay = delayInput ? delayInput.value : 0;
+
+                if (!delay || isNaN(delay)) {
+                    return alert('Invalid Number in Delay.');
+                }
+
+                codeGenerated = `CreateThread(function()\n`;
+                codeGenerated += `    while true do\n`;
+                codeGenerated += `        Wait(${delay} * 1000)\n`;
+                codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `    end\n`;
+                codeGenerated += `end)`;
+            } else if (forLoop) {
+                let loopCount = loopCountInput.value;
+
+                if (!loopCount || isNaN(loopCount) || loopCount <= 0) {
+                    return alert('Please enter a valid number of repetitions.');
+                }
+
+                codeGenerated = `for i = 1, ${loopCount} do\n`;
+                codeGenerated += `    CreateThread(function()\n`;
+                codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `    end)\n`;
+                codeGenerated += `end`;
+            } else if (untilCheckmark) {
+                let condition = conditionInput ? conditionInput.value : '';
+
+                if (!condition) {
+                    return alert('Please enter a valid condition.');
+                }
+
+                codeGenerated = `CreateThread(function()\n`;
+                codeGenerated += `    repeat\n`;
+                codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `    until ${condition}\n`;
+                codeGenerated += `end)`;
+            } else {
+                codeGenerated = `CreateThread(function()\n`;
+                codeGenerated += `    local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `    TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `end)`;
+            }
+
+            navigator.clipboard.writeText(codeGenerated);
+            alert('✔ - Trigger has been copied to your clipboard!');
+        }
+
+        // Function to show/hide the delay, loop count, and condition input fields
+        function show() {
+            let whileLoop = document.getElementById('whileLoop').checked;
+            let forLoop = document.getElementById('forLoop').checked;
+            let untilCheckmark = document.getElementById('untilCheckmark').checked;
+            let loopCountContainer = document.getElementById('loopCountContainer');
+            let delayContainer = document.querySelector('.delay');
+            let conditionContainer = document.getElementById('conditionContainer');
+
+            if (whileLoop) {
+                delayContainer.innerHTML = `<br><input type="text" id="delay" placeholder="Delay [IN SECONDS]" required>`;
+                loopCountContainer.style.display = 'none';
+                conditionContainer.style.display = 'none';
+            } else if (forLoop) {
+                loopCountContainer.style.display = 'block';
+                delayContainer.innerHTML = '';
+                conditionContainer.style.display = 'none';
+            } else if (untilCheckmark) {
+                conditionContainer.style.display = 'block';
+                loopCountContainer.style.display = 'none';
+                delayContainer.innerHTML = '';
+            } else {
+                loopCountContainer.style.display = 'none';
+                delayContainer.innerHTML = '';
+                conditionContainer.style.display = 'none';
+            }
+        }
+
+        // Emoji Random Generator for Title
+        const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
+
+        function updateTitle() {
+            const randomEmoji1 = emojis[Math.floor(Math.random() * emojis.length)];
+            const randomEmoji2 = emojis[Math.floor(Math.random() * emojis.length)];
+            document.title = `${randomEmoji1} Chomik Trigger Creator ${randomEmoji2}`;
+        }
+
+        // Update the title every 1 second
+        setInterval(updateTitle, 1000);
+
+        // Overlay Functionality
+        const overlay = document.getElementById('overlay');
+        const backgroundMusic = document.getElementById('background-music');
+        const videoBackground = document.getElementById('video-background');
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.add('hidden'); /* Hide the overlay on click */
+            backgroundMusic.play(); /* Play music when overlay is clicked */
+            videoBackground.play(); /* Play the background video */
+        });
+
+        // Mute Button Functionality
+        const muteButton = document.getElementById('muteButton');
+
+        muteButton.addEventListener('click', () => {
+            if (backgroundMusic.muted) {
+                backgroundMusic.muted = false;
+                muteButton.innerHTML = '<img src="mute.png" alt="Mute">';
+            } else {
+                backgroundMusic.muted = true;
+                muteButton.innerHTML = '<img src="unmute.png" alt="Unmute">';
+            }
+        });
+    </script>
+</body>
+</html>
