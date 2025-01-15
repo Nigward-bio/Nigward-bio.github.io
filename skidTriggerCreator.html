@@ -235,6 +235,32 @@
             display: block; /* Ensure the image is centered */
             margin: auto; /* Center the image within the button */
         }
+
+        /* Snowflake Styling */
+        .snowflake {
+            position: absolute;
+            top: -10%;
+            color: #fff;
+            font-size: 1em;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+            opacity: 0.8; /* Slightly transparent */
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg); /* Fall to the bottom of the page */
+            }
+        }
+
+        /* Slower animation for snowflakes */
+        .snowflake {
+            animation-duration: 10s; /* Slower fall */
+        }
     </style>
 </head>
 <body>
@@ -484,6 +510,31 @@ until condition">
                 muteButton.innerHTML = '<img src="unmute.png" alt="Unmute">';
             }
         });
+
+        // Snowflake Effect
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.innerHTML = '❄';
+            snowflake.classList.add('snowflake');
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = Math.random() * 10 + 10 + 's'; // Slower fall (10-20 seconds)
+            snowflake.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity between 0.3 and 1
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // Random size between 10px and 20px
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 20000); // Remove snowflake after 20 seconds
+        }
+
+        function startSnowfall() {
+            const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
+            if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
+                setInterval(createSnowflake, 500); // Create a snowflake every 500ms
+            }
+        }
+
+        startSnowfall();
     </script>
 </body>
 </html>
