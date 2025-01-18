@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trigger Finder</title>
+  <style>
+    /* Dark Theme */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212; /* Dark background */
+      color: #ffffff; /* Light text */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Centered Container */
+    #container {
+      background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark container */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+      z-index: 2; /* Ensure it's above the snowflakes */
+    }
+
+    h1 {
+      color: #007fff; /* Blue color for the title */
+      margin-bottom: 20px;
+    }
+
+    /* Search and Filter Row */
+    .search-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Space between elements */
+      margin-bottom: 20px;
+    }
+
+    #search {
+      flex: 1; /* Take up remaining space */
+      padding: 10px;
+      background-color: #333; /* Dark input background */
+      color: #ffffff; /* Light text */
+      border: none;
+      border-radius: 5px;
+    }
+
+    #search:focus {
+      outline: none;
+      border: 1px solid #007fff; /* Blue border on focus */
+    }
+
+    #search-button {
+      padding: 10px 20px;
+      background: #007bff; /* Blue button */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #search-button:hover {
+      background: #0056b3; /* Darker blue on hover */
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      z-index: 1001; /* Ensure dropdown is above other elements */
+    }
+
+    .dropdown button {
+      padding: 10px 20px;
+      background: #007bff; /* Blue button */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .dropdown button:hover {
+      background: #0056b3; /* Darker blue on hover */
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #333; /* Dark dropdown background */
+      min-width: 160px; /* Slimmer dropdown */
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 8px; /* Reduced padding */
+      z-index: 1002; /* Ensure dropdown content is above dropdown button */
+      border-radius: 5px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block; /* Show dropdown on hover */
+    }
+
+    .dropdown-content label {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffffff; /* Light text */
+      position: relative;
+    }
+
+    .dropdown-content label:hover .filter-explanation {
+      display: block; /* Show explanation on hover */
+    }
+
+    .filter-explanation {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      background-color: rgba(0, 0, 0, 0.8); /* Transparent black */
+      color: #ffffff; /* Light text */
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      width: 200px; /* Fixed width for explanation */
+      z-index: 1000; /* Ensure it's on top */
+    }
+
+    #folder-input {
+      margin-bottom: 20px;
+      background-color: #333; /* Dark input background */
+      color: #ffffff; /* Light text */
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    #folder-input:focus {
+      outline: none;
+      border: 1px solid #007fff; /* Blue border on focus */
+    }
+
+    /* Fixed Height for Results Container */
+    #results-container {
+      margin-top: 20px;
+      height: 300px; /* Fixed height */
+      overflow-y: auto; /* Enable vertical scrolling */
+      border: 1px solid #444; /* Dark border */
+      padding: 10px;
+      background-color: rgba(30, 30, 30, 0.8); /* Dark background */
+      border-radius: 5px;
+    }
+
+    .trigger {
+      background: #333; /* Dark trigger background */
+      padding: 10px;
+      border: 1px solid #444; /* Dark border */
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .trigger .full-trigger {
+      color: #ffffff; /* White for full trigger */
+      font-weight: bold;
+    }
+
+    .trigger .folder {
+      color: #ffa500; /* Orange for folder name */
+      font-size: 0.9em;
+    }
+
+    #download-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff; /* Blue button */
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #download-btn:disabled {
+      background: #555; /* Darker gray for disabled state */
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #ff4444; /* Red for errors */
+      margin-top: 10px;
+    }
+
+    .success {
+      color: #00cc66; /* Green for success messages */
+      margin-top: 10px;
+    }
+
+    #progress-container {
+      width: 100%;
+      background-color: #333; /* Dark progress container */
+      margin-top: 20px;
+      display: none;
+      border-radius: 5px;
+    }
+
+    #progress-bar {
+      width: 0%;
+      height: 30px;
+      background-color: #007bff; /* Blue progress bar */
+      text-align: center;
+      line-height: 30px;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .highlight {
+      background-color: yellow;
+      font-weight: bold;
+      color: #000; /* Black text for highlighted content */
+    }
+
+    /* Overlay Styles */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black */
+      backdrop-filter: blur(10px); /* Add blur effect */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      color: white;
+      z-index: 1000; /* Ensure it's on top */
+      cursor: pointer;
+    }
+
+    #overlay.hidden {
+      display: none; /* Hide the overlay */
+    }
+
+    /* Mute Button */
+    #muteButton {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent background */
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999; /* Ensure it's under the overlay but above other content */
+      width: 44px; /* Fixed width for a square button */
+      height: 44px; /* Fixed height for a square button */
+    }
+
+    #muteButton img {
+      width: 24px;
+      height: 24px;
+      display: block; /* Ensure the image is centered */
+      margin: auto; /* Center the image within the button */
+    }
+
+    /* Video Background */
+    #video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the video covers the entire background */
+      z-index: -1; /* Places the video behind other content */
+    }
+
+    /* Snowflake Styles */
+    .snowflake {
+      position: absolute;
+      top: -10%;
+      width: 6px; /* Size of the snowflake */
+      height: 6px; /* Size of the snowflake */
+      background-color: #fff; /* White color */
+      border-radius: 50%; /* Make it a circle */
+      filter: blur(1px); /* Add a slight blur for a softer look */
+      animation: fall linear infinite;
+      opacity: 0.8; /* Slightly transparent */
+    }
+
+    /* Slower animation for snowflakes */
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video Background -->
+  <video id="video-background" autoplay muted loop>
+    <source src="2pac.mp4" type="video/mp4"> <!-- Updated video name -->
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Overlay -->
+  <div id="overlay">
+    Click anywhere to start
+  </div>
+
+  <!-- Mute Button -->
+  <button id="muteButton">
+    <img src="mute.png" alt="Mute">
+  </button>
+
+  <!-- Centered Container -->
+  <div id="container">
+    <h1>Trigger Finder</h1>
+
+    <!-- Search and Filter Row -->
+    <div class="search-filter-row">
+      <input type="text" id="search" placeholder="Search triggers or script folders...">
+      <button id="search-button">Search</button>
+      <div class="dropdown">
+        <button>Filters</button>
+        <div class="dropdown-content" id="filters">
+          <label><input type="checkbox" id="filter-money" value="money"> Money
+            <div class="filter-explanation">Triggers related to money transactions.</div>
+          </label>
+          <label><input type="checkbox" id="filter-weapon" value="weapon"> Weapon
+            <div class="filter-explanation">Triggers related to weapons or weapon spawns.</div>
+          </label>
+          <label><input type="checkbox" id="filter-vehicle" value="vehicle"> Vehicle
+            <div class="filter-explanation">Triggers related to vehicles or vehicle spawns.</div>
+          </label>
+          <label><input type="checkbox" id="filter-job" value="job"> Job
+            <div class="filter-explanation">Triggers related to jobs or job assignments.</div>
+          </label>
+          <label><input type="checkbox" id="filter-giveitem" value="giveitem"> Give Item
+            <div class="filter-explanation">Triggers related to giving items to players.</div>
+          </label>
+          <label><input type="checkbox" id="filter-revive" value="revive"> Revive
+            <div class="filter-explanation">Triggers related to reviving players.</div>
+          </label>
+          <label><input type="checkbox" id="filter-handcuff" value="handcuff"> Handcuff
+            <div class="filter-explanation">Triggers related to handcuffing players.</div>
+          </label>
+          <label><input type="checkbox" id="filter-setjob" value="setjob"> Set Job
+            <div class="filter-explanation">Triggers related to setting a player's job.</div>
+          </label>
+          <label><input type="checkbox" id="filter-bait" value="bait"> Bait Trigger
+            <div class="filter-explanation">Triggers designed to detect or punish exploits.</div>
+          </label>
+          <label><input type="checkbox" id="filter-comms" value="comms"> Comms
+            <div class="filter-explanation">Triggers related to community service or tasks.</div>
+          </label>
+          <label><input type="checkbox" id="filter-jail" value="jail"> Jail
+            <div class="filter-explanation">Triggers related to jailing or arresting players.</div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <input type="file" id="folder-input" webkitdirectory directory multiple>
+    <div id="progress-container">
+      <div id="progress-bar">0%</div>
+    </div>
+    <div id="results-container">
+      <div id="results"></div>
+    </div>
+    <div id="message"></div>
+    <button id="download-btn" disabled>Download Results</button>
+  </div>
+
+  <!-- Audio Element -->
+  <audio id="background-music" src="oooo.mp3" loop></audio> <!-- Added music -->
+
+  <script>
+    const DEBUG_MODE = true;
+    let allTriggers = []; // Store all triggers for search functionality
+
+    // Overlay Functionality
+    const overlay = document.getElementById('overlay');
+    const videoBackground = document.getElementById('video-background');
+    const muteButton = document.getElementById('muteButton');
+    const backgroundMusic = document.getElementById('background-music');
+    const folderInput = document.getElementById('folder-input');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const resultsContainer = document.getElementById('results');
+    const searchInput = document.getElementById('search');
+    const searchButton = document.getElementById('search-button');
+    const downloadButton = document.getElementById('download-btn');
+    const filters = document.querySelectorAll('#filters input[type="checkbox"]');
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.add('hidden'); // Hide the overlay
+      videoBackground.muted = false; // Unmute the video
+      videoBackground.play(); // Play the video
+      backgroundMusic.play(); // Play the music
+    });
+
+    // Mute/Unmute Button Functionality
+    muteButton.addEventListener('click', () => {
+      if (videoBackground.muted) {
+        videoBackground.muted = false;
+        backgroundMusic.muted = false;
+        muteButton.innerHTML = '<img src="mute.png" alt="Mute">';
+      } else {
+        videoBackground.muted = true;
+        backgroundMusic.muted = true;
+        muteButton.innerHTML = '<img src="unmute.png" alt="Unmute">';
+      }
+    });
+
+    // Snowflake Effect (Seasonal)
+    const currentMonth = new Date().getMonth() + 1; // Get current month (1-12)
+    const isWinter = currentMonth === 12 || currentMonth === 1 || currentMonth === 2; // Winter months
+
+    if (isWinter) {
+      const snowflakeContainer = document.createElement('div');
+      snowflakeContainer.className = 'snowflakes';
+      document.body.appendChild(snowflakeContainer);
+
+      // Function to create a snowflake
+      const createSnowflake = () => {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+        snowflake.style.animationDuration = `${Math.random() * 5 + 5}s`; // Random fall speed
+        snowflake.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity
+        snowflakeContainer.appendChild(snowflake);
+
+        // Remove snowflake after it falls
+        setTimeout(() => {
+          snowflake.remove();
+        }, 10000); // Remove after 10 seconds
+      };
+
+      // Create a snowflake every 500ms
+      setInterval(createSnowflake, 500);
+    }
+
+    // Extract Full Triggers from File Content
+    function extractTriggers(content, folderPath) {
+      const triggerRegex = /(TriggerEvent|TriggerServerEvent)\s*\([^)]*\)/g; // Match full trigger
+      const triggers = [];
+      let match;
+
+      while ((match = triggerRegex.exec(content)) !== null) {
+        const fullTrigger = match[0]; // Full trigger including event name and arguments
+
+        triggers.push({
+          trigger: fullTrigger, // Full trigger
+          folder: folderPath // Subfolder path
+        });
+      }
+
+      return triggers;
+    }
+
+    // Display Triggers in Results Container
+    function displayTriggers(triggers) {
+      resultsContainer.innerHTML = triggers.map(trigger => `
+        <div class="trigger">
+          <div class="full-trigger">${trigger.trigger}</div>
+          <div class="folder">Folder: ${trigger.folder}</div>
+        </div>
+      `).join('');
+    }
+
+    // Handle Folder Input
+    folderInput.addEventListener('change', async (event) => {
+      const files = event.target.files;
+      progressContainer.style.display = 'block'; // Show progress bar
+      progressBar.style.width = '0%'; // Reset progress bar
+      progressBar.textContent = '0%';
+      resultsContainer.innerHTML = ''; // Clear previous results
+      allTriggers = []; // Reset all triggers
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.name.endsWith('.lua') || file.name.endsWith('.js')) { // Process only Lua or JS files
+          const text = await file.text();
+          const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/'); // Extract subfolder path
+          const triggers = extractTriggers(text, folderPath); // Pass subfolder path
+          allTriggers.push(...triggers);
+        }
+
+        // Update progress bar
+        const progress = ((i + 1) / files.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        progressBar.textContent = `${Math.round(progress)}%`;
+      }
+
+      progressContainer.style.display = 'none'; // Hide progress bar after completion
+      downloadButton.disabled = false; // Enable download button
+      displayTriggers(allTriggers); // Display all triggers
+    });
+
+    // Search Functionality
+    searchButton.addEventListener('click', () => {
+      const query = searchInput.value.toLowerCase();
+      const filteredTriggers = allTriggers.filter(trigger =>
+        trigger.trigger.toLowerCase().includes(query) ||
+        trigger.folder.toLowerCase().includes(query)
+      );
+      displayTriggers(filteredTriggers);
+    });
+
+    // Filter Functionality
+    filters.forEach(filter => {
+      filter.addEventListener('change', () => {
+        const activeFilters = Array.from(filters)
+          .filter(f => f.checked)
+          .map(f => f.value);
+
+        const filteredTriggers = allTriggers.filter(trigger =>
+          activeFilters.some(filter => trigger.trigger.toLowerCase().includes(filter))
+        );
+        displayTriggers(filteredTriggers);
+      });
+    });
+
+    // Download Results as TXT
+// Download Results as TXT
+downloadButton.addEventListener('click', () => {
+  const asciiArt = `
+                                     _                        _  _             _  _                                             
+__      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_)| |_  ___                                      
+\\ \\ /\\ / /\\ \\ /\\ / /\\ \\ /\\ / / / __|| '_ \\  / _ \\ | '_ \` _ \\ | || |/ /   / __|| || __|/ _ \\                                     
+ \\ V  V /  \\ V  V /  \\ V  V /_| (__ | | | || (_) || | | | | || ||   <  _ \\__ \\| || |_|  __/                                     
+  \\_/\\_/    \\_/\\_/    \\_/\\_/(_)\\___||_| |_| \\___/ |_| |_| |_||_||_|\\_\\(_)|___/|_| \\__|\\___|                                     
+                                                                                                                                
+     _  _                            _                     __          __  __   ___        _  _     ___   _        ___   __ __  
+  __| |(_) ___   ___  ___   _ __  __| |    __ _   __ _    / /__      __\\ \\/ /  / _ \\ _ __ | || |   ( _ ) | |__    /   \\ /__\\\\ \\ 
+ / _\` || |/ __| / __|/ _ \\ | '__|/ _\` |   / _\` | / _\` |  / / \\ \\ /\\ / / \\  /  / /_)/| '__|| || |_  / _ \\ | '_ \\  / /\\ //_\\   \\ \\
+| (_| || |\\__ \\| (__| (_) || |  | (_| | _| (_| || (_| | / /   \\ V  V /  /  \\ / ___/ | |   |__   _|| (_) || |_) |/ /_////__/\\_/ /
+ \\__,_||_||___/ \\___|\\___/ |_|   \\__,_|(_)\\__, | \\__, |/_/     \\_/\\_/  /_/\\_\\\\/     |_|      |_|   \\___/ |_.__//___,' \\__/\\___/ 
+                                          |___/  |___/                                                                          
+  `;
+
+  const triggersText = allTriggers.map(trigger => `
+    Trigger: ${trigger.trigger}
+    Folder: ${trigger.folder}
+    --------------------------
+  `).join('\n');
+
+  const fullText = `${asciiArt}\n\n${triggersText}`;
+
+  const blob = new Blob([fullText], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'triggers.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+  </script>
+</body>
+</html>
