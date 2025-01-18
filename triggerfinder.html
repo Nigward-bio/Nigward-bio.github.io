@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon -->
+  <link rel="icon" href="chomik.jpg" type="image/jpeg">
   <title>Trigger Finder</title>
   <style>
     /* Dark Theme */
@@ -404,6 +406,11 @@
     const downloadButton = document.getElementById('download-btn');
     const filters = document.querySelectorAll('#filters input[type="checkbox"]');
 
+    // Random Emoji Generator for Title
+    const emojis = ["🐹", "🐭", "🐾", "🌟", "🔍", "🎯", "🚀", "💡", "🛠️", "🔧"];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    document.title = `${randomEmoji} Chomik Trigger Finder ${randomEmoji}`;
+
     overlay.addEventListener('click', () => {
       overlay.classList.add('hidden'); // Hide the overlay
       videoBackground.muted = false; // Unmute the video
@@ -534,9 +541,8 @@
     });
 
     // Download Results as TXT
-// Download Results as TXT
-downloadButton.addEventListener('click', () => {
-  const asciiArt = `
+    downloadButton.addEventListener('click', () => {
+      const asciiArt = `
                                      _                        _  _             _  _                                             
 __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_)| |_  ___                                      
 \\ \\ /\\ / /\\ \\ /\\ / /\\ \\ /\\ / / / __|| '_ \\  / _ \\ | '_ \` _ \\ | || |/ /   / __|| || __|/ _ \\                                     
@@ -551,22 +557,22 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
                                           |___/  |___/                                                                          
   `;
 
-  const triggersText = allTriggers.map(trigger => `
-    Trigger: ${trigger.trigger}
-    Folder: ${trigger.folder}
-    --------------------------
-  `).join('\n');
+      const triggersText = allTriggers.map(trigger => `
+        Trigger: ${trigger.trigger}
+        Folder: ${trigger.folder}
+        --------------------------
+      `).join('\n');
 
-  const fullText = `${asciiArt}\n\n${triggersText}`;
+      const fullText = `${asciiArt}\n\n${triggersText}`;
 
-  const blob = new Blob([fullText], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'triggers.txt';
-  a.click();
-  URL.revokeObjectURL(url);
-});
+      const blob = new Blob([fullText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'triggers.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
   </script>
 </body>
 </html>
