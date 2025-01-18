@@ -392,6 +392,21 @@
     const DEBUG_MODE = true;
     let allTriggers = []; // Store all triggers for search functionality
 
+    // Random Emoji Generator for Title
+    const emojis = ["🐹", "🐭", "🐾", "🌟", "🔍", "🎯", "🚀", "💡", "🛠️", "🔧"];
+
+    // Function to update the title with a random emoji
+    function updateTitleWithEmoji() {
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      document.title = `${randomEmoji} Chomik Trigger Finder ${randomEmoji}`;
+    }
+
+    // Update the title every 3 seconds (3000 milliseconds)
+    setInterval(updateTitleWithEmoji, 3000);
+
+    // Initial call to set the title immediately
+    updateTitleWithEmoji();
+
     // Overlay Functionality
     const overlay = document.getElementById('overlay');
     const videoBackground = document.getElementById('video-background');
@@ -405,11 +420,6 @@
     const searchButton = document.getElementById('search-button');
     const downloadButton = document.getElementById('download-btn');
     const filters = document.querySelectorAll('#filters input[type="checkbox"]');
-
-    // Random Emoji Generator for Title
-    const emojis = ["🐹", "🐭", "🐾", "🌟", "🔍", "🎯", "🚀", "💡", "🛠️", "🔧"];
-    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    document.title = `${randomEmoji} Chomik Trigger Finder ${randomEmoji}`;
 
     overlay.addEventListener('click', () => {
       overlay.classList.add('hidden'); // Hide the overlay
