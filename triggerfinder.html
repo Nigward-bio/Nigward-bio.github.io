@@ -543,9 +543,18 @@
           .filter(f => f.checked)
           .map(f => f.value);
 
-        const filteredTriggers = allTriggers.filter(trigger =>
-          activeFilters.some(filter => trigger.trigger.toLowerCase().includes(filter))
-        );
+        let filteredTriggers;
+
+        if (activeFilters.length === 0) {
+          // If no filters are selected, show all triggers
+          filteredTriggers = allTriggers;
+        } else {
+          // If filters are selected, apply them
+          filteredTriggers = allTriggers.filter(trigger =>
+            activeFilters.some(filter => trigger.trigger.toLowerCase().includes(filter))
+          );
+        }
+
         displayTriggers(filteredTriggers);
       });
     });
