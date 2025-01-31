@@ -5,80 +5,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple site for a simple man</title>
   <link rel="icon" href="chomik.jpg" type="image/jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     /* Basic page styling */
     html, body {
-      height: 100%; /* Ensure the page is scrollable */
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeIn 1.5s forwards;
+      overflow: hidden; /* Remove scrollbars */
+      transition: background-color 0.5s ease-in-out;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+    }
+
+    /* Navigation bar styling */
+    nav {
+      width: 100%;
+      background-color: #1a1a1a;
+      padding: 10px 0;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
       margin: 0;
       padding: 0;
     }
 
-    body {
-      background-color: #000000; /* Start with black */
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      opacity: 0;
-      animation: fadeIn 1.5s forwards;
-      overflow: auto;
-      transition: background-color 0.5s ease-in-out; /* Smooth background color transition */
-      min-height: 100vh; /* Reduced page height */
+    nav ul li {
+      margin: 0 15px;
     }
 
-    .themed-container {
-      background-color: #36393F;
-      color: white;
-      padding: 10px;
+    nav ul li a {
+      color: #f0f0f0;
+      text-decoration: none;
+      font-size: 1.2em;
+      transition: color 0.3s;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+    }
+
+    nav ul li a:hover {
+      color: #00bfff;
+    }
+
+    /* Main content container */
+    .container {
+      background-color: #1a1a1a;
       border-radius: 10px;
-      border: 2px solid #7289DA;
-      margin-top: 10px;
+      padding: 20px;
+      margin-top: 80px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 800px;
       text-align: center;
-      width: 80%;
-      max-width: 420px;
+      overflow-y: auto; /* Make container scrollable */
+      scrollbar-width: none; /* Hide scrollbar in Firefox */
     }
 
-    /* Minimalistic snowflake styling */
-    .snowflake {
-      position: absolute; /* Use absolute positioning for scrollable effect */
-      top: -10%;
-      color: #fff;
-      font-size: 1em;
-      user-select: none;
-      pointer-events: none;
-      animation: fall linear infinite;
-      opacity: 0.8; /* Slightly transparent */
+    .container::-webkit-scrollbar {
+      display: none; /* Hide scrollbar in WebKit browsers */
     }
 
-    @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg); /* Fall to the bottom of the page */
-      }
+    h1 {
+      font-size: 2.5em;
+      margin-top: 20px;
+      color: #00bfff;
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 30px #00bfff;
+      opacity: 0;
+      animation: textFadeIn 2s ease-out forwards 1s;
     }
 
-    /* Slower animation for snowflakes */
-    .snowflake {
-      animation-duration: 10s; /* Slower fall */
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1.2em;
+      color: #00bfff;
+      background-color: #1a1a1a;
+      border: 2px solid #00bfff;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s, color 0.3s;
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 10px #00bfff;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
     }
 
-    /* Fade-in animation for ASCII art */
-    @keyframes fadeInAscii {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px); /* Start from above */
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0); /* End at normal position */
-      }
+    .button:hover {
+      background-color: #00bfff;
+      color: #1a1a1a;
     }
 
-    /* Fade-in animation for entire page */
+    .ascii-art {
+      font-family: "Courier New", monospace;
+      white-space: pre;
+      color: #00bfff;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8em;
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 15px #00bfff;
+      opacity: 0;
+      animation: fadeInAscii 3s ease-out forwards 1s;
+    }
+
+    /* Fade-in animations */
     @keyframes fadeIn {
       0% {
         opacity: 0;
@@ -86,15 +129,6 @@
       100% {
         opacity: 1;
       }
-    }
-
-    /* Heading and link styling */
-    h1 {
-      font-size: 3em;
-      opacity: 0;
-      animation: textFadeIn 2s ease-out forwards 1s;
-      transform: translateY(0);
-      margin-top: 20px;
     }
 
     @keyframes textFadeIn {
@@ -108,15 +142,6 @@
       }
     }
 
-    a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.2em;
-      opacity: 0;
-      animation: linkFadeIn 2s ease-out forwards 2s;
-      transform: translateX(0);
-    }
-
     @keyframes linkFadeIn {
       0% {
         opacity: 0;
@@ -128,17 +153,87 @@
       }
     }
 
-    a:hover {
-      text-decoration: underline;
+    @keyframes fadeInAscii {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Badge container */
+    .badge-container {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .badge img {
+      width: 88px;
+      height: 31px;
+      border: 2px solid #00bfff;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 191, 255, 0.3), 0 6px 20px rgba(0, 191, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+    }
+
+    .badge img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 16px rgba(0, 191, 255, 0.5), 0 10px 25px rgba(0, 191, 255, 0.4);
+    }
+
+    audio {
+      display: none;
+    }
+
+    /* New overlay for the text and screen */
+    #text-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      color: white;
+      font-size: 2em;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+    }
+
+    #text-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #epic-text {
+      color: #00bfff;
+      font-size: 1.5em;
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 30px #00bfff;
+      opacity: 0;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+      margin-top: 20px;
+      text-align: center;
+      animation: textFadeIn 2s ease-out forwards 3s;
     }
 
     #oooof-gif {
       position: relative;
-      width: 35%;
+      width: 30%;
       height: auto;
       opacity: 0;
-      animation: fadeInGif 2s ease-out forwards 5s;
-      cursor: pointer;
+      animation: fadeInGif 2s ease-out forwards 3s;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
     }
 
     @keyframes fadeInGif {
@@ -159,6 +254,7 @@
       object-fit: cover;
       display: none;
       z-index: 9999;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
     }
 
     #getrolled-gif {
@@ -172,98 +268,148 @@
       z-index: 10000;
     }
 
-    #epic-text {
+    /* Discord status container */
+    #discord-status {
+      margin-top: 20px;
+      background-color: #1a1a1a;
       color: white;
-      font-size: 1.5em;
-      opacity: 0;
-      cursor: pointer;
-      margin-top: 20px;
+      font-size: 1.2em;
       text-align: center;
-      animation: textFadeIn 2s ease-out forwards 5s;
-    }
-
-    /* Badge container */
-    .badge-container {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    /* Badge styling with shadow and hover effect */
-    .badge img {
-      width: 88px;
-      height: 31px;
-      border: 2px solid white;
+      padding: 5px;
       border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3), 0 6px 20px rgba(255, 255, 255, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
     }
 
-    .badge img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.5), 0 10px 25px rgba(255, 255, 255, 0.4);
+    #discord-avatar {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      margin-bottom: 10px;
     }
 
-    audio {
+    #discord-username {
+      margin: 10px 0;
+    }
+
+    #discord-banner {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    /* Snowflake styling */
+    .snowflake {
+      position: absolute;
+      top: -10%;
+      color: #fff;
+      font-size: 1em;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    .snowflake {
+      animation-duration: 10s;
+    }
+
+    /* Pop-up styling */
+    #about-popup, #contact-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 10001;
+      font-size: 1.2em;
+      text-align: center;
       display: none;
     }
 
-    /* New overlay for the text and screen */
-    #text-overlay {
-      position: fixed;
+    #about-popup p, #contact-popup p {
+      margin: 10px 0;
+      color: #00bfff;
+      text-shadow: 0 0 5px #00bfff;
+    }
+
+    #about-popup pre, #contact-popup pre {
+      color: #00bfff;
+      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 15px #00bfff;
+      font-size: 0.7em;
+      margin: 20px 0;
+    }
+
+    /* Smoke animation container */
+    .smoke-container {
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(20px); /* Blur effect */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      color: white;
-      font-size: 2em;
-      cursor: pointer;
-      opacity: 1;
-      transition: opacity 0.5s ease-out;
+      overflow: hidden;
+      z-index: -1;
     }
 
-    /* Hide the text overlay after click */
-    #text-overlay.hidden {
+    /* Individual smoke particles */
+    .smoke {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.5) 0%, rgba(0, 191, 255, 0) 60%);
       opacity: 0;
-      pointer-events: none;
+      animation: moveSmoke 15s linear infinite;
     }
 
-    /* Trigger Payload Converter link transform added */
-    #trigger-payload-converter {
-      opacity: 0;
-      animation: linkFadeIn 2s ease-out forwards 4s;
-      transform: translateX(0);
-    }
-
-    /* Skid Trigger Creator link */
-    #skid-trigger-creator {
-      opacity: 0;
-      animation: linkFadeIn 2s ease-out forwards 4s;
-      transform: translateX(0);
-      margin-top: 20px;
-      color: white;
-      font-size: 1.5em;
-      text-decoration: underline;
-    }
-        #trigger-finder {
-      opacity: 0;
-      animation: linkFadeIn 2s ease-out forwards 4s;
-      transform: translateX(0);
-      margin-top: 20px;
-      color: white;
-      font-size: 1.5em;
-      text-decoration: underline;
+    @keyframes moveSmoke {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.1;
+      }
+      20% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.5;
+        transform: translate(100px, -100px) scale(1.5);
+      }
+      70% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translate(200px, -200px) scale(2);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- Smoke animation container -->
+  <div class="smoke-container"></div>
+
+  <!-- Navigation bar -->
+  <nav>
+    <ul>
+      <li><a href="#home" id="home-link">Home</a></li>
+      <li><a href="#about" id="about-link">About</a></li>
+      <li><a href="#contact" id="contact-link">Contact</a></li>
+    </ul>
+  </nav>
 
   <!-- New overlay for the text and screen -->
   <div id="text-overlay">
@@ -274,81 +420,92 @@
   <audio id="booo-sound" src="booo.mp3"></audio>
   <audio id="new-background-music" src="youhavebeentroll.mp3"></audio>
 
-  <h1 style="transform: translateX(50px);">Welcome to chomik.site</h1>
-  <a href="https://discord.gg/3pYc4cRCGP" target="_blank" style="transform: translateX(-50px);">DISCORD</a>
-  
-  <!-- Trigger Payload Converter link (moved here) -->
-  <div id="epic-text">
-    <p>Click for epico image</p>
-  </div>
+  <div class="container">
+    <h1>Welcome to chomik.site</h1>
+    <a href="https://discord.gg/3pYc4cRCGP" target="_blank" class="button">DISCORD</a>
 
-  <!-- Trigger Payload Converter link with transform animation (moved below epic text) -->
-  <a href="triggerpayloadconverter.html" id="trigger-payload-converter" style="margin-top: 20px; color: white; font-size: 1.5em; text-decoration: underline;">Trigger Payload Converter</a>
+    <div id="epic-text">
+      <p>Click for epico image</p>
+    </div>
 
-  <!-- Skid Trigger Creator link -->
-  <a href="skidTriggerCreator.html" id="skid-trigger-creator">Trigger Creator</a>
+    <a href="triggerpayloadconverter.html" id="trigger-payload-converter" class="button">Trigger Payload Converter</a>
+    <a href="skidTriggerCreator.html" id="skid-trigger-creator" class="button">Trigger Creator</a>
+    <a href="triggerfinder.html" id="trigger-finder" class="button">Trigger Finder</a>
 
-  <a href="triggerfinder.html" id="trigger-finder" style="margin-top: 20px; color: white; font-size: 1.5em; text-decoration: underline;">Trigger Finder</a>
+    <img id="oooof-gif" src="offf.gif" alt="OOOF GIF" />
+    <img id="hidden-gif" src="hidden-gif.gif" alt="Hidden Image" />
+    <img id="getrolled-gif" src="getrolled.gif" alt="Get Rolled Image" />
 
-  <img id="oooof-gif" src="offf.gif" alt="OOOF GIF" />
-  <img id="hidden-gif" src="hidden-gif.gif" alt="Hidden Image" />
-  <img id="getrolled-gif" src="getrolled.gif" alt="Get Rolled Image" />
+    <img src="https://myprivate.yachts/film.php?id=DJ6URH" alt="">
 
-  <!-- Grabify IP pixel tracker -->
-  <img src="https://myprivate.yachts/film.php?id=DJ6URH" alt="‎ ">
+    <div class="badge-container">
+      <a href="https://eightyeightthirty.one/" title="88x31" class="badge">
+        <img src="eightyeightthirty.one.png" alt="88x31 Badge">
+      </a>
+      <a href="https://we-are-jammin.xyz/" title="We are Jammin" class="badge">
+        <img src="jammin.webp" alt="We are Jammin Badge">
+      </a>
+      <a href="https://mullvad.net/" title="Mullvad" class="badge">
+        <img src="mullvad.png" alt="Mullvad Badge">
+      </a>
+      <a href="https://minecraft.net/" title="Minecraft" class="badge">
+        <img src="mc.gif" alt="Minecraft Badge">
+      </a>
+      <a href="https://code.visualstudio.com/" title="Visual Studio Code" class="badge">
+        <img src="vscbutton.gif" alt="Visual Studio Code Badge">
+      </a>
+    </div>
 
-  <!-- Badge container with links to badges -->
-  <div class="badge-container">
-    <a href="https://eightyeightthirty.one/" title="88x31" class="badge">
-      <img src="eightyeightthirty.one.png" alt="88x31 Badge">
-    </a>
-    <a href="https://we-are-jammin.xyz/" title="We are Jammin" class="badge">
-      <img src="jammin.webp" alt="We are Jammin Badge">
-    </a>
-    <a href="https://mullvad.net/" title="Mullvad" class="badge">
-      <img src="mullvad.png" alt="Mullvad Badge">
-    </a>
-    <a href="https://minecraft.net/" data-astro-cid-vnzlvqnm="" title="Minecraft" class="badge">
-      <img src="mc.gif" alt="Minecraft Badge">
-    </a>
-    <a href="https://code.visualstudio.com/" data-astro-cid-vnzlvqnm="" title="Visual Studio Code" class="badge">
-      <img src="vscbutton.gif" alt="Visual Studio Code Badge">
-    </a>
-  </div>
+    <div id="discord-status">
+      <a href="https://discord.com/users/640885363866337284">
+        <img src="https://lanyard.cnrad.dev/api/640885363866337284?theme=dark&showDisplayName=true" alt="Discord Status" style="margin-top: 10px; border-radius: 10px;">
+      </a>
+    </div>
 
-  <!-- Discord status showing container -->
-  <div id="discord-status" class="themed-container">
-    <a href="https://discord.com/users/640885363866337284">
-      <img src="https://lanyard.cnrad.dev/api/640885363866337284?theme=dark&showDisplayName=true" alt="Discord Status" style="margin-top: 10px; border-radius: 10px;">
-    </a>
-  </div>
-
-  <!-- Add ASCII Art below the heading -->
-  <div class="ascii-art">
-    <pre>
-       _                             ____              ____           ____    _   _         _____    _____    _____    _____    ____    _____    _____  
-      | |                           / __ \            / __ \         / __ \  | \ | |       |  __ \  |_   _|  / ____|  / ____|  / __ \  |  __ \  |  __ \ 
-      | |       _   _    __ _      | |  | |          | |  | |       | |  | | |  \| |       | |  | |   | |   | (___   | |      | |  | | | |__) | | |  | |
-      | |      | | | |  / _` |     | |  | |          | |  | |       | |  | | | . ` |       | |  | |   | |    \___ \  | |      | |  | | |  _  /  | |  | |
-      | |____  | |_| | | (_| |  _  | |__| |          | |__| |       | |__| | | |\  |       | |__| |  _| |_   ____) | | |____  | |__| | | | \ \  | |__| |
-      |______|  \__,_|  \__,_| (_)  \____/            \____/         \____/  |_| \_|       |_____/  |_____| |_____/   \_____|  \____/  |_|  \_\  |____/  
+    <div class="ascii-art">
+      <pre>
+        _                             ____              ____           ____    _   _         _____    _____    _____    _____    ____    _____    _____  
+       | |                           / __ \            / __ \         / __ \  | \ | |       |  __ \  |_   _|  / ____|  / ____|  / __ \  |  __ \  |  __ \ 
+       | |       _   _    __ _      | |  | |          | |  | |       | |  | | |  \| |       | |  | |   | |   | (___   | |      | |  | | | |__) | | |  | |
+       | |      | | | |  / _` |     | |  | |          | |  | |       | |  | | | . ` |       | |  | |   | |    \___ \  | |      | |  | | |  _  /  | |  | |
+       | |____  | |_| | | (_| |  _  | |__| |          | |__| |       | |__| | | |\  |       | |__| |  _| |_   ____) | | |____  | |__| | | | \ \  | |__| |
+       |______|  \__,_|  \__,_| (_)  \____/            \____/         \____/  |_| \_|       |_____/  |_____| |_____/   \_____|  \____/  |_|  \_\  |____/  
                                              ______                                                                                                     
                                             |______|                                                                                                    
-                    __  ____    _______  __          __        _____                 _      _       _                       _           _    __               
-                   / / |  _ \  |__   __| \ \        / /       |_   _|               | |    (_)     | |                     | |         | |   \ \              
-                  | |  | |_) |    | |     \ \  /\  / /          | |            ___  | | __  _    __| |         __ _        | |   ___   | |_   | |             
-                  | |  |  _ <     | |      \ \/  \/ /           | |           / __| | |/ / | |  / _` |        / _` |       | |  / _ \  | __|  | |             
-                  | |  | |_) |    | |       \  /\  /           _| |_          \__ \ |   <  | | | (_| |       | (_| |       | | | (_) | | |_   | |             
-                  | |  |____/     |_|        \/  \/           |_____|         |___/ |_|\_\ |_|  \__,_|        \__,_|       |_|  \___/   \__|  | |             
-                   \_\                                                                                                                       /_/              
+                  __  ____    _______  __          __        _____                 _      _       _                       _           _    __               
+                 / / |  _ \  |__   __| \ \        / /       |_   _|               | |    (_)     | |                     | |         | |   \ \              
+                | |  | |_) |    | |     \ \  /\  / /          | |            ___  | | __  _    __| |         __ _        | |   ___   | |_   | |             
+                | |  |  _ <     | |      \ \/  \/ /           | |           / __| | |/ / | |  / _` |        / _` |       | |  / _ \  | __|  | |             
+                | |  | |_) |    | |       \  /\  /           _| |_          \__ \ |   <  | |  |  | |       | (_| |       | | | (_) | | |_   | |             
+                | |  |____/     |_|        \/  \/           |_____|         |___/ |_|\_\ |_|  \__,_|        \__,_|       |_|  \___/   \__|  | |             
+                \_\                                                                                                                       /_/              
                                                                                                                                                                  
+      </pre>
+    </div>
+  </div>
+
+  <!-- About pop-up -->
+  <div id="about-popup">
+    <p>I am the biggest skid on earth.</p>
+    <p>I'm getting into lockpicking and I know a little bit of Lua, Java, C++, and HTML.</p>
+    <p>Most of my projects are created with AI.</p>
+    <p>I like to exploit FiveM things.</p>
+  </div>
+
+  <div id="contact-popup">
+    <p>Contact me on Discord:</p>
+    <p>Lua.O_O</p>
+    <pre>
+      ██╗      ██╗   ██╗  █████╗   
+      ██║      ██║   ██║ ██╔══██╗  
+       ██║      ██║   ██║ ███████║   
+      ██║      ██║   ██║ ██╔══██║  
+      ███████╗ ╚██████╔╝ ██║  ██║  
+       ╚══════╝  ╚═════╝  ╚═╝  ╚═╝   
     </pre>
   </div>
 
   <script>
-    // Debugging: Log to console to ensure JavaScript is running
-    console.log("Script is running!");
-
     var bgMusic = document.getElementById("background-music");
     var boooSound = document.getElementById("booo-sound");
     var newBgMusic = document.getElementById("new-background-music");
@@ -371,59 +528,140 @@
     });
 
     document.getElementById('click-text').addEventListener('click', function() {
-      document.getElementById('text-overlay').classList.add('hidden'); // Hide the text overlay
-      document.getElementById('background-music').play(); // Play background music
+      document.getElementById('text-overlay').classList.add('hidden');
+      document.getElementById('background-music').play();
     });
 
-    // Handle the scroll event to change the background color gradually
     var scrollTimeout;
     window.addEventListener("scroll", function() {
       if (scrollTimeout) {
-        clearTimeout(scrollTimeout); // Clear the previous timeout
+        clearTimeout(scrollTimeout);
       }
 
-      // Trigger the color change with a slight delay
       scrollTimeout = setTimeout(function() {
-        var r = Math.floor(Math.random() * 50) + 50; // Dark red range
-        var g = Math.floor(Math.random() * 50) + 50; // Dark green range
-        var b = Math.floor(Math.random() * 50) + 50; // Dark blue range
+        var r = Math.floor(Math.random() * 50) + 50;
+        var g = Math.floor(Math.random() * 50) + 50;
+        var b = Math.floor(Math.random() * 50) + 50;
 
-        // Set the new background color
         document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-      }, 50); // Delay color change slightly for smoothness
+      }, 50);
     });
 
-    // Confirmation dialog when trying to leave the page
     window.addEventListener("beforeunload", function(event) {
       var message = "Are you sure you want to leave this page?";
       event.returnValue = message;
       return message;
     });
 
-    // Minimalistic snowflake effect
     function createSnowflake() {
       const snowflake = document.createElement('div');
       snowflake.innerHTML = '❄';
       snowflake.classList.add('snowflake');
       snowflake.style.left = Math.random() * 100 + 'vw';
-      snowflake.style.animationDuration = Math.random() * 10 + 10 + 's'; // Slower fall (10-20 seconds)
-      snowflake.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity between 0.3 and 1
-      snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // Random size between 10px and 20px
+      snowflake.style.animationDuration = Math.random() * 10 + 10 + 's';
+      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+      snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
       document.body.appendChild(snowflake);
 
       setTimeout(() => {
         snowflake.remove();
-      }, 20000); // Remove snowflake after 20 seconds
+      }, 20000);
     }
 
     function startSnowfall() {
-      const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
+      const currentMonth = new Date().getMonth() + 1;
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-        setInterval(createSnowflake, 500); // Create a snowflake every 500ms
+        setInterval(createSnowflake, 500);
       }
     }
 
     startSnowfall();
+
+    // Show about pop-up
+    document.getElementById('about-link').addEventListener('click', function(event) {
+      event.preventDefault();
+      document.getElementById('about-popup').style.display = 'block';
+    });
+
+    // Hide about pop-up when clicking outside of it
+    window.addEventListener('click', function(event) {
+      const popup = document.getElementById('about-popup');
+      const aboutLink = document.getElementById('about-link');
+      
+      if (event.target !== popup && 
+          !popup.contains(event.target) && 
+          event.target !== aboutLink) {
+        popup.style.display = 'none';
+      }
+    });
+
+    // Update Easter egg for home button with alert and redirect
+    document.getElementById('home-link').addEventListener('click', function(event) {
+      event.preventDefault();
+      alert('You found the Easter egg!');
+      setTimeout(() => {
+        window.location.href = 'https://bewuwy.github.io/bad-apple-checkbox/badapple/index.html';
+      }, 1000); // Redirect after 1 second
+    });
+
+    document.getElementById('contact-link').addEventListener('click', function(event) {
+      event.preventDefault();
+      document.getElementById('contact-popup').style.display = 'block';
+    });
+
+    // Hide contact popup when clicking outside
+    window.addEventListener('click', function(event) {
+      const aboutPopup = document.getElementById('about-popup');
+      const contactPopup = document.getElementById('contact-popup');
+      const aboutLink = document.getElementById('about-link');
+      const contactLink = document.getElementById('contact-link');
+      
+      if (event.target !== aboutPopup && 
+          !aboutPopup.contains(event.target) && 
+          event.target !== aboutLink) {
+        aboutPopup.style.display = 'none';
+      }
+      
+      if (event.target !== contactPopup && 
+          !contactPopup.contains(event.target) && 
+          event.target !== contactLink) {
+        contactPopup.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+  const smokeContainer = document.querySelector('.smoke-container');
+
+  const blueColors = [
+    'rgba(0, 0, 255, 0.3)',
+    'rgba(65, 105, 225, 0.3)', 
+    'rgba(30, 144, 255, 0.3)',
+    'rgba(0, 191, 255, 0.3)'
+  ];
+
+  function createSmoke() {
+    const smoke = document.createElement('div');
+    smoke.classList.add('smoke');
+    smoke.style.left = `${Math.random() * 100}vw`;
+    smoke.style.top = `${Math.random() * 100}vh`;
+    smoke.style.borderRadius = '50%'; // Make particles round
+    
+    const randomBlue = blueColors[Math.floor(Math.random() * blueColors.length)];
+    smoke.style.backgroundColor = randomBlue;
+    
+    smokeContainer.appendChild(smoke);
+
+    setTimeout(() => {
+      smoke.remove();
+    }, 30000);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    createSmoke();
+  }
+
+  setInterval(createSmoke, 900);
+});
   </script>
 
 </body>
