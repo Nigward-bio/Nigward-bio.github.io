@@ -251,62 +251,149 @@
                 return { eventName, parameters, type: 'trigger' };
             }
 
-            // Check if it's a parsed event (eventName[params])
-            const parsedRegex = /^([\w:]+)\[([^\]]+)\]$/;
+            // Updated regex to handle event names with colons
+            const parsedRegex = /^([\w:-]+)\[([^\]]*)\]$/;
             const parsedMatch = cleanedInput.match(parsedRegex);
 
             if (parsedMatch) {
                 const eventName = parsedMatch[1];
-                const parameters = parseParameters(parsedMatch[2]);
+                const parameters = parsedMatch[2] ? parseParameters(parsedMatch[2]) : [];
                 return { eventName, parameters, type: 'parsed' };
             }
 
             return null;
         }
 
-        // Function to parse parameters (mixed types: strings, numbers, variables, etc.)
+        // Improved parameter parsing to handle empty parameters better
         function parseParameters(params) {
+            if (!params || params.trim() === '') {
+                return [];
+            }
             try {
-                // Split parameters by commas, but ignore commas inside quotes or function calls
                 const paramList = [];
                 let buffer = '';
                 let inString = false;
-                let inFunction = 0;
+                let stringDelimiter = '';
+                let inObject = 0;
+                let inArray = 0;
+                let escaped = false;
+
                 for (let i = 0; i < params.length; i++) {
                     const char = params[i];
-                    if (char === '"' || char === "'") {
-                        inString = !inString; // Toggle string state
-                    } else if (char === '(' && !inString) {
-                        inFunction++; // Enter function call
-                    } else if (char === ')' && !inString) {
-                        inFunction--; // Exit function call
+                    
+                    if (escaped) {
+                        buffer += char;
+                        escaped = false;
+                        continue;
                     }
-                    if (char === ',' && !inString && inFunction === 0) {
+
+                    if (char === '\\') {
+                        escaped = true;
+                        buffer += char;
+                        continue;
+                    }
+
+                    if ((char === '"' || char === "'") && !inString) {
+                        inString = true;
+                        stringDelimiter = char;
+                        buffer += char;
+                    } else if (char === stringDelimiter && inString) {
+                        inString = false;
+                        buffer += char;
+                    } else if (char === '{' && !inString) {
+                        inObject++;
+                        buffer += char;
+                    } else if (char === '}' && !inString) {
+                        inObject--;
+                        buffer += char;
+                    } else if (char === '[' && !inString) {
+                        inArray++;
+                        buffer += char;
+                    } else if (char === ']' && !inString) {
+                        inArray--;
+                        buffer += char;
+                    } else if (char === ',' && !inString && inObject === 0 && inArray === 0) {
                         paramList.push(buffer.trim());
                         buffer = '';
                     } else {
                         buffer += char;
                     }
                 }
+
                 if (buffer.trim()) {
                     paramList.push(buffer.trim());
                 }
-                return paramList.map(param => {
-                    // Remove surrounding quotes if present
-                    if ((param.startsWith('"') && param.endsWith('"')) || (param.startsWith("'") && param.endsWith("'"))) {
-                        return param.slice(1, -1);
-                    }
-                    // Parse numbers
-                    if (!isNaN(param)) {
-                        return parseFloat(param);
-                    }
-                    // Return as-is (e.g., variables like AMOUNT or function calls)
-                    return param;
-                });
+
+                return paramList.map(param => parseValue(param.trim()));
             } catch (error) {
                 console.error("Error parsing parameters:", error);
                 return [];
             }
+        }
+
+        // Add this helper function to check if a string is a valid identifier
+        function isValidIdentifier(str) {
+            return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(str);
+        }
+
+        // Update the parseValue function
+        function parseValue(value) {
+            // Remove surrounding whitespace
+            value = value.trim();
+
+            // Check if it's a valid identifier (variable name)
+            if (isValidIdentifier(value)) {
+                return { type: 'identifier', value: value };
+            }
+
+            // Try parsing as JSON
+            try {
+                if ((value.startsWith('{') && value.endsWith('}')) ||
+                    (value.startsWith('[') && value.endsWith(']'))) {
+                    return JSON.parse(value);
+                }
+            } catch {}
+
+            // Handle quoted strings
+            if ((value.startsWith('"') && value.endsWith('"')) ||
+                (value.startsWith("'") && value.endsWith("'"))) {
+                return value.slice(1, -1);
+            }
+
+            // Handle numbers
+            if (!isNaN(value)) {
+                return Number(value);
+            }
+
+            // Handle booleans and null
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            if (value === 'null') return null;
+            if (value === 'undefined') return undefined;
+
+            // If not a valid identifier, treat as string but preserve format
+            return value;
+        }
+
+        // Update the formatParameter function
+        function formatParameter(param) {
+            if (param && param.type === 'identifier') {
+                return param.value; // Return identifier without quotes
+            }
+            if (typeof param === 'string') {
+                // Check if the string needs quotes
+                if (isValidIdentifier(param)) {
+                    return param; // No quotes for valid identifiers
+                }
+                return `'${param.replace(/'/g, "\\'")}'`; // Quote only if necessary
+            }
+            if (typeof param === 'object' && param !== null) {
+                return JSON.stringify(param);
+            }
+            if (typeof param === 'undefined') {
+                return 'undefined';
+            }
+            return String(param);
         }
 
         // Function to convert parsed event into TriggerServerEvent format
@@ -314,7 +401,7 @@
             if (parameters.length === 0) {
                 return `TriggerServerEvent('${eventName}')`;
             }
-            return `TriggerServerEvent('${eventName}',${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(',')})`;
+            return `TriggerServerEvent('${eventName}', ${parameters.map(formatParameter).join(', ')})`;
         }
 
         // Function to convert TriggerServerEvent into parsed event format
@@ -322,7 +409,39 @@
             if (parameters.length === 0) {
                 return `${eventName}[]`;
             }
-            return `${eventName}[${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(',')}]`;
+            return `${eventName}[${parameters.map(formatParameter).join(',')}]`;
+        }
+
+        // Update the formatEventDetails function to properly format parameters
+        function formatEventDetails(eventName, parameters) {
+            const formattedParams = parameters.map(param => {
+                if (param && param.type === 'identifier') {
+                    return param.value;
+                }
+                if (typeof param === 'string') {
+                    return `"${param}"`;
+                }
+                return param;
+            });
+            
+            return `Event Name: ${eventName}\nParameters: [${formattedParams.join(', ')}]`;
+        }
+
+        // Update the formatParameter function to handle identifiers better
+        function formatParameter(param) {
+            if (param && param.type === 'identifier') {
+                return param.value; // Return identifier without quotes
+            }
+            if (typeof param === 'string') {
+                return `"${param}"`; // Use double quotes for strings
+            }
+            if (typeof param === 'object' && param !== null) {
+                return JSON.stringify(param);
+            }
+            if (typeof param === 'undefined') {
+                return 'undefined';
+            }
+            return String(param); // Convert numbers and other types to string
         }
 
         // Function to format the output as "Event Name: ... Parameters: [...]"
