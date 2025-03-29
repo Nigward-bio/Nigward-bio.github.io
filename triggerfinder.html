@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"="width=device-width, initial-scale=1.0">
   <!-- Favicon -->
   <link rel="icon" href="chomik.jpg" type="image/jpeg">
   <title>Trigger Finder</title>
@@ -499,6 +499,7 @@
   <script>
     const DEBUG_MODE = true;
     let allTriggers = []; // Store all triggers for search functionality
+    let allShops = []; // Store all shops for download functionality
 
     // Random Emoji Generator for Title
     const emojis = ["🐹", "🐭", "🐾", "🌟", "🔍", "🎯", "🚀", "💡", "🛠️", "🔧"];
@@ -595,6 +596,93 @@
       return triggers;
     }
 
+    // Enhanced shop extraction function
+    function extractShops(content) {
+      try {
+        const shops = [];
+        let currentShop = null;
+        let currentShopName = null;
+        let bracketCount = 0;
+        
+        // Split content into lines for easier processing
+        const lines = content.split('\n');
+        
+        for (let line of lines) {
+          line = line.trim();
+          
+          // Skip comments and empty lines
+          if (line.startsWith('--') || !line) continue;
+          
+          // Start of new shop
+          if (line.match(/^\w+\s*=\s*{/)) {
+            currentShopName = line.split('=')[0].trim();
+            bracketCount = 1;
+            currentShop = {
+              type: currentShopName,
+              name: '',
+              locations: [],
+              items: []
+            };
+            continue;
+          }
+
+          // Process shop name
+          if (currentShop && line.includes('name')) {
+            const nameMatch = line.match(/name\s*=\s*['"]([^'"]+)['"]/);
+            if (nameMatch) currentShop.name = nameMatch[1];
+          }
+
+          // Process locations
+          if (currentShop && line.includes('vec3')) {
+            const coordMatch = line.match(/vec3\(([^)]+)\)/);
+            if (coordMatch) {
+              currentShop.locations.push(coordMatch[1].trim());
+            }
+          }
+
+          // Process inventory items
+          if (currentShop && line.includes('name')) {
+            const itemMatch = line.match(/{[^}]*name\s*=\s*['"]([^'"]+)['"][^}]*price\s*=\s*(\d+)[^}]*(?:currency\s*=\s*['"]([^'"]+)['"])?/);
+            if (itemMatch) {
+              currentShop.items.push({
+                name: itemMatch[1],
+                price: itemMatch[2],
+                currency: itemMatch[3] || 'money'
+              });
+            }
+          }
+
+          // Count brackets to properly detect shop end
+          bracketCount += (line.match(/{/g) || []).length;
+          bracketCount -= (line.match(/}/g) || []).length;
+          
+          // End of current shop definition
+          if (bracketCount === 0 && currentShop) {
+            if (currentShop.locations.length > 0 || currentShop.items.length > 0) {
+              shops.push(currentShop);
+            }
+            currentShop = null;
+            currentShopName = null;
+          }
+        }
+
+        return shops;
+      } catch (error) {
+        console.error('Error parsing shops:', error);
+        return [];
+      }
+    }
+
+    // Add shop finding function
+    function findShopsFile(files) {
+      return files.find(f => {
+        const path = f.webkitRelativePath.toLowerCase();
+        return path.includes('shops.lua') || 
+               path.includes('ox_inventory/data/shops.lua') ||
+               path.includes('ox_inventory\\data\\shops.lua');
+      });
+    }
+
     // Display Triggers in Results Container
     function displayTriggers(triggers) {
       resultsContainer.innerHTML = triggers.map(trigger => `
@@ -605,39 +693,62 @@
       `).join('');
     }
 
-    // Handle Folder Input
+    // Handle Folder Input with enhanced shop processing
     folderInput.addEventListener('change', async (event) => {
-      const files = event.target.files;
-      progressContainer.style.display = 'block'; // Show progress bar
-      progressBar.style.width = '0%'; // Reset progress bar
+      const files = Array.from(event.target.files);
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
       progressBar.textContent = '0%';
-      resultsContainer.innerHTML = ''; // Clear previous results
-      allTriggers = []; // Reset all triggers
-      let allWebhooks = new Set(); // Use Set to avoid duplicates
+      resultsContainer.innerHTML = '';
+      allTriggers = [];
+      allShops = [];
+      let allWebhooks = new Set();
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.name.endsWith('.lua') || file.name.endsWith('.js')) { // Process only Lua or JS files
-          const text = await file.text();
-          const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/'); // Extract subfolder path
-          const triggers = extractTriggers(text, folderPath); // Pass subfolder path
-          allTriggers.push(...triggers);
-          
-          // Extract and add webhooks
-          const webhooks = extractWebhooks(text);
-          webhooks.forEach(webhook => allWebhooks.add(webhook));
+      try {
+        // Find and process shops.lua first
+        const shopsFile = findShopsFile(files);
+        if (shopsFile) {
+          console.log('Found shops file:', shopsFile.webkitRelativePath);
+          const text = await shopsFile.text();
+          allShops = extractShops(text);
+          console.log('Extracted shops:', allShops.length);
         }
 
-        // Update progress bar
-        const progress = ((i + 1) / files.length) * 100;
-        progressBar.style.width = `${progress}%`;
-        progressBar.textContent = `${Math.round(progress)}%`;
+        // Process other files in batches
+        const remainingFiles = files.filter(f => f !== shopsFile);
+        const totalFiles = remainingFiles.length;
+        const batchSize = 10;
+
+        for (let i = 0; i < totalFiles; i += batchSize) {
+          const batch = remainingFiles.slice(i, i + batchSize);
+          
+          await Promise.all(batch.map(async file => {
+            if (file.name.endsWith('.lua') || file.name.endsWith('.js')) {
+              const text = await file.text();
+              const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/');
+              
+              const triggers = extractTriggers(text, folderPath);
+              allTriggers.push(...triggers);
+              
+              const webhooks = extractWebhooks(text);
+              webhooks.forEach(webhook => allWebhooks.add(webhook));
+            }
+          }));
+
+          const progress = ((i + batchSize) / totalFiles) * 100;
+          progressBar.style.width = `${Math.min(progress, 100)}%`;
+          progressBar.textContent = `${Math.round(Math.min(progress, 100))}%`;
+          
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+      } catch (error) {
+        console.error('Processing error:', error);
       }
 
-      progressContainer.style.display = 'none'; // Hide progress bar after completion
-      downloadButton.disabled = false; // Enable download button
-      displayTriggers(allTriggers); // Display all triggers
-      displayWebhooks(Array.from(allWebhooks)); // Convert Set to Array for display
+      progressContainer.style.display = 'none';
+      downloadButton.disabled = false;
+      displayTriggers(allTriggers);
+      displayWebhooks(Array.from(allWebhooks));
     });
 
     // Search Functionality
@@ -673,7 +784,7 @@
       });
     });
 
-    // Download Results as TXT
+    // Update download button to include ASCII art and both triggers and shops
     downloadButton.addEventListener('click', () => {
       const asciiArt = `
                                      _                        _  _             _  _                                             
@@ -688,21 +799,47 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
 | (_| || |\\__ \\| (__| (_) || |  | (_| | _| (_| || (_| | / /   \\ V  V /  /  \\ / ___/ | |   |__   _|| (_) || |_) |/ /_////__/\\_/ /
  \\__,_||_||___/ \\___|\\___/ |_|   \\__,_|(_)\\__, | \\__, |/_/     \\_/\\_/  /_/\\_\\\\/     |_|      |_|   \\___/ |_.__//___,' \\__/\\___/ 
                                           |___/  |___/                                                                          
-  `;
+`;
 
       const triggersText = allTriggers.map(trigger => `
-        Trigger: ${trigger.trigger}
-        Folder: ${trigger.folder}
-        --------------------------
-      `).join('\n');
+Trigger: ${trigger.trigger}
+Folder: ${trigger.folder}
+--------------------------`).join('\n');
 
-      const fullText = `${asciiArt}\n\n${triggersText}`;
+      const shopsText = allShops.map(shop => {
+        // Remove duplicate locations by converting to Set and back to array
+        const uniqueLocations = [...new Set(shop.locations)];
+        
+        // Format unique locations with proper indentation
+        const locations = uniqueLocations.map(loc => `    ${loc}`).join('\n');
+        
+        // Format items with proper indentation and alignment
+        const items = shop.items.map(item => {
+          const currencyText = item.currency !== 'money' ? `, Currency: ${item.currency}` : '';
+          return `    - ${item.name} (Price: ${item.price}${currencyText})`;
+        }).join('\n');
+
+        // Build formatted shop section
+        return `
+Shop Information:
+  Type: ${shop.type}
+  Name: ${shop.name}
+
+  Locations:
+${locations}
+
+  Items:
+${items}
+--------------------------`;
+      }).join('\n');
+
+      const fullText = `${asciiArt}\n\nTriggers:\n${triggersText}\n\nShops and Locations:\n${shopsText}`;
 
       const blob = new Blob([fullText], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'triggers.txt';
+      a.download = 'results.txt';
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -880,7 +1017,7 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
       if (!select.value) return;
       const container = select.closest('.webhook-controls');
       const input = container.querySelector('.webhook-spam-input');
-      input.value = select.value + ' ' + (input.value || 'www.chomik.site');
+      input.value = select.value; // Just insert the mention without additional text
       select.value = ''; // Reset select
     }
   </script>
