@@ -261,6 +261,19 @@
         .snowflake {
             animation-duration: 10s; /* Slower fall */
         }
+
+        #bindContainer {
+            background-color: rgba(30, 30, 30, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        #bindContainer input {
+            margin-bottom: 10px;
+            background-color: #333;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -320,6 +333,13 @@ until condition">
                 <input type="checkbox" id="untilCheckmark" name="untilCheckmark">
                 Repeat Until
             </label>
+
+            <label id="bindCheckLabel" for="bindCheck" data-tooltip="Adds key binding to start/stop the trigger. Example:
+Press key to start running the trigger
+Press another key to stop">
+                <input type="checkbox" id="bindCheck" name="bindCheck">
+                Bind Keys
+            </label>
         </div>
 
         <!-- Loop Count Input (for For Loop) -->
@@ -339,6 +359,18 @@ until condition">
     
         <br>
 
+        <!-- Bind Input Container -->
+        <div id="bindContainer" style="display: none;">
+            <label for="startKey">Start Key:</label>
+            <input type="text" id="startKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to start [E]">
+            
+            <label for="stopKey">Stop Key:</label>
+            <input type="text" id="stopKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to stop [Y]">
+            
+            <label for="bindDelay">Trigger Delay (seconds):</label>
+            <input type="number" id="bindDelay" placeholder="Delay between triggers">
+        </div>
+
         <button type="button" onclick="change()">Generate Trigger</button> <!-- Changed type to "button" -->
 
         <br>
@@ -357,25 +389,25 @@ until condition">
             let whileLoop = document.getElementById('whileLoop');
             let forLoop = document.getElementById('forLoop');
             let untilCheckmark = document.getElementById('untilCheckmark');
+            let bindCheck = document.getElementById('bindCheck');
 
-            if (this.id === 'whileLoop' && this.checked) {
-                forLoop.checked = false;
-                untilCheckmark.checked = false;
-            } else if (this.id === 'forLoop' && this.checked) {
-                whileLoop.checked = false;
-                untilCheckmark.checked = false;
-            } else if (this.id === 'untilCheckmark' && this.checked) {
-                whileLoop.checked = false;
-                forLoop.checked = false;
+            // Uncheck all other checkboxes except the current one
+            if (this.checked) {
+                [whileLoop, forLoop, untilCheckmark, bindCheck].forEach(checkbox => {
+                    if (checkbox !== this) {
+                        checkbox.checked = false;
+                    }
+                });
             }
 
             show(); // Update the visibility of input fields
         }
 
-        // Attach event listeners to checkboxes
+        // Attach event listeners to all checkboxes
         document.getElementById('whileLoop').addEventListener('change', handleCheckboxChange);
         document.getElementById('forLoop').addEventListener('change', handleCheckboxChange);
         document.getElementById('untilCheckmark').addEventListener('change', handleCheckboxChange);
+        document.getElementById('bindCheck').addEventListener('change', handleCheckboxChange);
 
         // Function to generate the trigger code
         function change() {
@@ -384,9 +416,13 @@ until condition">
             let whileLoop = document.getElementById('whileLoop').checked;
             let forLoop = document.getElementById('forLoop').checked;
             let untilCheckmark = document.getElementById('untilCheckmark').checked;
+            let bindCheck = document.getElementById('bindCheck').checked;
             let loopCountInput = document.getElementById('loopCount');
             let delayInput = document.getElementById('delay');
             let conditionInput = document.getElementById('condition');
+            let startKeyInput = document.getElementById('startKey');
+            let stopKeyInput = document.getElementById('stopKey');
+            let bindDelayInput = document.getElementById('bindDelay');
 
             if (!triggerName) {
                 return alert('Please enter the first parameter.');
@@ -436,6 +472,35 @@ until condition">
                 codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
                 codeGenerated += `    until ${condition}\n`;
                 codeGenerated += `end)`;
+            } else if (bindCheck) {
+                let startKey = startKeyInput ? startKeyInput.value : '';
+                let stopKey = stopKeyInput ? stopKeyInput.value : '';
+                let bindDelay = bindDelayInput ? bindDelayInput.value : 0;
+
+                if (!startKey || !stopKey) {
+                    return alert('Please enter valid start and stop keys.');
+                }
+
+                if (!bindDelay || isNaN(bindDelay)) {
+                    return alert('Invalid Number in Trigger Delay.');
+                }
+
+                codeGenerated = `local isRunning = false\n`;
+                codeGenerated += `local function startTrigger()\n`;
+                codeGenerated += `    isRunning = true\n`;
+                codeGenerated += `    CreateThread(function()\n`;
+                codeGenerated += `        while isRunning do\n`;
+                codeGenerated += `            Wait(${bindDelay} * 1000)\n`;
+                codeGenerated += `            local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `            TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `        end\n`;
+                codeGenerated += `    end)\n`;
+                codeGenerated += `end\n`;
+                codeGenerated += `local function stopTrigger()\n`;
+                codeGenerated += `    isRunning = false\n`;
+                codeGenerated += `end\n`;
+                codeGenerated += `RegisterCommand('${startKey}', startTrigger, false)\n`;
+                codeGenerated += `RegisterCommand('${stopKey}', stopTrigger, false)`;
             } else {
                 codeGenerated = `CreateThread(function()\n`;
                 codeGenerated += `    local params = json.decode('${triggerParams}')\n`;
@@ -452,26 +517,37 @@ until condition">
             let whileLoop = document.getElementById('whileLoop').checked;
             let forLoop = document.getElementById('forLoop').checked;
             let untilCheckmark = document.getElementById('untilCheckmark').checked;
+            let bindCheck = document.getElementById('bindCheck').checked;
             let loopCountContainer = document.getElementById('loopCountContainer');
             let delayContainer = document.querySelector('.delay');
             let conditionContainer = document.getElementById('conditionContainer');
+            let bindContainer = document.getElementById('bindContainer');
 
             if (whileLoop) {
                 delayContainer.innerHTML = `<br><input type="text" id="delay" placeholder="Delay [IN SECONDS]" required>`;
                 loopCountContainer.style.display = 'none';
                 conditionContainer.style.display = 'none';
+                bindContainer.style.display = 'none';
             } else if (forLoop) {
                 loopCountContainer.style.display = 'block';
                 delayContainer.innerHTML = '';
                 conditionContainer.style.display = 'none';
+                bindContainer.style.display = 'none';
             } else if (untilCheckmark) {
                 conditionContainer.style.display = 'block';
                 loopCountContainer.style.display = 'none';
                 delayContainer.innerHTML = '';
+                bindContainer.style.display = 'none';
+            } else if (bindCheck) {
+                bindContainer.style.display = 'block';
+                loopCountContainer.style.display = 'none';
+                delayContainer.innerHTML = '';
+                conditionContainer.style.display = 'none';
             } else {
                 loopCountContainer.style.display = 'none';
                 delayContainer.innerHTML = '';
                 conditionContainer.style.display = 'none';
+                bindContainer.style.display = 'none';
             }
         }
 
@@ -535,6 +611,19 @@ until condition">
         }
 
         startSnowfall();
+
+        // Add this to your existing JavaScript
+        document.getElementById('bindCheck').addEventListener('change', function() {
+            document.getElementById('bindContainer').style.display = 
+                this.checked ? 'block' : 'none';
+            
+            if (this.checked) {
+                // Disable other options when bind is selected
+                document.getElementById('whileLoop').checked = false;
+                document.getElementById('forLoop').checked = false;
+                document.getElementById('untilCheckmark').checked = false;
+            }
+        });
     </script>
 </body>
 </html>
