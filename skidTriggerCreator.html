@@ -384,6 +384,13 @@ Press another key to stop">
     <audio id="background-music" src="jojo1.mp3" loop></audio>
 
     <script>
+        // Add this constant at the top of your script section
+        const CONTROL_KEYS = {
+            E: 38,   // E key control code
+            Y: 246,  // Y key control code
+            // Add more keys as needed
+        };
+
         // Function to handle checkbox selection
         function handleCheckboxChange() {
             let whileLoop = document.getElementById('whileLoop');
@@ -473,34 +480,73 @@ Press another key to stop">
                 codeGenerated += `    until ${condition}\n`;
                 codeGenerated += `end)`;
             } else if (bindCheck) {
-                let startKey = startKeyInput ? startKeyInput.value : '';
-                let stopKey = stopKeyInput ? stopKeyInput.value : '';
+                let startKey = startKeyInput ? startKeyInput.value.toUpperCase() : '';
+                let stopKey = stopKeyInput ? stopKeyInput.value.toUpperCase() : '';
                 let bindDelay = bindDelayInput ? bindDelayInput.value : 0;
 
                 if (!startKey || !stopKey) {
                     return alert('Please enter valid start and stop keys.');
                 }
 
+                if (startKey === stopKey) {
+                    return alert("❌ Start and Stop keys cannot be the same!");
+                }
+
                 if (!bindDelay || isNaN(bindDelay)) {
                     return alert('Invalid Number in Trigger Delay.');
                 }
 
-                codeGenerated = `local isRunning = false\n`;
-                codeGenerated += `local function startTrigger()\n`;
-                codeGenerated += `    isRunning = true\n`;
-                codeGenerated += `    CreateThread(function()\n`;
-                codeGenerated += `        while isRunning do\n`;
-                codeGenerated += `            Wait(${bindDelay} * 1000)\n`;
-                codeGenerated += `            local params = json.decode('${triggerParams}')\n`;
-                codeGenerated += `            TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated = `local isRunning = false\n\n`;
+                codeGenerated += `function notify(message)\n`;
+                codeGenerated += `    SetNotificationTextEntry("STRING")\n`;
+                codeGenerated += `    AddTextComponentString(message)\n`;
+                codeGenerated += `    DrawNotification(false, false)\n`;
+                codeGenerated += `end\n\n`;
+                codeGenerated += `function DrawText3D(x, y, z, text)\n`;
+                codeGenerated += `    local onScreen, _x, _y = World3dToScreen2d(x, y, z)\n`;
+                codeGenerated += `    local px, py, pz = table.unpack(GetGameplayCamCoords())\n\n`;
+                codeGenerated += `    SetTextScale(0.35, 0.35)\n`;
+                codeGenerated += `    SetTextFont(4)\n`;
+                codeGenerated += `    SetTextProportional(1)\n`;
+                codeGenerated += `    SetTextEntry("STRING")\n`;
+                codeGenerated += `    SetTextCentre(1)\n`;
+                codeGenerated += `    AddTextComponentString(text)\n`;
+                codeGenerated += `    DrawText(_x, _y)\n`;
+                codeGenerated += `end\n\n`;
+                codeGenerated += `CreateThread(function()\n`;
+                codeGenerated += `    notify("Welcome! Press ${startKey} to start spawning, ${stopKey} to stop script")\n\n`;
+                codeGenerated += `    while true do\n`;
+                codeGenerated += `        Wait(0)\n\n`;
+                codeGenerated += `        local playerPed = PlayerPedId()\n`;
+                codeGenerated += `        local playerCoords = GetEntityCoords(playerPed)\n\n`;
+                codeGenerated += `        if isRunning then\n`;
+                codeGenerated += `            DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Press ${startKey} to stop | ${stopKey} to exit script")\n`;
+                codeGenerated += `        else\n`;
+                codeGenerated += `            DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Press ${startKey} to start running | ${stopKey} to exit script")\n`;
+                codeGenerated += `        end\n\n`;
+                codeGenerated += `        if IsControlJustPressed(1, ${CONTROL_KEYS[startKey]}) then\n`;
+                codeGenerated += `            if isRunning then\n`;
+                codeGenerated += `                isRunning = false\n`;
+                codeGenerated += `                notify("Stopped")\n`;
+                codeGenerated += `            else\n`;
+                codeGenerated += `                isRunning = true\n`;
+                codeGenerated += `                notify("Running...")\n`;
+                codeGenerated += `                CreateThread(function()\n`;
+                codeGenerated += `                    while isRunning do\n`;
+                codeGenerated += `                        local params = json.decode('${triggerParams}')\n`;
+                codeGenerated += `                        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `                        Wait(${bindDelay} * 1000)\n`;
+                codeGenerated += `                    end\n`;
+                codeGenerated += `                end)\n`;
+                codeGenerated += `            end\n`;
+                codeGenerated += `        end\n\n`;
+                codeGenerated += `        if IsControlJustPressed(1, ${CONTROL_KEYS[stopKey]}) then\n`;
+                codeGenerated += `            notify("Script Terminated")\n`;
+                codeGenerated += `            isRunning = false\n`;
+                codeGenerated += `            return\n`;
                 codeGenerated += `        end\n`;
-                codeGenerated += `    end)\n`;
-                codeGenerated += `end\n`;
-                codeGenerated += `local function stopTrigger()\n`;
-                codeGenerated += `    isRunning = false\n`;
-                codeGenerated += `end\n`;
-                codeGenerated += `RegisterCommand('${startKey}', startTrigger, false)\n`;
-                codeGenerated += `RegisterCommand('${stopKey}', stopTrigger, false)`;
+                codeGenerated += `    end\n`;
+                codeGenerated += `end)`;
             } else {
                 codeGenerated = `CreateThread(function()\n`;
                 codeGenerated += `    local params = json.decode('${triggerParams}')\n`;
