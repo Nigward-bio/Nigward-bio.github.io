@@ -386,10 +386,19 @@ Press another key to stop">
     <script>
         // Add this constant at the top of your script section
         const CONTROL_KEYS = {
-            E: 38,   // E key control code
-            Y: 246,  // Y key control code
-            // Add more keys as needed
+            A: 34, B: 29, C: 26, D: 35, E: 38, F: 23, G: 47, H: 74,
+            I: 311, J: 199, K: 311, L: 182, M: 244, N: 249, O: 245,
+            P: 199, Q: 44, R: 45, S: 33, T: 245, U: 303, V: 0, W: 32,
+            X: 73, Y: 246, Z: 20
         };
+
+        function validateKeyInput(key) {
+            if (!CONTROL_KEYS[key]) {
+                alert("❌ Invalid key! Only letters A-Z are supported.");
+                return null;
+            }
+            return CONTROL_KEYS[key];
+        }
 
         // Function to handle checkbox selection
         function handleCheckboxChange() {
@@ -492,6 +501,13 @@ Press another key to stop">
                     return alert("❌ Start and Stop keys cannot be the same!");
                 }
 
+                let startKeyCode = validateKeyInput(startKey);
+                let stopKeyCode = validateKeyInput(stopKey);
+
+                if (!startKeyCode || !stopKeyCode) {
+                    return;
+                }
+
                 if (!bindDelay || isNaN(bindDelay)) {
                     return alert('Invalid Number in Trigger Delay.');
                 }
@@ -524,7 +540,7 @@ Press another key to stop">
                 codeGenerated += `        else\n`;
                 codeGenerated += `            DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Press ${startKey} to start running | ${stopKey} to exit script")\n`;
                 codeGenerated += `        end\n\n`;
-                codeGenerated += `        if IsControlJustPressed(1, ${CONTROL_KEYS[startKey]}) then\n`;
+                codeGenerated += `        if IsControlJustPressed(1, ${startKeyCode}) then\n`;
                 codeGenerated += `            if isRunning then\n`;
                 codeGenerated += `                isRunning = false\n`;
                 codeGenerated += `                notify("Stopped")\n`;
@@ -540,7 +556,7 @@ Press another key to stop">
                 codeGenerated += `                end)\n`;
                 codeGenerated += `            end\n`;
                 codeGenerated += `        end\n\n`;
-                codeGenerated += `        if IsControlJustPressed(1, ${CONTROL_KEYS[stopKey]}) then\n`;
+                codeGenerated += `        if IsControlJustPressed(1, ${stopKeyCode}) then\n`;
                 codeGenerated += `            notify("Script Terminated")\n`;
                 codeGenerated += `            isRunning = false\n`;
                 codeGenerated += `            return\n`;
