@@ -287,10 +287,6 @@
       margin-bottom: 10px;
     }
 
-    #discord-username {
-      margin: 10px 0;
-    }
-
     #discord-banner {
       width: 100%;
       height: auto;
@@ -395,10 +391,134 @@
         opacity: 0;
       }
     }
+
+    /* Mute button styling */
+    #mute-button {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      background-color: transparent;
+      border: none;
+      color: #00bfff;
+      font-size: 24px;
+      cursor: url('GTA 5 Web Cursor.cur'), pointer;
+      z-index: 2000;
+      transition: transform 0.3s ease;
+    }
+
+    #mute-button:hover {
+      transform: scale(1.2);
+    }
+
+    /* Admin login form styling */
+    .admin-login {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(10, 10, 10, 0.7);
+      border-radius: 5px;
+      padding: 10px;
+      width: 200px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      transform: translateY(90%);
+    }
+
+    .admin-login:hover,
+    .admin-login.focused {
+      transform: translateY(0);
+    }
+
+    .admin-login h4 {
+      color: #00bfff;
+      margin: 0 0 10px 0;
+      font-size: 0.9em;
+      text-align: center;
+    }
+
+    .admin-login input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 5px;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      color: #f0f0f0;
+      border-radius: 3px;
+    }
+
+    /* Login attempts counter and funny messages */
+    #login-message {
+      color: #ff6f00;
+      font-size: 0.75em;
+      text-align: center;
+      margin: 5px 0;
+      min-height: 40px;
+      overflow: hidden;
+    }
+
+    #sql-hint {
+      color: #888;
+      font-size: 0.7em;
+      text-align: center;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* Hack attempt counter */
+    #hack-counter {
+      position: absolute;
+      top: -25px;
+      right: 10px;
+      background-color: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #hack-counter.active {
+      opacity: 1;
+    }
+
+    .admin-login button {
+      width: 100%;
+      padding: 5px;
+      background-color: #00bfff;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 3px;
+      cursor: url('GTA 5 Web Cursor.cur'), pointer;
+      transition: background-color 0.3s;
+    }
+
+    .admin-login button:hover {
+      background-color: #0099cc;
+    }
+
+    /* Secret message styling */
+    #secret-message {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #00bfff;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 10002;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+    }
   </style>
 </head>
 <body>
-
   <!-- Smoke animation container -->
   <div class="smoke-container"></div>
 
@@ -409,7 +529,29 @@
       <li><a href="#about" id="about-link">About</a></li>
       <li><a href="#contact" id="contact-link">Contact</a></li>
     </ul>
+    <!-- Add mute button -->
+    <button id="mute-button" aria-label="Toggle sound">🔊</button>
   </nav>
+
+  <!-- Admin login form -->
+  <div class="admin-login">
+    <h4>Admin Access</h4>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <div id="login-message"></div>
+    <div id="sql-hint">Hint: SQL injection won't work here!</div>
+    <div id="hack-counter"></div>
+    <button id="login-btn">Login</button>
+  </div>
+
+  <!-- Secret message container -->
+  <div id="secret-message">
+    <h2>🔓 SECRET ADMIN ACCESS GRANTED 🔓</h2>
+    <p>Congratulations! You've found the hidden admin panel.</p>
+    <p>The secret skid code is: <strong>SK1D-M4ST3R-2025</strong></p>
+    <p>Use this code to find the one piece!(beta)</p>
+    <button id="close-secret">Close</button>
+  </div>
 
   <!-- New overlay for the text and screen -->
   <div id="text-overlay">
@@ -423,21 +565,15 @@
   <div class="container">
     <h1>Welcome to chomik.site</h1>
     <a href="https://discord.gg/3pYc4cRCGP" target="_blank" class="button">DISCORD</a>
-
     <div id="epic-text">
       <p>Click for epico image</p>
     </div>
-
     <a href="triggerpayloadconverter.html" id="trigger-payload-converter" class="button">Trigger Payload Converter</a>
     <a href="skidTriggerCreator.html" id="skid-trigger-creator" class="button">Trigger Creator</a>
     <a href="triggerfinder.html" id="trigger-finder" class="button">Trigger Finder</a>
-
     <img id="oooof-gif" src="offf.gif" alt="OOOF GIF" />
     <img id="hidden-gif" src="hidden-gif.gif" alt="Hidden Image" />
     <img id="getrolled-gif" src="getrolled.gif" alt="Get Rolled Image" />
-
-    <img src="https://myprivate.yachts/film.php?id=DJ6URH" alt="">
-
     <div class="badge-container">
       <a href="https://eightyeightthirty.one/" title="88x31" class="badge">
         <img src="eightyeightthirty.one.png" alt="88x31 Badge">
@@ -455,13 +591,7 @@
         <img src="vscbutton.gif" alt="Visual Studio Code Badge">
       </a>
     </div>
-
-    <div id="discord-status">
-      <a href="https://discord.com/users/640885363866337284">
-        <img src="https://lanyard.cnrad.dev/api/640885363866337284?theme=dark&showDisplayName=true" alt="Discord Status" style="margin-top: 10px; border-radius: 10px;">
-      </a>
-    </div>
-
+    <div id="discord-status"></div>
     <div class="ascii-art">
       <pre>
         _                             ____              ____           ____    _   _         _____    _____    _____    _____    ____    _____    _____  
@@ -479,7 +609,7 @@
                 | |  | |_) |    | |       \  /\  /           _| |_          \__ \ |   <  | |  |  | |       | (_| |       | | | (_) | | |_   | |             
                 | |  |____/     |_|        \/  \/           |_____|         |___/ |_|\_\ |_|  \__,_|        \__,_|       |_|  \___/   \__|  | |             
                 \_\                                                                                                                       /_/              
-                                                                                                                                                                 
+                                                                                                                                                                    ██╗   ██╗  █████╗   
       </pre>
     </div>
   </div>
@@ -492,16 +622,17 @@
     <p>I like to exploit FiveM things.</p>
   </div>
 
+  <!-- Contact pop-up -->
   <div id="contact-popup">
     <p>Contact me on Discord:</p>
     <p>Lua.O_O</p>
     <pre>
       ██╗      ██╗   ██╗  █████╗   
       ██║      ██║   ██║ ██╔══██╗  
-       ██║      ██║   ██║ ███████║   
+      ██║      ██║   ██║ ███████║   
       ██║      ██║   ██║ ██╔══██║  
       ███████╗ ╚██████╔╝ ██║  ██║  
-       ╚══════╝  ╚═════╝  ╚═╝  ╚═╝   
+      ╚══════╝  ╚═════╝  ╚═╝  ╚═╝   
     </pre>
   </div>
 
@@ -532,21 +663,6 @@
       document.getElementById('background-music').play();
     });
 
-    var scrollTimeout;
-    window.addEventListener("scroll", function() {
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout);
-      }
-
-      scrollTimeout = setTimeout(function() {
-        var r = Math.floor(Math.random() * 50) + 50;
-        var g = Math.floor(Math.random() * 50) + 50;
-        var b = Math.floor(Math.random() * 50) + 50;
-
-        document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-      }, 50);
-    });
-
     window.addEventListener("beforeunload", function(event) {
       var message = "Are you sure you want to leave this page?";
       event.returnValue = message;
@@ -562,7 +678,6 @@
       snowflake.style.opacity = Math.random() * 0.7 + 0.3;
       snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
       document.body.appendChild(snowflake);
-
       setTimeout(() => {
         snowflake.remove();
       }, 20000);
@@ -587,7 +702,6 @@
     window.addEventListener('click', function(event) {
       const popup = document.getElementById('about-popup');
       const aboutLink = document.getElementById('about-link');
-      
       if (event.target !== popup && 
           !popup.contains(event.target) && 
           event.target !== aboutLink) {
@@ -629,39 +743,429 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-  const smokeContainer = document.querySelector('.smoke-container');
+    // Enhanced Discord status implementation with WebSocket support
+    function enhanceDiscordStatus() {
+      const discordId = '640885363866337284'; // Your Discord ID
+      const statusContainer = document.getElementById('discord-status');
+      
+      const discordStyles = document.createElement('style');
+      discordStyles.textContent = `
+        .activity-assets img {
+          width: 60px;
+          height: 60px;
+          border-radius: 5px;
+          margin-right: 10px;
+          image-rendering: auto;
+          object-fit: cover;
+          background-color: #1a1a1a;
+        }
+        
+        /* Status dot styling - updated to be more visible */
+        .status-dot {
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-right: 5px;
+          vertical-align: middle;
+          position: relative;
+        }
+        
+        .status-dot.online {
+          background-color: #3ba55c;
+          box-shadow: 0 0 5px #3ba55c;
+          animation: pulse 2s infinite;
+        }
+        
+        .status-dot.idle {
+          background-color: #faa61a;
+          box-shadow: 0 0 5px #faa61a;
+        }
+        
+        .status-dot.dnd {
+          background-color: #ed4245;
+          box-shadow: 0 0 5px #ed4245;
+        }
+        
+        .status-dot.offline {
+          background-color: #747f8d;
+        }
+        
+        /* Discord card with improved layout */
+        .discord-card {
+          background-color: #1e1f22;
+          border-radius: 10px;
+          padding: 15px;
+          width: 100%;
+          max-width: 350px;
+          margin: 0 auto;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+          position: relative;
+        }
+        
+        /* Game activity container - adjusted without game image */
+        .game-activity-container {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          background-color: rgba(0, 0, 0, 0.2);
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
+        /* User info section with avatar next to name */
+        .discord-name-container {
+          display: flex;
+          align-items: center;
+          margin-bottom: 5px;
+          gap: 10px;
+        }
+        
+        .small-avatar {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          margin-right: 0;
+          position: relative;
+        }
+        
+        .avatar-wrapper {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .status-indicator {
+          position: absolute;
+          bottom: -2px;
+          right: -2px;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: 2px solid #1e1f22;
+        }
+        
+        #discord-name {
+          font-weight: bold;
+          font-size: 1.1em;
+        }
+      `;
+      document.head.appendChild(discordStyles);
 
-  const blueColors = [
-    'rgba(0, 0, 255, 0.3)',
-    'rgba(65, 105, 225, 0.3)', 
-    'rgba(30, 144, 255, 0.3)',
-    'rgba(0, 191, 255, 0.3)'
-  ];
+      // Create a redesigned container with avatar next to name - removed game image
+      statusContainer.innerHTML = `
+        <div class="discord-card">
+          <div class="activity-wrapper">            
+            <div class="game-activity-container">
+              <div class="game-info">
+                <div class="discord-info">
+                  <div class="discord-name-container">
+                    <div class="avatar-wrapper">
+                      <img id="discord-avatar-small" class="small-avatar" src="" alt="Avatar" />
+                      <div id="status-indicator" class="status-indicator"></div>
+                    </div>
+                    <div id="discord-name">Loading...</div>
+                  </div>
+                  <div id="discord-discriminator"></div>
+                </div>
+                <div id="game-name" class="game-name">Not playing</div>
+                <div id="game-details" class="game-details"></div>
+                <div id="game-elapsed" class="game-details"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
 
-  function createSmoke() {
-    const smoke = document.createElement('div');
-    smoke.classList.add('smoke');
-    smoke.style.left = `${Math.random() * 100}vw`;
-    smoke.style.top = `${Math.random() * 100}vh`;
-    smoke.style.borderRadius = '50%'; // Make particles round
+      // Helper function to filter objectionable content
+      function filterText(text) {
+        if (!text) return '';
+        
+        // Filter out unwanted phrases
+        let filteredText = text;
+        const textFilters = ['no bitches', 'verified'];
+        
+        textFilters.forEach(filter => {
+          filteredText = filteredText.replace(new RegExp(filter, 'gi'), '');
+        });
+        
+        // Clean up any multiple spaces 
+        filteredText = filteredText.replace(/\s+/g, ' ').trim();
+        return filteredText;
+      }
+
+      // Updated function to update the Discord card with data
+      function updateDiscordCard(data) {
+        // Set avatar with proper GIF support
+        const avatarUrl = data.discord_user.avatar 
+          ? `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.${data.discord_user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128&t=${Date.now()}` 
+          : 'https://cdn.discordapp.com/embed/avatars/0.png';
+        
+        // Update small avatar next to name
+        const avatarSmall = document.getElementById('discord-avatar-small');
+        avatarSmall.src = avatarUrl;
+        
+        // Set username and discriminator
+        document.getElementById('discord-name').textContent = data.discord_user.username;
+        const discriminator = data.discord_user.discriminator !== '0' ? `#${data.discord_user.discriminator}` : '';
+        document.getElementById('discord-discriminator').textContent = discriminator;
+
+        // Set status indicator on the avatar
+        const statusIndicator = document.getElementById('status-indicator');
+        
+        switch(data.discord_status) {
+          case 'online':
+            statusIndicator.style.backgroundColor = '#3ba55c';
+            statusIndicator.title = 'Online';
+            break;
+          case 'idle':
+            statusIndicator.style.backgroundColor = '#faa61a';
+            statusIndicator.title = 'Idle';
+            break;
+          case 'dnd':
+            statusIndicator.style.backgroundColor = '#ed4245';
+            statusIndicator.title = 'Do Not Disturb';
+            break;
+          default:
+            statusIndicator.style.backgroundColor = '#747f8d';
+            statusIndicator.title = 'Offline';
+        }
+        
+        // Find and display game or activity if any exists
+        if (data.activities && data.activities.length > 0) {
+          const activity = data.activities.find(act => act.type === 0) || 
+                          data.activities.find(act => act.type === 2) || 
+                          data.activities.find(act => act.type === 3) || 
+                          data.activities[0];
+          
+          if (activity) {
+            const gameName = document.getElementById('game-name');
+            const gameDetails = document.getElementById('game-details');
+            const gameElapsed = document.getElementById('game-elapsed');
+            
+            gameName.textContent = filterText(activity.name) || 'Unknown Activity';
+            
+            let detailsText = '';
+            if (activity.details) {
+              detailsText += filterText(activity.details);
+            }
+            
+            if (activity.state) {
+              if (detailsText) {
+                detailsText += ` - ${filterText(activity.state)}`;
+              } else {
+                detailsText = filterText(activity.state);
+              }
+            }
+            
+            gameDetails.textContent = detailsText;
+            
+            if (activity.timestamps && activity.timestamps.start) {
+              const startTime = new Date(activity.timestamps.start);
+              const now = new Date();
+              const elapsed = Math.floor((now - startTime) / 1000 / 60);
+              
+              if (elapsed < 60) {
+                gameElapsed.textContent = `${elapsed} min elapsed`;
+              } else {
+                const hours = Math.floor(elapsed / 60);
+                const mins = elapsed % 60;
+                gameElapsed.textContent = `${hours} hr${mins > 0 ? ` ${mins} min` : ''} elapsed`;
+              }
+            } else {
+              gameElapsed.textContent = '';
+            }
+          }
+        }
+      }
+
+      async function fetchDiscordData() {
+        try {
+          const response = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
+          const data = await response.json();
+          if (data.success) {
+            updateDiscordCard(data.data);
+          } else {
+            console.error('Failed to fetch Discord status');
+          }
+        } catch (error) {
+          console.error('Error fetching Discord status:', error);
+        }
+      }
+
+      fetchDiscordData();
+      setInterval(fetchDiscordData, 15000);
+    }
+
+    enhanceDiscordStatus();
+
+    // Fix mute button functionality
+    const muteButton = document.getElementById('mute-button');
+    const audioElements = document.querySelectorAll('audio');
     
-    const randomBlue = blueColors[Math.floor(Math.random() * blueColors.length)];
-    smoke.style.backgroundColor = randomBlue;
+    function updateMuteStatus(muted) {
+      audioElements.forEach(audio => {
+        audio.muted = muted;
+      });
+      
+      muteButton.textContent = muted ? '🔇' : '🔊';
+      localStorage.setItem('audioMuted', muted.toString());
+    }
     
-    smokeContainer.appendChild(smoke);
+    function toggleMute() {
+      const currentMuted = audioElements[0].muted;
+      updateMuteStatus(!currentMuted);
+    }
+    
+    function initializeMuteState() {
+      const savedState = localStorage.getItem('audioMuted');
+      const shouldBeMuted = savedState === 'true';
+      updateMuteStatus(shouldBeMuted);
+    }
+    
+    muteButton.addEventListener('click', toggleMute);
+    
+    document.addEventListener('DOMContentLoaded', initializeMuteState);
+    
+    initializeMuteState();
 
-    setTimeout(() => {
-      smoke.remove();
-    }, 30000);
-  }
+    // Admin login functionality
+    const loginBtn = document.getElementById('login-btn');
+    const secretMessage = document.getElementById('secret-message');
+    const closeSecret = document.getElementById('close-secret');
+    const loginMessage = document.getElementById('login-message');
+    const sqlHint = document.getElementById('sql-hint');
+    let loginAttempts = 0;
+    let hackAttempts = 0;
+    const attemptedUsernames = new Set();
+    
+    const hackCounter = document.createElement('div');
+    hackCounter.id = 'hack-counter';
+    hackCounter.textContent = '0';
+    document.querySelector('.admin-login').appendChild(hackCounter);
 
-  for (let i = 0; i < 20; i++) {
-    createSmoke();
-  }
+    const sqlInjectionPatterns = [
+      "'--", "' --", '"+--', 'or 1=1', "' or '", '" or "', 
+      'admin\'', "admin\"", '\'1\'=\'1', '"1"="1',
+      'UNION', 'SELECT', '1234', 'true--', 'OR TRUE', 
+      '/*', '--', '#', '^', '&'
+    ];
+    
+    const hackerResponses = [
+      "Nice try, script kiddie! 🤣",
+      "SQL injection is sooooo 2005! 🙄",
+      "Did you copy that from a hacking tutorial? 📝",
+      "Your hacking skills need some serious work 🛠️",
+      "That's the oldest trick in the book! 📚",
+      "Even my grandma could hack better 👵",
+      "Are you trying to DROP TABLE students; me? 🎓",
+      "Bobby Tables would be disappointed in you 👎",
+      "Did you really think that would work? 🤦‍♂️",
+      "Hack level: absolute beginner 🔰",
+      "I've seen better hacking in movies 🎬",
+      "Your SQL is bad and you should feel bad 🦑",
+      "101010... I can speak binary too! 💻",
+      "Keep trying, maybe in 100 years you'll succeed 🧓",
+      "I'm sending this to @RealHackerFails 📱",
+      "Hacking in progress... oh wait, that's just a calculator app 🧮",
+      "Is your keyboard sticky with energy drinks? 🥤",
+      "Maybe try 'Please let me in?' instead 🙏",
+      "Are you wearing your hacker hoodie right now? 👕",
+      "This isn't 'Hack the Planet' from 1995 🌍",
+      "You're about as stealthy as a DDOS attack 🔊",
+      "*laughs in prepared statements* 😂",
+      "My security is beyond your understanding 🧠",
+      "Hacking attempt #" + hackAttempts + " - still failing 📈",
+      "I bet you think you're Anonymous right now 🎭",
+      "Cute SQL injection. Did your bot write that? 🤖",
+      "My 5-year-old cousin has better hacking skills 👶",
+      "You're trying too hard and getting nowhere 🏃‍♂️",
+      "Your injection just got sanitized 🧼",
+      "Hack.exe has stopped working ⚠️"
+    ];
+    
+    const sqlHints = [
+      "Try some SQL injection... if you dare",
+      "Hint: Our admin is not called 'admin' OR '1'='1'",
+      "Fun fact: SQL injection still works on 97% of sites",
+      "Careful, our security team is watching you",
+      "Admin login is protected by AI. Good luck hacking that",
+      "Fun fact: SQL stands for Secure Query Language",
+      "Try harder, hacker! I'm taking screenshots 📸",
+      "Maybe try 'guest/guest'? (It won't work either)",
+      "Hint: The username is NOT 'root'",
+      "Our database is in the cloud... good luck finding it ☁️",
+      "The FBI has been notified of your IP address 🕵️‍♂️",
+      "Our CAPTCHA is invisible, and you're failing it 🤖",
+      "Warning: Unauthorized access will result in your PC playing Baby Shark 🦈",
+      "Tip: Maybe stop trying to hack and just ask nicely? 🙏",
+      "Achievement unlocked: Failed SQL injection! 🏆"
+    ];
 
-  setInterval(createSmoke, 900);
-});
+    function changeSqlHint() {
+      const randomHint = sqlHints[Math.floor(Math.random() * sqlHints.length)];
+      sqlHint.textContent = randomHint;
+    }
+    setInterval(changeSqlHint, 5000);
+
+    loginBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      loginAttempts++;
+      
+      if (username && !attemptedUsernames.has(username.toLowerCase())) {
+        attemptedUsernames.add(username.toLowerCase());
+      }
+      
+      const isInjectionAttempt = sqlInjectionPatterns.some(pattern => 
+        username.toLowerCase().includes(pattern.toLowerCase()) || 
+        password.toLowerCase().includes(pattern.toLowerCase())
+      );
+      
+      if (isInjectionAttempt) {
+        hackAttempts++;
+        hackCounter.textContent = hackAttempts;
+        hackCounter.classList.add('active');
+        
+        const response = hackerResponses[Math.floor(Math.random() * hackerResponses.length)];
+        loginMessage.innerHTML = `<span style="color:#ff3333">${response}</span>`;
+        
+        if (hackAttempts >= 5) {
+          setTimeout(() => {
+            alert('SECURITY ALERT: Multiple hacking attempts detected. Your IP has been logged: 127.0.0.1');
+          }, 500);
+        }
+        
+        if (hackAttempts >= 10) {
+          document.body.innerHTML = `
+            <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#0f0;padding:20px;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <h1>HACKING DETECTED</h1>
+              <p>Just kidding! This was a test to see how persistent you are.</p>
+              <p>You really tried ${hackAttempts} different SQL injection techniques!</p>
+              <p>Here's your reward: The actual password is "skidmaster"</p>
+              <button onclick="location.reload()">Go Back</button>
+            </div>
+          `;
+        }
+        
+      } else if (username === 'admin' && password === 'skidmaster') {
+        secretMessage.style.display = 'block';
+        loginMessage.innerHTML = '<span style="color:#00ff00">Access granted! Welcome, skid master.</span>';
+        createConfetti();
+      } else {
+        const message = normalMessages[Math.floor(Math.random() * normalMessages.length)];
+        loginMessage.innerHTML = `<span style="color:#ff9900">${message}</span>`;
+        
+        if (attemptedUsernames.size >= 10) {
+          loginMessage.innerHTML += `<br><span style="color:#00bfff">HINT: The username starts with "a" and rhymes with "mad-min" 😉</span>`;
+        }
+      }
+      
+      document.getElementById('password').value = '';
+    });
+
+    closeSecret.addEventListener('click', () => {
+      secretMessage.style.display = 'none';
+    });
   </script>
 
 </body>
