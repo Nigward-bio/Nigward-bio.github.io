@@ -5,37 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple site for a simple man</title>
   <link rel="icon" href="chomik.jpg" type="image/jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Use Fira Code font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Include Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+    /* Define theme colors */
+    :root {
+      --bg-color: #0a0a0a;
+      --container-bg: rgba(0, 0, 0, 0.5);
+      --text-color: #c0c0c0; /* Light gray for general text */
+      --primary-color: #7400d9; /* Purple from html.html */
+      --accent-color: #7a03e0; /* Slightly different purple for accents */
+      --border-color: rgba(122, 3, 224, 0.5); /* Purple border */
+      --border-radius: 0.4rem; /* 6.4px */
+      --font-family: 'Fira Code', monospace;
+    }
+
     /* Basic page styling */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #0d0d0d;
-      color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       opacity: 0;
       animation: fadeIn 1.5s forwards;
-      overflow: hidden; /* Remove scrollbars */
-      transition: background-color 0.5s ease-in-out;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+      overflow-x: hidden;
     }
 
-    /* Navigation bar styling */
+    /* Add global custom cursor style */
+    * {
+      cursor: url(jojo/hqizezkx5r.cur) 0 0, auto !important;
+    }
+
+    /* Video Background */
+    #video-bg {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -10;
+      object-fit: cover;
+      filter: blur(2px) brightness(100%); /* Match html.html filter */
+    }
+
+    /* Click to Start Overlay Styles */
+    #text-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10002; /* Ensure it's above other content */
+      cursor: pointer; /* Use default pointer for the overlay itself */
+      transition: opacity 0.5s ease;
+      opacity: 1; /* Start visible */
+    }
+    #text-overlay.hidden {
+      opacity: 0;
+      pointer-events: none; /* Disable interaction after hiding */
+    }
+    #click-text {
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      font-family: var(--font-family); /* Match page font */
+    }
+
+    /* Main content wrapper - centered */
+    .main-wrapper {
+      display: flex;
+      min-height: 100vh;
+      padding: 2rem 0; /* py-8 equivalent */
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start; /* Align items to the top */
+    }
+
+    /* Main content container - similar to max-w-[42rem] */
+    .container {
+      max-width: 42rem;
+      width: 90%; /* Fallback for smaller screens */
+      margin: 0 auto; /* Center the container */
+      padding: 0 1rem; /* px-4 equivalent */
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem; /* gap-3 equivalent */
+      margin-top: 40px; /* Space for potential nav/top elements */
+    }
+
+    /* General component styling */
+    .component {
+      background-color: var(--container-bg);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      padding: 1rem; /* p-4 equivalent */
+      backdrop-filter: blur(5px); /* Optional blur */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .component:hover {
+       /* Subtle lift effect on hover */
+       /* transform: translateY(-3px); */
+       /* box-shadow: 0 5px 15px rgba(122, 3, 224, 0.3); */
+    }
+
+    /* Navigation bar styling - Simplified */
     nav {
       width: 100%;
-      background-color: #1a1a1a;
-      padding: 10px 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 8px 0;
       position: fixed;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
     }
 
     nav ul {
@@ -51,251 +146,377 @@
     }
 
     nav ul li a {
-      color: #f0f0f0;
+      color: var(--text-color);
       text-decoration: none;
-      font-size: 1.2em;
+      font-size: 1em;
       transition: color 0.3s;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+      cursor: url('GTA 5 Web Cursor.cur'), auto;
     }
 
     nav ul li a:hover {
-      color: #00bfff;
+      color: var(--accent-color);
     }
 
-    /* Main content container */
-    .container {
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      padding: 20px;
-      margin-top: 80px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      width: 90%;
-      max-width: 800px;
+    /* Mute button styling */
+    #mute-button {
+      position: fixed;
+      top: 8px; /* Align with nav padding */
+      right: 15px;
+      background-color: transparent;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.25rem; /* Adjusted size for icons */
+      cursor: url('GTA 5 Web Cursor.cur'), pointer;
+      z-index: 1001; /* Above nav */
+      transition: transform 0.3s ease, color 0.3s ease;
+      padding: 5px; /* Add some padding for easier clicking */
+      line-height: 1; /* Ensure icon vertical alignment */
+    }
+
+    #mute-button:hover {
+      transform: scale(1.1);
+      color: var(--accent-color);
+    }
+
+    /* Profile card styling - Restore banner styles */
+    .profile-card {
+      position: relative;
+      padding: 0; /* Remove default padding */
+      overflow: hidden; /* Ensure banner corners are clipped */
+      margin-top: 0; /* Reset margin */
+    }
+
+    .profile-banner {
+      width: 100%;
+      height: 120px; /* h-32 equivalent */
+      object-fit: cover;
+      display: block; /* Remove extra space below image */
+      border-top-left-radius: var(--border-radius);
+      border-top-right-radius: var(--border-radius);
+    }
+
+    .profile-content {
+      padding: 1rem;
+      padding-top: 4rem; /* Space for overlapping avatar */
       text-align: center;
-      overflow-y: auto; /* Make container scrollable */
-      scrollbar-width: none; /* Hide scrollbar in Firefox */
     }
 
-    .container::-webkit-scrollbar {
-      display: none; /* Hide scrollbar in WebKit browsers */
+    .profile-avatar {
+      width: 100px; /* Slightly smaller than 120px */
+      height: 100px;
+      border-radius: 50%;
+      position: absolute;
+      top: calc(120px - 50px); /* Position overlapping banner */
+      left: 50%;
+      transform: translateX(-50%);
+      border: 3px solid var(--accent-color);
+      box-shadow: 0 0 15px rgba(122, 3, 224, 0.5);
+      background-color: var(--bg-color); /* Ensure transparency doesn't show banner */
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin-top: 20px;
-      color: #00bfff;
-      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 30px #00bfff;
-      opacity: 0;
-      animation: textFadeIn 2s ease-out forwards 1s;
+    .profile-name {
+      color: var(--primary-color);
+      font-size: 1.8em; /* text-[32px] equivalent */
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(116, 0, 217, 0.5);
     }
 
-    .button {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 1.2em;
-      color: #00bfff;
-      background-color: #1a1a1a;
-      border: 2px solid #00bfff;
-      border-radius: 5px;
+    .profile-tag {
+      color: var(--text-color);
+      font-size: 0.9em;
+      margin-bottom: 15px;
+      min-height: 1.2em; /* Space for typewriter */
+    }
+
+    /* Typewriter effect */
+    .typewriter::after {
+      content: '|';
+      animation: cursor 1.1s infinite step-start;
+      color: var(--primary-color);
+    }
+
+    @keyframes cursor {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px; /* gap-3 */
+      margin-top: 1rem; /* mt-1.5 */
+    }
+
+    .social-icon {
+      background-color: rgba(0, 0, 0, 0.5); /* Match button bg */
+      color: var(--accent-color);
+      width: 44px; /* p-2 + svg size */
+      height: 44px;
+      border-radius: 50%; /* rounded-full */
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
-      transition: background-color 0.3s, color 0.3s;
-      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 10px #00bfff;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+      filter: drop-shadow(0 0 3.5px var(--accent-color)); /* Drop shadow */
     }
 
-    .button:hover {
-      background-color: #00bfff;
-      color: #1a1a1a;
+    .social-icon:hover {
+      filter: brightness(0.7); /* hover:brightness-50 */
+      transform: translateY(-2px);
     }
 
-    .ascii-art {
-      font-family: "Courier New", monospace;
-      white-space: pre;
-      color: #00bfff;
-      text-align: center;
-      margin-top: 20px;
+    .social-icon i {
+      font-size: 1.5em; /* h-7 w-7 equivalent */
+    }
+
+    /* Tooltip for social icons */
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%; /* Position above the icon */
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px); /* Center and add space */
+      background: rgba(0, 0, 0, 0.9);
+      color: var(--primary-color);
+      padding: 5px 10px;
+      border-radius: var(--border-radius);
       font-size: 0.8em;
-      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 15px #00bfff;
+      font-weight: 600;
       opacity: 0;
-      animation: fadeInAscii 3s ease-out forwards 1s;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 10;
+      border: 1px solid var(--border-color);
+    }
+
+    .tooltip-container:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Discord Invite Component Styling */
+    .discord-invite {
+      display: flex;
+      flex-direction: column; /* Stack vertically on small screens */
+      gap: 0.5rem; /* gap-2 */
+      align-items: flex-start; /* Align items to start */
+    }
+    @media (min-width: 640px) { /* sm breakpoint */
+      .discord-invite {
+        flex-direction: row; /* Row layout on larger screens */
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .discord-invite-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem; /* gap-3 */
+    }
+
+    .discord-invite-icon {
+      width: 4.5rem; /* h-[4.5rem] w-[4.5rem] */
+      height: 4.5rem;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
+    }
+
+    .discord-invite-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .discord-invite-name {
+      color: var(--primary-color);
+      font-weight: 700; /* font-bold */
+    }
+
+    .discord-invite-status {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem; /* gap-1 */
+      margin-top: 0.25rem; /* Add some space */
+    }
+
+    .discord-invite-status-dot {
+      width: 0.5rem; /* h-2 w-2 */
+      height: 0.5rem;
+      border-radius: 50%;
+      z-index: 1; /* Ensure dot is visible */
+    }
+    .discord-invite-status-dot.online { background-color: #21a357; } /* Green */
+    .discord-invite-status-dot.offline { background-color: #7f838d; } /* Gray */
+
+    .discord-invite-status-text {
+      color: var(--primary-color); /* Match text color */
+      font-weight: 500; /* font-medium */
+      font-size: 0.9em; /* text-sm */
+    }
+
+    .discord-invite-button {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: var(--primary-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0.375rem 0.75rem; /* p-1.5 pl-3 */
+      padding-left: 0.75rem;
+      font-size: 0.9em; /* text-sm */
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      transition: filter 0.3s ease;
+      width: 100%; /* Full width on small screens */
+      justify-content: center;
+    }
+    @media (min-width: 640px) { /* sm breakpoint */
+      .discord-invite-button {
+        width: fit-content; /* Fit content on larger screens */
+      }
+    }
+
+    .discord-invite-button:hover {
+      filter: brightness(1.25);
+    }
+
+    .discord-invite-button i {
+      color: var(--accent-color);
+      font-size: 1.5em; /* w-7 h-7 */
+      margin-left: 0.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .discord-invite-button:hover i {
+      transform: translateX(4px);
+    }
+
+    /* Buttons redesigned as links */
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+      gap: 0.75rem; /* gap-3 */
+    }
+
+    .link-button {
+      background-color: var(--container-bg);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      padding: 1rem; /* p-4 */
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* Space between content and arrow */
+      text-decoration: none;
+      transition: filter 0.3s ease;
+      color: var(--text-color);
+    }
+
+    .link-button:hover {
+      filter: brightness(1.25); /* hover:brightness-125 */
+    }
+
+    .link-button-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem; /* gap-3 */
+      overflow: hidden; /* Prevent text overflow */
+    }
+
+    .link-button-icon-wrapper {
+      background-color: rgba(0, 0, 0, 0.5); /* Icon background */
+      border-radius: var(--border-radius);
+      padding: 0.5rem; /* p-2 */
+      border: 1px solid var(--border-color);
+      flex-shrink: 0; /* Prevent icon from shrinking */
+    }
+
+    .link-button-icon {
+      color: var(--accent-color);
+      filter: drop-shadow(0 0 3.5px var(--accent-color));
+      font-size: 1.75em; /* h-7 w-7 */
+      display: block; /* Remove extra space */
+    }
+
+    .link-button-text {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      overflow: hidden; /* Prevent text overflow */
+    }
+
+    .link-button-title {
+      font-size: 0.9em; /* text-sm */
+      font-weight: 600;
+      color: var(--primary-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .link-button-url {
+      font-size: 0.8em; /* text-sm */
+      color: var(--text-color);
+      filter: brightness(0.75); /* brightness-75 */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .link-button-arrow {
+      color: var(--accent-color);
+      font-size: 1.75em; /* h-7 w-7 */
+      transition: transform 0.3s ease;
+    }
+
+    .link-button:hover .link-button-arrow {
+      transform: translateX(4px); /* group-hover:translate-x-1 */
     }
 
     /* Fade-in animations */
     @keyframes fadeIn {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
-    @keyframes textFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Hide default controls dots if needed */
+    .control-dots{display:none}
+
+    /* Add styles for hidden sections */
+    .hidden-section {
+      display: none;
     }
 
-    @keyframes linkFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInAscii {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Badge container */
-    .badge-container {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .badge img {
-      width: 88px;
-      height: 31px;
-      border: 2px solid #00bfff;
+    /* Style for preformatted text in contact section */
+    #contact-section pre {
+      color: var(--primary-color); /* Match theme */
+      text-shadow: 0 0 5px var(--primary-color);
+      font-size: 0.9em; /* Adjust size as needed */
+      margin: 1rem 0;
+      text-align: center; /* Center the ASCII art */
+      background-color: rgba(0, 0, 0, 0.2); /* Optional subtle background */
+      padding: 10px;
       border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 191, 255, 0.3), 0 6px 20px rgba(0, 191, 255, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-    }
-
-    .badge img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 8px 16px rgba(0, 191, 255, 0.5), 0 10px 25px rgba(0, 191, 255, 0.4);
-    }
-
-    audio {
-      display: none;
-    }
-
-    /* New overlay for the text and screen */
-    #text-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(20px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      color: white;
-      font-size: 2em;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-      opacity: 1;
-      transition: opacity 0.5s ease-out;
-    }
-
-    #text-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    #epic-text {
-      color: #00bfff;
-      font-size: 1.5em;
-      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 30px #00bfff;
-      opacity: 0;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-      margin-top: 20px;
-      text-align: center;
-      animation: textFadeIn 2s ease-out forwards 3s;
-    }
-
-    #oooof-gif {
-      position: relative;
-      width: 30%;
-      height: auto;
-      opacity: 0;
-      animation: fadeInGif 2s ease-out forwards 3s;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-    }
-
-    @keyframes fadeInGif {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
-      }
-    }
-
-    #hidden-gif, #getrolled-gif {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
-      z-index: 9999;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-    }
-
-    #getrolled-gif {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50%;
-      height: auto;
-      object-fit: contain;
-      display: none;
-      z-index: 10000;
-    }
-
-    /* Discord status container */
-    #discord-status {
-      margin-top: 20px;
-      background-color: #1a1a1a;
-      color: white;
-      font-size: 1.2em;
-      text-align: center;
-      padding: 5px;
-      border-radius: 5px;
-      cursor: url('GTA 5 Web Cursor.cur'), auto; /* Custom cursor */
-    }
-
-    #discord-avatar {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      margin-bottom: 10px;
-    }
-
-    #discord-banner {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
+      overflow-x: auto; /* Allow scrolling if needed */
     }
 
     /* Snowflake styling */
     .snowflake {
-      position: absolute;
+      position: fixed; /* Use fixed to cover the viewport */
       top: -10%;
       color: #fff;
       font-size: 1em;
@@ -303,384 +524,757 @@
       pointer-events: none;
       animation: fall linear infinite;
       opacity: 0.8;
+      z-index: 9998; /* Ensure snowflakes are behind overlay/nav but above background */
     }
 
     @keyframes fall {
       0% {
         transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
       }
       100% {
         transform: translateY(110vh) rotate(360deg);
+        opacity: 0; /* Fade out at the bottom */
       }
-    }
-
-    .snowflake {
-      animation-duration: 10s;
-    }
-
-    /* Pop-up styling */
-    #about-popup, #contact-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      z-index: 10001;
-      font-size: 1.2em;
-      text-align: center;
-      display: none;
-    }
-
-    #about-popup p, #contact-popup p {
-      margin: 10px 0;
-      color: #00bfff;
-      text-shadow: 0 0 5px #00bfff;
-    }
-
-    #about-popup pre, #contact-popup pre {
-      color: #00bfff;
-      text-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff, 0 0 15px #00bfff;
-      font-size: 0.7em;
-      margin: 20px 0;
-    }
-
-    /* Smoke animation container */
-    .smoke-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-    }
-
-    /* Individual smoke particles */
-    .smoke {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(0, 191, 255, 0.5) 0%, rgba(0, 191, 255, 0) 60%);
-      opacity: 0;
-      animation: moveSmoke 15s linear infinite;
-    }
-
-    @keyframes moveSmoke {
-      0% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.1;
-      }
-      20% {
-        opacity: 0.3;
-      }
-      50% {
-        opacity: 0.5;
-        transform: translate(100px, -100px) scale(1.5);
-      }
-      70% {
-        opacity: 0.3;
-      }
-      100% {
-        transform: translate(200px, -200px) scale(2);
-        opacity: 0;
-      }
-    }
-
-    /* Mute button styling */
-    #mute-button {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background-color: transparent;
-      border: none;
-      color: #00bfff;
-      font-size: 24px;
-      cursor: url('GTA 5 Web Cursor.cur'), pointer;
-      z-index: 2000;
-      transition: transform 0.3s ease;
-    }
-
-    #mute-button:hover {
-      transform: scale(1.2);
-    }
-
-    /* Admin login form styling */
-    .admin-login {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background-color: rgba(10, 10, 10, 0.7);
-      border-radius: 5px;
-      padding: 10px;
-      width: 200px;
-      z-index: 1000;
-      transition: all 0.3s ease;
-      transform: translateY(90%);
-    }
-
-    .admin-login:hover,
-    .admin-login.focused {
-      transform: translateY(0);
-    }
-
-    .admin-login h4 {
-      color: #00bfff;
-      margin: 0 0 10px 0;
-      font-size: 0.9em;
-      text-align: center;
-    }
-
-    .admin-login input {
-      width: 100%;
-      padding: 5px;
-      margin-bottom: 5px;
-      background-color: #1a1a1a;
-      border: 1px solid #333;
-      color: #f0f0f0;
-      border-radius: 3px;
-    }
-
-    /* Login attempts counter and funny messages */
-    #login-message {
-      color: #ff6f00;
-      font-size: 0.75em;
-      text-align: center;
-      margin: 5px 0;
-      min-height: 40px;
-      overflow: hidden;
-    }
-
-    #sql-hint {
-      color: #888;
-      font-size: 0.7em;
-      text-align: center;
-      margin-top: 5px;
-      font-style: italic;
-    }
-
-    /* Hack attempt counter */
-    #hack-counter {
-      position: absolute;
-      top: -25px;
-      right: 10px;
-      background-color: #ff0000;
-      color: #fff;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    #hack-counter.active {
-      opacity: 1;
-    }
-
-    .admin-login button {
-      width: 100%;
-      padding: 5px;
-      background-color: #00bfff;
-      color: #0a0a0a;
-      border: none;
-      border-radius: 3px;
-      cursor: url('GTA 5 Web Cursor.cur'), pointer;
-      transition: background-color 0.3s;
-    }
-
-    .admin-login button:hover {
-      background-color: #0099cc;
-    }
-
-    /* Secret message styling */
-    #secret-message {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.9);
-      color: #00bfff;
-      padding: 20px;
-      border-radius: 10px;
-      z-index: 10002;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
     }
   </style>
 </head>
 <body>
-  <!-- Smoke animation container -->
-  <div class="smoke-container"></div>
+  <!-- Video Background -->
+  <video autoplay muted playsinline id="video-bg">
+    <source src="html_files/d1ka4hvf27_part1.mov" type="video/mp4"> <!-- Set initial video -->
+    Your browser does not support HTML5 video.
+  </video>
+
+  <!-- Click to Start Overlay -->
+  <div id="text-overlay">
+    <p id="click-text">Click to Start</p>
+  </div>
 
   <!-- Navigation bar -->
   <nav>
     <ul>
       <li><a href="#home" id="home-link">Home</a></li>
+      <li><a href="#main" id="main-link">Main</a></li>
       <li><a href="#about" id="about-link">About</a></li>
       <li><a href="#contact" id="contact-link">Contact</a></li>
     </ul>
-    <!-- Add mute button -->
-    <button id="mute-button" aria-label="Toggle sound">🔊</button>
+    <!-- Mute button -->
+    <button id="mute-button" aria-label="Toggle sound">
+      <i class="fas fa-volume-high"></i>
+    </button>
   </nav>
 
-  <!-- Admin login form -->
-  <div class="admin-login">
-    <h4>Admin Access</h4>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <div id="login-message"></div>
-    <div id="sql-hint">Hint: SQL injection won't work here!</div>
-    <div id="hack-counter"></div>
-    <button id="login-btn">Login</button>
-  </div>
+  <!-- Audio Elements -->
+  <audio id="player-audio-element" src="html_files/k07sau5fvp.mp3" preload="auto"></audio>
+  <audio id="second-track-element" src="html_files/z5603ozumx.mp3" preload="auto"></audio>
 
-  <!-- Secret message container -->
-  <div id="secret-message">
-    <h2>🔓 SECRET ADMIN ACCESS GRANTED 🔓</h2>
-    <p>Congratulations! You've found the hidden admin panel.</p>
-    <p>The secret skid code is: <strong>SK1D-M4ST3R-2025</strong></p>
-    <p>Use this code to find the one piece!(beta)</p>
-    <button id="close-secret">Close</button>
-  </div>
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <div class="container">
 
-  <!-- New overlay for the text and screen -->
-  <div id="text-overlay">
-    <p id="click-text">Click to Start</p>
-  </div>
+      <!-- Main Content (initially visible) -->
+      <div id="main-content">
+        <!-- Profile Card -->
+        <div class="profile-card component">
+          <!-- Re-add profile banner -->
+          <img class="profile-banner" src="html_files/n4kr8xn5ay.gif" alt="Profile Banner">
+          <img class="profile-avatar" src="html_files/jtni8ymtkl.gif" alt="Profile Avatar">
+          <div class="profile-content">
+            <div class="profile-name">Lua.o_o</div>
+            <div class="profile-tag typewriter" id="profile-description"></div>
+            <div class="social-icons">
+              <div class="tooltip-container">
+                <a href="https://discord.gg/7FPCThJuHk" target="_blank" class="social-icon">
+                  <i class="fab fa-discord"></i>
+                </a>
+                <span class="tooltip">Discord</span>
+              </div>
+              <div class="tooltip-container">
+                <a href="https://github.com/Lua-1111" target="_blank" class="social-icon">
+                  <i class="fab fa-github"></i>
+                </a>
+                <span class="tooltip">GitHub</span>
+              </div>
+              <div class="tooltip-container">
+                <a href="https://www.youtube.com/@Nigwardstomfoolery" target="_blank" class="social-icon">
+                  <i class="fab fa-youtube"></i>
+                </a>
+                <span class="tooltip">YouTube</span>
+              </div>
+              <div class="tooltip-container">
+                <a href="https://namemc.com/profile/The_BLACKSQUID.1" target="_blank" class="social-icon">
+                  <i class="fas fa-user"></i>
+                </a>
+                <span class="tooltip">NameMC</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <audio id="background-music" src="audio.mp3" autoplay loop></audio>
-  <audio id="booo-sound" src="booo.mp3"></audio>
-  <audio id="new-background-music" src="youhavebeentroll.mp3"></audio>
+        <!-- Discord Invite Component -->
+        <div class="discord-invite component">
+          <div class="discord-invite-info">
+            <img src="html_files/a66265dd91b833fe55446685582b92ef.jpg" alt="Server Icon" class="discord-invite-icon">
+            <div class="discord-invite-details">
+              <span class="discord-invite-name">Chomík Republick</span>
+              <div class="discord-invite-status">
+                <div class="discord-invite-status-dot online"></div>
+                <span id="online-count" class="discord-invite-status-text">Loading...</span>
+              </div>
+              <div class="discord-invite-status">
+                <div class="discord-invite-status-dot offline"></div>
+                <span id="member-count" class="discord-invite-status-text">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <a href="https://discord.gg/wXPr48bDEJ" target="_blank" class="discord-invite-button">
+            Join Server <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
 
-  <div class="container">
-    <h1>Welcome to chomik.site</h1>
-    <a href="https://discord.gg/3pYc4cRCGP" target="_blank" class="button">DISCORD</a>
-    <div id="epic-text">
-      <p>Click for epico image</p>
+        <!-- Discord Presence -->
+        <div id="discord-status" class="component">
+          <!-- Content generated by JavaScript -->
+        </div>
+
+        <!-- Links Grid -->
+        <div class="links-grid">
+          <a href="triggerpayloadconverter.html" id="trigger-payload-converter" class="link-button">
+            <div class="link-button-content">
+              <div class="link-button-icon-wrapper">
+                <i class="fas fa-code link-button-icon"></i>
+              </div>
+              <div class="link-button-text">
+                <span class="link-button-title">Trigger Payload Converter</span>
+                <span class="link-button-url">Convert trigger payloads</span>
+              </div>
+            </div>
+            <i class="fas fa-arrow-right link-button-arrow"></i>
+          </a>
+          <a href="skidTriggerCreator.html" id="skid-trigger-creator" class="link-button">
+            <div class="link-button-content">
+              <div class="link-button-icon-wrapper">
+                <i class="fas fa-wrench link-button-icon"></i>
+              </div>
+              <div class="link-button-text">
+                <span class="link-button-title">Trigger Creator</span>
+                <span class="link-button-url">Create custom triggers</span>
+              </div>
+            </div>
+            <i class="fas fa-arrow-right link-button-arrow"></i>
+          </a>
+          <a href="triggerfinder.html" id="trigger-finder" class="link-button">
+            <div class="link-button-content">
+              <div class="link-button-icon-wrapper">
+                <i class="fas fa-search link-button-icon"></i>
+              </div>
+              <div class="link-button-text">
+                <span class="link-button-title">Trigger Finder</span>
+                <span class="link-button-url">Find existing triggers</span>
+              </div>
+            </div>
+            <i class="fas fa-arrow-right link-button-arrow"></i>
+          </a>
+        </div>
+      </div> <!-- End of main-content -->
+
+      <!-- About Section (Initially Hidden) -->
+      <div id="about-section" class="component hidden-section">
+        <h2>About Me</h2>
+        <p>I am the biggest skid on earth.</p>
+        <p>I'm getting into lockpicking and I know a little bit of Lua, Java, C++, and HTML.</p>
+        <p>Most of my projects are created with AI.</p>
+        <p>I like to exploit FiveM things.</p>
+      </div>
+
+      <!-- Contact Section (Initially Hidden) -->
+      <div id="contact-section" class="component hidden-section">
+        <h2>Contact</h2>
+        <p>Contact me on Discord:</p>
+        <p>Lua.O_O</p>
+        <pre>
+      ██╗      ██╗   ██╗  █████╗
+      ██║      ██║   ██║ ██╔══██╗
+      ██║      ██║   ██║ ███████║
+      ██║      ██║   ██║ ██╔══██║
+      ███████╗ ╚██████╔╝ ██║  ██║
+      ╚══════╝  ╚═════╝  ╚═╝  ╚═╝
+        </pre>
+      </div>
+
+      <!-- Hidden GIFs for troll effect -->
+      <img id="hidden-gif" src="jojo/hidden-gif.gif" alt="Hidden Image" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 9999;" />
+      <img id="getrolled-gif" src="jojo/getrolled.gif" alt="Get Rolled Image" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50%; height: auto; object-fit: contain; z-index: 10000;" />
+
     </div>
-    <a href="triggerpayloadconverter.html" id="trigger-payload-converter" class="button">Trigger Payload Converter</a>
-    <a href="skidTriggerCreator.html" id="skid-trigger-creator" class="button">Trigger Creator</a>
-    <a href="triggerfinder.html" id="trigger-finder" class="button">Trigger Finder</a>
-    <img id="oooof-gif" src="offf.gif" alt="OOOF GIF" />
-    <img id="hidden-gif" src="hidden-gif.gif" alt="Hidden Image" />
-    <img id="getrolled-gif" src="getrolled.gif" alt="Get Rolled Image" />
-    <div class="badge-container">
-      <a href="https://eightyeightthirty.one/" title="88x31" class="badge">
-        <img src="eightyeightthirty.one.png" alt="88x31 Badge">
-      </a>
-      <a href="https://we-are-jammin.xyz/" title="We are Jammin" class="badge">
-        <img src="jammin.webp" alt="We are Jammin Badge">
-      </a>
-      <a href="https://mullvad.net/" title="Mullvad" class="badge">
-        <img src="mullvad.png" alt="Mullvad Badge">
-      </a>
-      <a href="https://minecraft.net/" title="Minecraft" class="badge">
-        <img src="mc.gif" alt="Minecraft Badge">
-      </a>
-      <a href="https://code.visualstudio.com/" title="Visual Studio Code" class="badge">
-        <img src="vscbutton.gif" alt="Visual Studio Code Badge">
-      </a>
-    </div>
-    <div id="discord-status"></div>
-    <div class="ascii-art">
-      <pre>
-        _                             ____              ____           ____    _   _         _____    _____    _____    _____    ____    _____    _____  
-       | |                           / __ \            / __ \         / __ \  | \ | |       |  __ \  |_   _|  / ____|  / ____|  / __ \  |  __ \  |  __ \ 
-       | |       _   _    __ _      | |  | |          | |  | |       | |  | | |  \| |       | |  | |   | |   | (___   | |      | |  | | | |__) | | |  | |
-       | |      | | | |  / _` |     | |  | |          | |  | |       | |  | | | . ` |       | |  | |   | |    \___ \  | |      | |  | | |  _  /  | |  | |
-       | |____  | |_| | | (_| |  _  | |__| |          | |__| |       | |__| | | |\  |       | |__| |  _| |_   ____) | | |____  | |__| | | | \ \  | |__| |
-       |______|  \__,_|  \__,_| (_)  \____/            \____/         \____/  |_| \_|       |_____/  |_____| |_____/   \_____|  \____/  |_|  \_\  |____/  
-                                             ______                                                                                                     
-                                            |______|                                                                                                    
-                  __  ____    _______  __          __        _____                 _      _       _                       _           _    __               
-                 / / |  _ \  |__   __| \ \        / /       |_   _|               | |    (_)     | |                     | |         | |   \ \              
-                | |  | |_) |    | |     \ \  /\  / /          | |            ___  | | __  _    __| |         __ _        | |   ___   | |_   | |             
-                | |  |  _ <     | |      \ \/  \/ /           | |           / __| | |/ / | |  / _` |        / _` |       | |  / _ \  | __|  | |             
-                | |  | |_) |    | |       \  /\  /           _| |_          \__ \ |   <  | |  |  | |       | (_| |       | | | (_) | | |_   | |             
-                | |  |____/     |_|        \/  \/           |_____|         |___/ |_|\_\ |_|  \__,_|        \__,_|       |_|  \___/   \__|  | |             
-                \_\                                                                                                                       /_/              
-                                                                                                                                                                    ██╗   ██╗  █████╗   
-      </pre>
-    </div>
-  </div>
-
-  <!-- About pop-up -->
-  <div id="about-popup">
-    <p>I am the biggest skid on earth.</p>
-    <p>I'm getting into lockpicking and I know a little bit of Lua, Java, C++, and HTML.</p>
-    <p>Most of my projects are created with AI.</p>
-    <p>I like to exploit FiveM things.</p>
-  </div>
-
-  <!-- Contact pop-up -->
-  <div id="contact-popup">
-    <p>Contact me on Discord:</p>
-    <p>Lua.O_O</p>
-    <pre>
-      ██╗      ██╗   ██╗  █████╗   
-      ██║      ██║   ██║ ██╔══██╗  
-      ██║      ██║   ██║ ███████║   
-      ██║      ██║   ██║ ██╔══██║  
-      ███████╗ ╚██████╔╝ ██║  ██║  
-      ╚══════╝  ╚═════╝  ╚═╝  ╚═╝   
-    </pre>
   </div>
 
   <script>
-    var bgMusic = document.getElementById("background-music");
-    var boooSound = document.getElementById("booo-sound");
-    var newBgMusic = document.getElementById("new-background-music");
+    // Define the missing normalMessages array
+    const normalMessages = [
+      "Access denied. Try again.",
+      "Wrong credentials!",
+      "Nice try, but no.",
+      "That's not correct. Keep guessing!",
+      "Nope, not even close.",
+      "Security is tight here!",
+      "You'll never guess it...",
+      "Error: Unauthorized access",
+      "Are you even trying?",
+      "Maybe try 'password'? (Just kidding)",
+      "Admin access is for admins only!",
+      "That didn't work, did it?",
+      "Wrong username or password"
+    ];
 
-    document.getElementById("epic-text").addEventListener("click", function() {
-      bgMusic.pause();
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
+    // Add filterText function to prevent errors
+    function filterText(text) {
+      if (!text) return '';
+      return text.replace(/<script.*?>.*?<\/script>/gi, '') // Remove script tags
+                 .replace(/</g, "&lt;") // Escape HTML tags
+                 .replace(/>/g, "&gt;");
+    }
+
+    // Click to start overlay
+    const overlay = document.getElementById('text-overlay');
+    const clickText = document.getElementById('click-text');
+    const playerAudioElement = document.getElementById('player-audio-element');
+    const videoBg = document.getElementById('video-bg');
+    const backgroundVideos = [
+        "html_files/d1ka4hvf27_part1.mov", // Replace with your first video path
+        "html_files/d1ka4hvf27_part2.mov", // Replace with your second video path
+        "html_files/d1ka4hvf27_part3.mov"  // Replace with your third video path
+    ];
+    let currentVideoIndex = 0;
+
+    function playNextVideo() {
+        currentVideoIndex = (currentVideoIndex + 1) % backgroundVideos.length; // Loop back to 0
+        videoBg.src = backgroundVideos[currentVideoIndex];
+        videoBg.load(); // Important: load the new source
+        videoBg.play().catch(error => {
+            console.error("Error playing next background video:", error);
+            // Attempt to play again after a short delay if needed, or handle error
+        });
+    }
+
+    videoBg.addEventListener('ended', playNextVideo);
+
+    if (overlay && clickText && playerAudioElement && videoBg) {
+        overlay.addEventListener('click', function() {
+            overlay.classList.add('hidden');
+            initializeMuteState();
+            playerAudioElement.play().catch(error => {
+                console.log("Background music autoplay failed:", error);
+            });
+            videoBg.play().catch(error => {
+                console.log("Background video autoplay failed:", error);
+            });
+        }, { once: true });
+    } else {
+        console.error("Overlay, click text, player audio element, or video background element not found.");
+        if(overlay) overlay.style.display = 'none';
+    }
+
+    // Typewriter Effect
+    const typewriterElement = document.getElementById('profile-description');
+    const textToType = "Skid Master | Explorer of Lua | C++ Learner | HTML Tinkerer | FiveM Exploiter | AI Project Creator";
+    let typeIndex = 0;
+
+    function typeWriter() {
+      if (typeIndex < textToType.length) {
+        typewriterElement.textContent += textToType.charAt(typeIndex);
+        typeIndex++;
+        setTimeout(typeWriter, 150); // Adjust typing speed (milliseconds)
       }
-      setTimeout(function() {
-        boooSound.play();
-      }, 3000);
-      setTimeout(function() {
-        document.getElementById("hidden-gif").style.display = "block";
-      }, 3000);
-      setTimeout(function() {
-        document.getElementById("getrolled-gif").style.display = "block";
-        newBgMusic.play();
-      }, 8000);
+    }
+    document.addEventListener('DOMContentLoaded', typeWriter);
+
+    // Enhanced Discord status implementation
+    function enhanceDiscordStatus() {
+      const discordId = '640885363866337284'; // Your Discord ID
+      const statusContainer = document.getElementById('discord-status');
+
+      const discordStyles = `
+        /* Discord Presence Card */
+        .discord-presence-card {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        .discord-presence-top {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          align-items: center;
+          justify-content: space-between;
+        }
+        @media (min-width: 640px) {
+          .discord-presence-top {
+            flex-direction: row;
+          }
+        }
+        .discord-user-info {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+        .discord-avatar-wrapper {
+          position: relative;
+          flex-shrink: 0;
+        }
+        .discord-avatar {
+          width: 4.5rem;
+          height: 4.5rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          display: block;
+        }
+        .discord-status-indicator {
+          position: absolute;
+          width: 1rem;
+          height: 1rem;
+          border-radius: 50%;
+          bottom: -4px;
+          right: -4px;
+          border: 3px solid var(--container-bg);
+          z-index: 1;
+        }
+        .discord-status-indicator.online { background-color: #3ba55c; }
+        .discord-status-indicator.idle { background-color: #faa61a; }
+        .discord-status-indicator.dnd { background-color: #ed4245; }
+        .discord-status-indicator.offline { background-color: #747f8d; }
+        .discord-user-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .discord-name-badges {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          flex-wrap: wrap;
+        }
+        .discord-username {
+          color: var(--primary-color);
+          font-weight: 600;
+          font-size: 1.1em;
+          word-break: break-all;
+        }
+        .discord-custom-status {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+        .discord-custom-status img {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+        .discord-custom-status p {
+          color: var(--text-color);
+          font-size: 0.9em;
+          word-break: break-all;
+        }
+        .discord-add-button {
+          background-color: rgba(0, 0, 0, 0.5);
+          color: var(--primary-color);
+          border: 1px solid var(--border-color);
+          border-radius: var(--border-radius);
+          padding: 0.375rem 0.75rem;
+          padding-left: 0.75rem;
+          font-size: 0.9em;
+          font-weight: 600;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+          transition: filter 0.3s ease;
+          width: 100%;
+          justify-content: center;
+        }
+        @media (min-width: 640px) {
+          .discord-add-button {
+            width: fit-content;
+          }
+        }
+        .discord-add-button:hover {
+          filter: brightness(1.25);
+        }
+        .discord-add-button i {
+          color: var(--accent-color);
+          font-size: 1.5em;
+          margin-left: 0.25rem;
+          transition: transform 0.3s ease;
+        }
+        .discord-add-button:hover i {
+          transform: translateX(4px);
+        }
+        .discord-separator {
+          width: 100%;
+          height: 1.5px;
+          background-color: var(--border-color);
+          opacity: 1;
+          margin: 0.75rem 0;
+        }
+        .discord-activity {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          text-align: center;
+        }
+        @media (min-width: 640px) {
+          .discord-activity {
+            flex-direction: row;
+            text-align: left;
+          }
+        }
+        .discord-activity-image {
+          width: 5rem;
+          height: 5rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          flex-shrink: 0;
+          object-fit: cover;
+        }
+        @media (min-width: 400px) {
+          .discord-activity-image {
+            width: 6rem;
+            height: 6rem;
+          }
+        }
+        .discord-activity-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+          overflow: hidden;
+        }
+        .discord-activity-name {
+          color: var(--primary-color);
+          font-weight: 600;
+          font-size: 1em;
+          word-break: break-all;
+        }
+        .discord-activity-state,
+        .discord-activity-party,
+        .discord-activity-elapsed {
+          color: var(--text-color);
+          font-size: 0.9em;
+          word-break: break-all;
+        }
+        .discord-activity-elapsed {
+          font-weight: 500;
+        }
+      `;
+
+      const styleSheet = document.createElement("style");
+      styleSheet.innerText = discordStyles;
+      document.head.appendChild(styleSheet);
+
+      const badgeMap = {
+        "HypeSquad Bravery": "https://discord.com/assets/463b616c7d65f9771f5b0c13447b4114.svg",
+        "Active Developer": "https://discord.com/assets/f9450599c4a7e4c0450139618511e5d6.svg",
+      };
+
+      function createBadgeHTML(badgeName) {
+        const badgeUrl = badgeMap[badgeName];
+        if (!badgeUrl) return '';
+        return `
+          <div class="discord-badge-container">
+            <img src="${badgeUrl}" alt="${badgeName}" class="discord-badge">
+            <span class="discord-badge-tooltip">${badgeName}</span>
+          </div>
+        `;
+      }
+
+      async function fetchDiscordData() {
+        try {
+          const response = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+          if (data.success) {
+            updateDiscordCard(data.data);
+          } else {
+            console.error('Failed to fetch Discord status from Lanyard API');
+          }
+        } catch (error) {
+          console.error('Error fetching Discord status:', error);
+        }
+      }
+
+      function updateDiscordCard(data) {
+        const user = data.discord_user;
+        const presence = data;
+
+        // Use API URL for avatar
+        const avatarUrl = user.avatar
+          ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128`
+          : `https://cdn.discordapp.com/embed/avatars/${user.discriminator % 5}.png`;
+
+        const badgesHTML = data.discord_user.public_flags_array ? data.discord_user.public_flags_array.map(createBadgeHTML).join('') : '';
+
+        let customStatusHTML = '';
+        if (presence.activities?.some(act => act.type === 4)) {
+          const customActivity = presence.activities.find(act => act.type === 4);
+          if (customActivity) {
+            // Use API URL for emoji (via twemoji CDN)
+            const emojiUrl = customActivity.emoji ? `https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/${customActivity.emoji.name.codePointAt(0).toString(16)}.svg` : '';
+            customStatusHTML = `
+              <div class="discord-custom-status">
+                ${emojiUrl ? `<img src="${emojiUrl}" alt="${customActivity.emoji.name}">` : ''}
+                <p>${filterText(customActivity.state) || ''}</p>
+              </div>
+            `;
+          }
+        }
+
+        let activityHTML = '';
+        const mainActivity = presence.activities?.find(act => act.type !== 4);
+
+        if (mainActivity) {
+          // Handle different types of image asset IDs (standard vs. proxied)
+          let largeImage = 'jojo/placeholder.png'; // Default placeholder
+          if (mainActivity.assets?.large_image) {
+            if (mainActivity.assets.large_image.startsWith('mp:')) {
+              // Handle media proxy URLs (remove 'mp:')
+              largeImage = `https://media.discordapp.net/${mainActivity.assets.large_image.substring(3)}`;
+            } else {
+              // Standard asset URL
+              largeImage = `https://cdn.discordapp.com/app-assets/${mainActivity.application_id}/${mainActivity.assets.large_image}.png`;
+            }
+          }
+
+          let elapsedHTML = '';
+          if (mainActivity.timestamps?.start) {
+            const startTime = new Date(mainActivity.timestamps.start);
+            const updateElapsed = () => {
+              const now = new Date();
+              const elapsedMs = now - startTime;
+              const totalSeconds = Math.floor(elapsedMs / 1000);
+              const hours = Math.floor(totalSeconds / 3600);
+              const minutes = Math.floor((totalSeconds % 3600) / 60);
+              const seconds = totalSeconds % 60;
+              const elapsedEl = document.getElementById('activity-elapsed-time');
+              if (elapsedEl) {
+                elapsedEl.textContent = `${hours > 0 ? hours+':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} elapsed`;
+              }
+            };
+            elapsedHTML = `<div class="discord-activity-elapsed" id="activity-elapsed-time">Calculating...</div>`;
+            if (window.discordElapsedInterval) clearInterval(window.discordElapsedInterval);
+            window.discordElapsedInterval = setInterval(updateElapsed, 1000);
+            updateElapsed();
+          } else {
+            if (window.discordElapsedInterval) clearInterval(window.discordElapsedInterval);
+          }
+
+          activityHTML = `
+            <div class="discord-separator"></div>
+            <div class="discord-activity">
+              <img src="${largeImage}" alt="${mainActivity.assets?.large_text || 'Activity Image'}" class="discord-activity-image">
+              <div class="discord-activity-details">
+                <div class="discord-activity-name">${filterText(mainActivity.name) || 'Unknown Activity'}</div>
+                ${mainActivity.details ? `<div class="discord-activity-state">${filterText(mainActivity.details)}</div>` : ''}
+                ${mainActivity.state ? `<div class="discord-activity-party">${filterText(mainActivity.state)}</div>` : ''}
+                ${elapsedHTML}
+              </div>
+            </div>
+          `;
+        } else {
+          if (window.discordElapsedInterval) clearInterval(window.discordElapsedInterval);
+        }
+
+        statusContainer.innerHTML = `
+          <div class="discord-presence-card">
+            <div class="discord-presence-top">
+              <div class="discord-user-info">
+                <div class="discord-avatar-wrapper">
+                  <img src="${avatarUrl}" alt="${user.username}'s Avatar" class="discord-avatar">
+                  <div class="discord-status-indicator ${presence.discord_status}"></div>
+                </div>
+                <div class="discord-user-details">
+                  <div class="discord-name-badges">
+                    <span class="discord-username">@${user.username}</span>
+                    ${badgesHTML}
+                  </div>
+                  ${customStatusHTML}
+                </div>
+              </div>
+              <a href="https://discord.com/users/${user.id}" target="_blank" class="discord-add-button">
+                Add on Discord <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            ${activityHTML}
+          </div>
+        `;
+      }
+
+      fetchDiscordData();
+      setInterval(fetchDiscordData, 15000);
+    }
+
+    enhanceDiscordStatus();
+
+    // Function to update Discord server counts
+    async function updateServerCounts() {
+        const inviteCode = 'wXPr48bDEJ'; // Your invite code
+        const onlineCountElement = document.getElementById('online-count');
+        const memberCountElement = document.getElementById('member-count');
+
+        if (!onlineCountElement || !memberCountElement) {
+            console.error("Count elements not found.");
+            return;
+        }
+
+        try {
+            // Using a CORS proxy because Discord API blocks direct browser requests
+            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`)}`);
+            if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            const contents = JSON.parse(data.contents); // AllOrigins wraps the response
+
+            if (contents.approximate_presence_count && contents.approximate_member_count) {
+                onlineCountElement.textContent = `${contents.approximate_presence_count} Online`;
+                memberCountElement.textContent = `${contents.approximate_member_count} Members`;
+            } else {
+                 // Handle cases where counts might be missing (e.g., widget disabled)
+                 onlineCountElement.textContent = `? Online`;
+                 memberCountElement.textContent = `? Members`;
+                 console.warn("Could not retrieve server counts. Is the server widget enabled?");
+            }
+        } catch (error) {
+            console.error('Error fetching server counts:', error);
+            onlineCountElement.textContent = 'Error';
+            memberCountElement.textContent = 'Error';
+        }
+    }
+
+    // Initial call and set interval for server counts
+    document.addEventListener('DOMContentLoaded', () => {
+        updateServerCounts(); // Initial fetch
+        setInterval(updateServerCounts, 60000); // Update every 60 seconds
     });
 
-    document.getElementById('click-text').addEventListener('click', function() {
-      document.getElementById('text-overlay').classList.add('hidden');
-      document.getElementById('background-music').play();
+    // Mute button functionality
+    const muteButton = document.getElementById('mute-button');
+    const muteIcon = muteButton.querySelector('i');
+    const audioElements = document.querySelectorAll('audio');
+    let isMuted = localStorage.getItem('muted') === 'true';
+
+    function updateMuteStatus(muted) {
+      isMuted = muted;
+      audioElements.forEach(audio => {
+        audio.muted = isMuted;
+      });
+      muteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+      localStorage.setItem('muted', isMuted);
+      muteButton.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
+    }
+
+    function toggleMute() {
+      updateMuteStatus(!isMuted);
+    }
+
+    function initializeMuteState() {
+      updateMuteStatus(isMuted);
+    }
+
+    muteButton.addEventListener('click', toggleMute);
+    initializeMuteState();
+
+    // Background Music Loop Logic
+    const player = document.getElementById('player-audio-element');
+    const secondTrack = document.getElementById('second-track-element');
+    const tracks = [
+        { element: player, src: "html_files/k07sau5fvp.mp3" },
+        { element: secondTrack, src: "html_files/z5603ozumx.mp3" }
+    ];
+    let currentTrackIndex = 0;
+
+    function playNextTrack() {
+        tracks[currentTrackIndex].element.pause();
+        tracks[currentTrackIndex].element.currentTime = 0;
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        tracks[currentTrackIndex].element.play().catch(e => console.log("Error playing next track:", e));
+    }
+
+    tracks.forEach(track => {
+        track.element.addEventListener('ended', playNextTrack);
     });
 
-    window.addEventListener("beforeunload", function(event) {
-      var message = "Are you sure you want to leave this page?";
-      event.returnValue = message;
-      return message;
+    // Navigation Logic
+    const homeLink = document.getElementById('home-link');
+    const mainLink = document.getElementById('main-link');
+    const aboutLink = document.getElementById('about-link');
+    const contactLink = document.getElementById('contact-link');
+    const mainContent = document.getElementById('main-content');
+    const aboutSection = document.getElementById('about-section');
+    const contactSection = document.getElementById('contact-section');
+
+    function showSection(sectionToShow) {
+      mainContent.style.display = 'none';
+      aboutSection.style.display = 'none';
+      contactSection.style.display = 'none';
+
+      if (sectionToShow) {
+        sectionToShow.style.display = (sectionToShow === mainContent) ? 'flex' : 'block';
+        if (sectionToShow === mainContent) {
+          mainContent.style.flexDirection = 'column';
+          mainContent.style.gap = '0.75rem';
+        }
+      }
+    }
+
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('You found the Easter egg!');
+      setTimeout(() => {
+        window.location.href = 'https://bewuwy.github.io/bad-apple-checkbox/badapple/index.html';
+      }, 1000);
     });
 
+    mainLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(mainContent);
+      window.location.hash = '#main';
+    });
+
+    aboutLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(aboutSection);
+      window.location.hash = '#about';
+    });
+
+    contactLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection(contactSection);
+      window.location.hash = '#contact';
+    });
+
+    showSection(mainContent);
+    if (window.location.hash !== '#main') {
+        window.history.replaceState(null, null, '#main');
+    }
+
+    // Snowflake effect
     function createSnowflake() {
       const snowflake = document.createElement('div');
       snowflake.innerHTML = '❄';
       snowflake.classList.add('snowflake');
       snowflake.style.left = Math.random() * 100 + 'vw';
-      snowflake.style.animationDuration = Math.random() * 10 + 10 + 's';
-      snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+      const duration = Math.random() * 10 + 10;
+      snowflake.style.animationDuration = duration + 's';
+      snowflake.style.opacity = Math.random() * 0.5 + 0.3;
       snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+
       document.body.appendChild(snowflake);
+
       setTimeout(() => {
         snowflake.remove();
-      }, 20000);
+      }, (duration + 1) * 1000);
     }
 
     function startSnowfall() {
@@ -691,482 +1285,6 @@
     }
 
     startSnowfall();
-
-    // Show about pop-up
-    document.getElementById('about-link').addEventListener('click', function(event) {
-      event.preventDefault();
-      document.getElementById('about-popup').style.display = 'block';
-    });
-
-    // Hide about pop-up when clicking outside of it
-    window.addEventListener('click', function(event) {
-      const popup = document.getElementById('about-popup');
-      const aboutLink = document.getElementById('about-link');
-      if (event.target !== popup && 
-          !popup.contains(event.target) && 
-          event.target !== aboutLink) {
-        popup.style.display = 'none';
-      }
-    });
-
-    // Update Easter egg for home button with alert and redirect
-    document.getElementById('home-link').addEventListener('click', function(event) {
-      event.preventDefault();
-      alert('You found the Easter egg!');
-      setTimeout(() => {
-        window.location.href = 'https://bewuwy.github.io/bad-apple-checkbox/badapple/index.html';
-      }, 1000); // Redirect after 1 second
-    });
-
-    document.getElementById('contact-link').addEventListener('click', function(event) {
-      event.preventDefault();
-      document.getElementById('contact-popup').style.display = 'block';
-    });
-
-    // Hide contact popup when clicking outside
-    window.addEventListener('click', function(event) {
-      const aboutPopup = document.getElementById('about-popup');
-      const contactPopup = document.getElementById('contact-popup');
-      const aboutLink = document.getElementById('about-link');
-      const contactLink = document.getElementById('contact-link');
-      
-      if (event.target !== aboutPopup && 
-          !aboutPopup.contains(event.target) && 
-          event.target !== aboutLink) {
-        aboutPopup.style.display = 'none';
-      }
-      
-      if (event.target !== contactPopup && 
-          !contactPopup.contains(event.target) && 
-          event.target !== contactLink) {
-        contactPopup.style.display = 'none';
-      }
-    });
-
-    // Enhanced Discord status implementation with WebSocket support
-    function enhanceDiscordStatus() {
-      const discordId = '640885363866337284'; // Your Discord ID
-      const statusContainer = document.getElementById('discord-status');
-      
-      const discordStyles = document.createElement('style');
-      discordStyles.textContent = `
-        .activity-assets img {
-          width: 60px;
-          height: 60px;
-          border-radius: 5px;
-          margin-right: 10px;
-          image-rendering: auto;
-          object-fit: cover;
-          background-color: #1a1a1a;
-        }
-        
-        /* Status dot styling - updated to be more visible */
-        .status-dot {
-          display: inline-block;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          margin-right: 5px;
-          vertical-align: middle;
-          position: relative;
-        }
-        
-        .status-dot.online {
-          background-color: #3ba55c;
-          box-shadow: 0 0 5px #3ba55c;
-          animation: pulse 2s infinite;
-        }
-        
-        .status-dot.idle {
-          background-color: #faa61a;
-          box-shadow: 0 0 5px #faa61a;
-        }
-        
-        .status-dot.dnd {
-          background-color: #ed4245;
-          box-shadow: 0 0 5px #ed4245;
-        }
-        
-        .status-dot.offline {
-          background-color: #747f8d;
-        }
-        
-        /* Discord card with improved layout */
-        .discord-card {
-          background-color: #1e1f22;
-          border-radius: 10px;
-          padding: 15px;
-          width: 100%;
-          max-width: 350px;
-          margin: 0 auto;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-          position: relative;
-        }
-        
-        /* Game activity container - adjusted without game image */
-        .game-activity-container {
-          display: flex;
-          align-items: center;
-          padding: 10px;
-          background-color: rgba(0, 0, 0, 0.2);
-          width: 100%;
-          box-sizing: border-box;
-        }
-        
-        /* User info section with avatar next to name */
-        .discord-name-container {
-          display: flex;
-          align-items: center;
-          margin-bottom: 5px;
-          gap: 10px;
-        }
-        
-        .small-avatar {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          margin-right: 0;
-          position: relative;
-        }
-        
-        .avatar-wrapper {
-          position: relative;
-          display: inline-block;
-        }
-        
-        .status-indicator {
-          position: absolute;
-          bottom: -2px;
-          right: -2px;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          border: 2px solid #1e1f22;
-        }
-        
-        #discord-name {
-          font-weight: bold;
-          font-size: 1.1em;
-        }
-      `;
-      document.head.appendChild(discordStyles);
-
-      // Create a redesigned container with avatar next to name - removed game image
-      statusContainer.innerHTML = `
-        <div class="discord-card">
-          <div class="activity-wrapper">            
-            <div class="game-activity-container">
-              <div class="game-info">
-                <div class="discord-info">
-                  <div class="discord-name-container">
-                    <div class="avatar-wrapper">
-                      <img id="discord-avatar-small" class="small-avatar" src="" alt="Avatar" />
-                      <div id="status-indicator" class="status-indicator"></div>
-                    </div>
-                    <div id="discord-name">Loading...</div>
-                  </div>
-                  <div id="discord-discriminator"></div>
-                </div>
-                <div id="game-name" class="game-name">Not playing</div>
-                <div id="game-details" class="game-details"></div>
-                <div id="game-elapsed" class="game-details"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Helper function to filter objectionable content
-      function filterText(text) {
-        if (!text) return '';
-        
-        // Filter out unwanted phrases
-        let filteredText = text;
-        const textFilters = ['no bitches', 'verified'];
-        
-        textFilters.forEach(filter => {
-          filteredText = filteredText.replace(new RegExp(filter, 'gi'), '');
-        });
-        
-        // Clean up any multiple spaces 
-        filteredText = filteredText.replace(/\s+/g, ' ').trim();
-        return filteredText;
-      }
-
-      // Updated function to update the Discord card with data
-      function updateDiscordCard(data) {
-        // Set avatar with proper GIF support
-        const avatarUrl = data.discord_user.avatar 
-          ? `https://cdn.discordapp.com/avatars/${discordId}/${data.discord_user.avatar}.${data.discord_user.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128&t=${Date.now()}` 
-          : 'https://cdn.discordapp.com/embed/avatars/0.png';
-        
-        // Update small avatar next to name
-        const avatarSmall = document.getElementById('discord-avatar-small');
-        avatarSmall.src = avatarUrl;
-        
-        // Set username and discriminator
-        document.getElementById('discord-name').textContent = data.discord_user.username;
-        const discriminator = data.discord_user.discriminator !== '0' ? `#${data.discord_user.discriminator}` : '';
-        document.getElementById('discord-discriminator').textContent = discriminator;
-
-        // Set status indicator on the avatar
-        const statusIndicator = document.getElementById('status-indicator');
-        
-        switch(data.discord_status) {
-          case 'online':
-            statusIndicator.style.backgroundColor = '#3ba55c';
-            statusIndicator.title = 'Online';
-            break;
-          case 'idle':
-            statusIndicator.style.backgroundColor = '#faa61a';
-            statusIndicator.title = 'Idle';
-            break;
-          case 'dnd':
-            statusIndicator.style.backgroundColor = '#ed4245';
-            statusIndicator.title = 'Do Not Disturb';
-            break;
-          default:
-            statusIndicator.style.backgroundColor = '#747f8d';
-            statusIndicator.title = 'Offline';
-        }
-        
-        // Find and display game or activity if any exists
-        if (data.activities && data.activities.length > 0) {
-          const activity = data.activities.find(act => act.type === 0) || 
-                          data.activities.find(act => act.type === 2) || 
-                          data.activities.find(act => act.type === 3) || 
-                          data.activities[0];
-          
-          if (activity) {
-            const gameName = document.getElementById('game-name');
-            const gameDetails = document.getElementById('game-details');
-            const gameElapsed = document.getElementById('game-elapsed');
-            
-            gameName.textContent = filterText(activity.name) || 'Unknown Activity';
-            
-            let detailsText = '';
-            if (activity.details) {
-              detailsText += filterText(activity.details);
-            }
-            
-            if (activity.state) {
-              if (detailsText) {
-                detailsText += ` - ${filterText(activity.state)}`;
-              } else {
-                detailsText = filterText(activity.state);
-              }
-            }
-            
-            gameDetails.textContent = detailsText;
-            
-            if (activity.timestamps && activity.timestamps.start) {
-              const startTime = new Date(activity.timestamps.start);
-              const now = new Date();
-              const elapsed = Math.floor((now - startTime) / 1000 / 60);
-              
-              if (elapsed < 60) {
-                gameElapsed.textContent = `${elapsed} min elapsed`;
-              } else {
-                const hours = Math.floor(elapsed / 60);
-                const mins = elapsed % 60;
-                gameElapsed.textContent = `${hours} hr${mins > 0 ? ` ${mins} min` : ''} elapsed`;
-              }
-            } else {
-              gameElapsed.textContent = '';
-            }
-          }
-        }
-      }
-
-      async function fetchDiscordData() {
-        try {
-          const response = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
-          const data = await response.json();
-          if (data.success) {
-            updateDiscordCard(data.data);
-          } else {
-            console.error('Failed to fetch Discord status');
-          }
-        } catch (error) {
-          console.error('Error fetching Discord status:', error);
-        }
-      }
-
-      fetchDiscordData();
-      setInterval(fetchDiscordData, 15000);
-    }
-
-    enhanceDiscordStatus();
-
-    // Fix mute button functionality
-    const muteButton = document.getElementById('mute-button');
-    const audioElements = document.querySelectorAll('audio');
-    
-    function updateMuteStatus(muted) {
-      audioElements.forEach(audio => {
-        audio.muted = muted;
-      });
-      
-      muteButton.textContent = muted ? '🔇' : '🔊';
-      localStorage.setItem('audioMuted', muted.toString());
-    }
-    
-    function toggleMute() {
-      const currentMuted = audioElements[0].muted;
-      updateMuteStatus(!currentMuted);
-    }
-    
-    function initializeMuteState() {
-      const savedState = localStorage.getItem('audioMuted');
-      const shouldBeMuted = savedState === 'true';
-      updateMuteStatus(shouldBeMuted);
-    }
-    
-    muteButton.addEventListener('click', toggleMute);
-    
-    document.addEventListener('DOMContentLoaded', initializeMuteState);
-    
-    initializeMuteState();
-
-    // Admin login functionality
-    const loginBtn = document.getElementById('login-btn');
-    const secretMessage = document.getElementById('secret-message');
-    const closeSecret = document.getElementById('close-secret');
-    const loginMessage = document.getElementById('login-message');
-    const sqlHint = document.getElementById('sql-hint');
-    let loginAttempts = 0;
-    let hackAttempts = 0;
-    const attemptedUsernames = new Set();
-    
-    const hackCounter = document.createElement('div');
-    hackCounter.id = 'hack-counter';
-    hackCounter.textContent = '0';
-    document.querySelector('.admin-login').appendChild(hackCounter);
-
-    const sqlInjectionPatterns = [
-      "'--", "' --", '"+--', 'or 1=1', "' or '", '" or "', 
-      'admin\'', "admin\"", '\'1\'=\'1', '"1"="1',
-      'UNION', 'SELECT', '1234', 'true--', 'OR TRUE', 
-      '/*', '--', '#', '^', '&'
-    ];
-    
-    const hackerResponses = [
-      "Nice try, script kiddie! 🤣",
-      "SQL injection is sooooo 2005! 🙄",
-      "Did you copy that from a hacking tutorial? 📝",
-      "Your hacking skills need some serious work 🛠️",
-      "That's the oldest trick in the book! 📚",
-      "Even my grandma could hack better 👵",
-      "Are you trying to DROP TABLE students; me? 🎓",
-      "Bobby Tables would be disappointed in you 👎",
-      "Did you really think that would work? 🤦‍♂️",
-      "Hack level: absolute beginner 🔰",
-      "I've seen better hacking in movies 🎬",
-      "Your SQL is bad and you should feel bad 🦑",
-      "101010... I can speak binary too! 💻",
-      "Keep trying, maybe in 100 years you'll succeed 🧓",
-      "I'm sending this to @RealHackerFails 📱",
-      "Hacking in progress... oh wait, that's just a calculator app 🧮",
-      "Is your keyboard sticky with energy drinks? 🥤",
-      "Maybe try 'Please let me in?' instead 🙏",
-      "Are you wearing your hacker hoodie right now? 👕",
-      "This isn't 'Hack the Planet' from 1995 🌍",
-      "You're about as stealthy as a DDOS attack 🔊",
-      "*laughs in prepared statements* 😂",
-      "My security is beyond your understanding 🧠",
-      "Hacking attempt #" + hackAttempts + " - still failing 📈",
-      "I bet you think you're Anonymous right now 🎭",
-      "Cute SQL injection. Did your bot write that? 🤖",
-      "My 5-year-old cousin has better hacking skills 👶",
-      "You're trying too hard and getting nowhere 🏃‍♂️",
-      "Your injection just got sanitized 🧼",
-      "Hack.exe has stopped working ⚠️"
-    ];
-    
-    const sqlHints = [
-      "Try some SQL injection... if you dare",
-      "Hint: Our admin is not called 'admin' OR '1'='1'",
-      "Fun fact: SQL injection still works on 97% of sites",
-      "Careful, our security team is watching you",
-      "Admin login is protected by AI. Good luck hacking that",
-      "Fun fact: SQL stands for Secure Query Language",
-      "Try harder, hacker! I'm taking screenshots 📸",
-      "Maybe try 'guest/guest'? (It won't work either)",
-      "Hint: The username is NOT 'root'",
-      "Our database is in the cloud... good luck finding it ☁️",
-      "The FBI has been notified of your IP address 🕵️‍♂️",
-      "Our CAPTCHA is invisible, and you're failing it 🤖",
-      "Warning: Unauthorized access will result in your PC playing Baby Shark 🦈",
-      "Tip: Maybe stop trying to hack and just ask nicely? 🙏",
-      "Achievement unlocked: Failed SQL injection! 🏆"
-    ];
-
-    function changeSqlHint() {
-      const randomHint = sqlHints[Math.floor(Math.random() * sqlHints.length)];
-      sqlHint.textContent = randomHint;
-    }
-    setInterval(changeSqlHint, 5000);
-
-    loginBtn.addEventListener('click', () => {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      loginAttempts++;
-      
-      if (username && !attemptedUsernames.has(username.toLowerCase())) {
-        attemptedUsernames.add(username.toLowerCase());
-      }
-      
-      const isInjectionAttempt = sqlInjectionPatterns.some(pattern => 
-        username.toLowerCase().includes(pattern.toLowerCase()) || 
-        password.toLowerCase().includes(pattern.toLowerCase())
-      );
-      
-      if (isInjectionAttempt) {
-        hackAttempts++;
-        hackCounter.textContent = hackAttempts;
-        hackCounter.classList.add('active');
-        
-        const response = hackerResponses[Math.floor(Math.random() * hackerResponses.length)];
-        loginMessage.innerHTML = `<span style="color:#ff3333">${response}</span>`;
-        
-        if (hackAttempts >= 5) {
-          setTimeout(() => {
-            alert('SECURITY ALERT: Multiple hacking attempts detected. Your IP has been logged: 127.0.0.1');
-          }, 500);
-        }
-        
-        if (hackAttempts >= 10) {
-          document.body.innerHTML = `
-            <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#0f0;padding:20px;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center">
-              <h1>HACKING DETECTED</h1>
-              <p>Just kidding! This was a test to see how persistent you are.</p>
-              <p>You really tried ${hackAttempts} different SQL injection techniques!</p>
-              <p>Here's your reward: The actual password is "skidmaster"</p>
-              <button onclick="location.reload()">Go Back</button>
-            </div>
-          `;
-        }
-        
-      } else if (username === 'admin' && password === 'skidmaster') {
-        secretMessage.style.display = 'block';
-        loginMessage.innerHTML = '<span style="color:#00ff00">Access granted! Welcome, skid master.</span>';
-        createConfetti();
-      } else {
-        const message = normalMessages[Math.floor(Math.random() * normalMessages.length)];
-        loginMessage.innerHTML = `<span style="color:#ff9900">${message}</span>`;
-        
-        if (attemptedUsernames.size >= 10) {
-          loginMessage.innerHTML += `<br><span style="color:#00bfff">HINT: The username starts with "a" and rhymes with "mad-min" 😉</span>`;
-        }
-      }
-      
-      document.getElementById('password').value = '';
-    });
-
-    closeSecret.addEventListener('click', () => {
-      secretMessage.style.display = 'none';
-    });
   </script>
-
 </body>
 </html>
