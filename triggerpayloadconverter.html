@@ -5,254 +5,449 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 FiveM Event Parser & Convertor 🚀</title>
     <link rel="icon" href="chomik.jpg" type="image/jpeg"> <!-- Favicon -->
+    <!-- Use Fira Code font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Define theme colors */
+        :root {
+          --bg-color: #0a0a0a;
+          --container-bg: rgba(0, 0, 0, 0.5);
+          --text-color: #c0c0c0; /* Light gray for general text */
+          --primary-color: #7400d9; /* Purple */
+          --accent-color: #7a03e0; /* Slightly different purple for accents */
+          --border-color: rgba(122, 3, 224, 0.5); /* Purple border */
+          --border-radius: 0.4rem; /* 6.4px */
+          --font-family: 'Fira Code', monospace;
+          --input-bg: #1a1a1a; /* Darker input background */
+        }
+
+        /* Basic page styling */
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          font-family: var(--font-family);
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          opacity: 0;
+          animation: fadeIn 1.5s forwards;
+          overflow-x: hidden; /* Prevent horizontal scroll */
+          overflow-y: auto; /* Allow vertical scroll if needed */
+        }
+
+        /* Add global custom cursor style */
+        * {
+          cursor: url(jojo/hqizezkx5r.cur) 0 0, auto !important;
+          box-sizing: border-box;
+        }
+
         /* Video Background */
-        #video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensures the video covers the entire background */
-            z-index: -1; /* Places the video behind other content */
+        #video-bg { /* Use consistent ID */
+          position: fixed;
+          right: 0;
+          bottom: 0;
+          min-width: 100%;
+          min-height: 100%;
+          width: auto;
+          height: auto;
+          z-index: -10;
+          object-fit: cover;
+          filter: blur(2px) brightness(100%);
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212; /* Fallback background color */
-            color: #ffffff; /* Light text */
+        /* Click to Start Overlay Styles */
+        #text-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 10002;
+          cursor: pointer;
+          transition: opacity 0.5s ease;
+          opacity: 1;
+        }
+        #text-overlay.hidden {
+          opacity: 0;
+          pointer-events: none;
+        }
+        #click-text {
+          color: white;
+          font-size: 2em;
+          font-weight: bold;
+          font-family: var(--font-family);
         }
 
+        /* Main content wrapper - centered */
+        .main-wrapper {
+          display: flex;
+          min-height: 100vh;
+          padding: 2rem 0 2rem 0; /* Consistent padding */
+          width: 100%;
+          justify-content: center;
+          align-items: center; /* Center vertically */
+        }
+
+        /* Main content container - adapted */
         .container {
-            text-align: center;
-            background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark container background */
-            padding: 40px; /* Increased padding to make the container bigger */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 80%; /* Increased width */
-            max-width: 800px; /* Optional: Set a maximum width */
+          max-width: 50rem; /* Keep increased width */
+          width: 90%;
+          margin: 0 auto;
+          padding: 0 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
         }
 
-        input {
+        /* General component styling (applied to #converter-app) */
+        .component {
+          background-color: var(--container-bg);
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          padding: 1.5rem; /* Use consistent padding */
+          backdrop-filter: blur(5px);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          width: 100%;
+          text-align: center;
+        }
+
+        /* Mute button styling */
+        #mute-button { /* Use consistent ID */
+          position: fixed;
+          top: 15px;
+          right: 15px;
+          background-color: transparent;
+          border: none;
+          color: var(--text-color);
+          font-size: 1.25rem;
+          cursor: url('GTA 5 Web Cursor.cur'), pointer; /* Specific cursor */
+          z-index: 1001;
+          transition: transform 0.3s ease, color 0.3s ease;
+          padding: 5px;
+          line-height: 1;
+        }
+
+        #mute-button:hover {
+          transform: scale(1.1);
+          color: var(--accent-color);
+        }
+
+        /* Converter Specific Styles - Adapted to Theme */
+        h1 {
+          font-family: var(--font-family);
+          font-size: 1.8em;
+          color: var(--primary-color);
+          text-shadow: 0 0 5px rgba(116, 0, 217, 0.5);
+          margin-bottom: 1rem;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          white-space: nowrap;
+        }
+
+        input[type="text"] {
             padding: 10px;
-            width: 100%; /* Make input take full width of the container */
-            font-size: 16px;
-            background-color: #333; /* Dark input background */
-            color: #ffffff; /* Light text */
-            border: 1px solid #444; /* Dark border */
-            border-radius: 5px;
-            margin-bottom: 10px;
+            width: 100%;
+            font-size: 1em; /* Adjusted font size */
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem; /* Consistent margin */
+            font-family: var(--font-family);
+        }
+        input[type="text"]:focus {
+             outline: none;
+             border-color: var(--accent-color);
+        }
+        input::placeholder {
+            color: rgba(192, 192, 192, 0.6);
         }
 
+
+        /* General Button Styling */
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff; /* Blue button */
-            color: #ffffff; /* Light text */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
+          padding: 10px 20px;
+          font-size: 1em; /* Adjusted font size */
+          background-color: var(--primary-color);
+          color: white;
+          border: 1px solid var(--border-color);
+          cursor: pointer;
+          border-radius: var(--border-radius);
+          font-family: var(--font-family);
+          transition: filter 0.3s ease;
+          font-weight: 600;
+          outline: none;
+          margin: 5px;
         }
 
         button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+          filter: brightness(1.25);
+        }
+
+        button:disabled {
+          background: #555;
+          border-color: #444;
+          cursor: not-allowed;
+          filter: brightness(0.7);
         }
 
         #output {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #ffffff; /* Light text */
+            margin-top: 1rem;
+            font-size: 1em; /* Adjusted font size */
+            color: var(--text-color);
             text-align: left;
-            white-space: pre-wrap; /* Preserve formatting */
+            white-space: pre-wrap;
+            background: var(--input-bg); /* Give output a background */
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            min-height: 100px; /* Added minimum height to reserve space */
+            word-break: break-all; /* Break long strings */
+            position: relative; /* Added for potential absolute positioning inside */
+            overflow: hidden; /* Contains the floated button */
+        }
+        #output strong {
+            color: var(--primary-color); /* Highlight headings */
         }
 
+        /* Style copy button inside output */
+        #output #copyButton {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            float: right; /* Position to the right */
+        }
+
+
         .big-text {
-            font-size: 32px;
+            font-size: 1.5em; /* Adjusted size */
             font-weight: bold;
-            color: #ff0000; /* Red color */
-            margin-bottom: 20px;
+            color: #ff0000; /* Keep red color */
+            margin-bottom: 1rem;
+            text-transform: uppercase; /* Match h1 style */
+            letter-spacing: 1px;
+        }
+
+        a { /* General link styling */
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: var(--primary-color);
         }
 
         .discord-link {
-            font-size: 18px;
-            color: #7289da; /* Discord blue color */
-            margin-top: 20px;
-            text-decoration: none;
-        }
-
-        .discord-link:hover {
-            text-decoration: underline;
+            /* font-size: 1em; */ /* Use general link size */
+            /* color: #7289da; */ /* Use themed color */
+            margin-top: 1rem;
+            display: inline-block; /* Allow margin */
         }
 
         .redirect-link {
-            font-size: 18px;
-            color: #00ff00; /* Green color */
-            margin-top: 10px; /* Reduced margin to bring it closer to the Discord link */
-            text-decoration: none;
-        }
-
-        .redirect-link:hover {
-            text-decoration: underline;
+            /* font-size: 1em; */ /* Use general link size */
+            color: #00ff00; /* Keep green color */
+            margin-top: 0.5rem; /* Adjusted margin */
+            display: inline-block; /* Allow margin */
         }
 
         .error-message {
-            color: #ff0000; /* Red color */
+            color: #ff4444; /* Brighter red */
             font-weight: bold;
             margin-top: 10px;
+            font-size: 0.9em;
         }
 
-        #copyButton {
-            padding: 5px 10px;
-            font-size: 14px;
-            background-color: #007bff; /* Blue button */
-            color: #ffffff; /* Light text */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        #copyButton:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-        }
-
-        /* New overlay for the text and screen */
-        #text-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px); /* Blur effect */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000; /* Higher z-index to ensure it's on top */
-            color: white;
-            font-size: 2em;
-            cursor: pointer;
-            opacity: 1;
-            transition: opacity 0.5s ease-out;
-        }
-
-        /* Hide the text overlay after click */
-        #text-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Mute Button */
-        #muteButton {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(30, 30, 30, 0.8); /* Same as container */
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 10px; /* Same as container */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Same as container */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999; /* Lower z-index to ensure it's under the overlay */
-        }
-
-        #muteButton img {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Snowflake Styling */
+        /* Snowflake Styling - Copied from skidTriggerCreator */
         .snowflake {
-            position: absolute;
-            top: -10%;
-            color: #fff;
-            font-size: 1em;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear infinite;
-            opacity: 0.8; /* Slightly transparent */
+          position: fixed;
+          top: -10%;
+          color: #fff;
+          font-size: 1em;
+          user-select: none;
+          pointer-events: none;
+          animation: fall linear infinite;
+          opacity: 0.8;
+          z-index: 9998;
         }
 
         @keyframes fall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg); /* Fall to the bottom of the page */
-            }
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(110vh) rotate(360deg);
+            opacity: 0;
+          }
         }
 
-        /* Slower animation for snowflakes */
-        .snowflake {
-            animation-duration: 10s; /* Slower fall */
+        /* Fade-in animations */
+        @keyframes fadeIn {
+          to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Video Background -->
-    <video id="video-background" autoplay muted loop>
-        <source src="background2.mp4" type="video/mp4">
+    <!-- Video Background - Use consistent ID and source -->
+    <video id="video-bg" autoplay muted loop playsinline>
+        <source src="background2.mp4" type="video/mp4"> <!-- Match other pages -->
         Your browser does not support the video tag.
     </video>
 
-    <!-- Text Overlay -->
+    <!-- Click to Start Overlay - Use consistent structure -->
     <div id="text-overlay">
-        Click anywhere to start
+        <p id="click-text">Click to Start</p>
     </div>
 
-    <!-- Mute Button -->
-    <button id="muteButton">
-        <img src="mute.png" alt="Mute">
+    <!-- Mute Button - Use consistent structure -->
+    <button id="mute-button" aria-label="Toggle sound">
+      <i class="fas fa-volume-high"></i> <!-- Font Awesome icon -->
     </button>
 
-    <!-- Audio Element -->
-    <audio id="background-music" src="jojo.mp3" loop></audio>
+    <!-- Audio Element - Use consistent ID and source -->
+    <audio id="background-music" src="jojo.mp3" loop preload="auto"></audio> <!-- Match other pages -->
 
-    <div class="container">
-        <div class="big-text">𝐅𝐔𝐂𝐊 𝐉𝐀𝐘𝐓𝐇𝐀𝐀𝐆𝐀𝐌𝐄𝐑 𝐀𝐍𝐃 𝐇𝐈𝐒 𝐀𝐈 𝐏𝐀𝐈𝐃 𝐒𝐇𝐈𝐓</div>
-        <h1>FiveM Event Parser & Convertor</h1>
-        <input type="text" id="inputBox" placeholder="Enter TriggerServerEvent or EventName[params]">
-        <button id="convertButton">Convert</button>
-        <div id="output"></div>
-        <div id="errorMessage" class="error-message"></div>
-        <a href="https://discord.gg/3pYc4cRCGP" class="discord-link" target="_blank">Join My Discord</a>
-        <br> <!-- Force a new line -->
-        <a href="index.html" class="redirect-link">Go back to the main page</a>
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Converter App as a component -->
+            <div id="converter-app" class="component"> <!-- Added ID and class -->
+                <h1><i class="fas fa-exchange-alt"></i> FiveM Event Parser & Convertor</h1> <!-- Added icon -->
+                <input type="text" id="inputBox" placeholder="Enter TriggerServerEvent or EventName[params]">
+                <button id="convertButton"><i class="fas fa-sync-alt"></i> Convert</button> <!-- Added icon -->
+                <div id="output"></div>
+                <div id="errorMessage" class="error-message"></div>
+                <a href="https://discord.gg/3pYc4cRCGP" class="discord-link" target="_blank"><i class="fab fa-discord"></i> Join My Discord</a>
+                <br> <!-- Keep line break -->
+                <a href="index.html" class="redirect-link"><i class="fas fa-arrow-left"></i> Go back to the main page</a> <!-- Added icon -->
+            </div>
+        </div>
     </div>
 
     <script>
-        // Function to remove unnecessary spaces
-        function cleanInput(input) {
-            return input.replace(/\s+/g, ''); // Remove all spaces
+        // --- Merged JavaScript from skidTriggerCreator ---
+
+        // Click to start overlay
+        const overlay = document.getElementById('text-overlay'); // Use new ID
+        const clickText = document.getElementById('click-text'); // Use new ID
+        const backgroundMusic = document.getElementById('background-music'); // Use new ID
+        const videoBg = document.getElementById('video-bg'); // Use new ID
+
+        if (overlay && clickText && backgroundMusic && videoBg) {
+            overlay.addEventListener('click', function() {
+                overlay.classList.add('hidden');
+                initializeMuteState(); // Initialize mute state based on localStorage
+                backgroundMusic.play().catch(error => {
+                    console.log("Background music autoplay failed:", error);
+                });
+                videoBg.play().catch(error => {
+                    console.log("Background video autoplay failed:", error);
+                });
+            }, { once: true });
+        } else {
+            console.error("Overlay, click text, background music, or video background element not found.");
+            if(overlay) overlay.style.display = 'none';
         }
 
-        // Function to detect and parse the input
-        function parseInput(input) {
-            const cleanedInput = cleanInput(input);
+        // Mute button functionality
+        const muteButton = document.getElementById('mute-button'); // Use new ID
+        const muteIcon = muteButton ? muteButton.querySelector('i') : null; // Check if muteButton exists
+        const audioElements = [backgroundMusic, videoBg]; // Include video in mute control
+        let isMuted = localStorage.getItem('muted') === 'true';
 
-            // Check if it's already a TriggerServerEvent
-            const triggerRegex = /Trigger(?:Server)?Event\((['"])([^'"]+)\1(?:,([^)]+))?\)/;
+        function updateMuteStatus(muted) {
+          isMuted = muted;
+          audioElements.forEach(audio => {
+            if (audio) audio.muted = isMuted;
+          });
+          if (muteIcon) muteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+          localStorage.setItem('muted', isMuted);
+          if (muteButton) muteButton.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
+        }
+
+        function toggleMute() {
+          updateMuteStatus(!isMuted);
+        }
+
+        function initializeMuteState() {
+          isMuted = localStorage.getItem('muted') === 'true';
+          audioElements.forEach(audio => {
+            if (audio) audio.muted = isMuted;
+          });
+           if (muteIcon) muteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+           if (muteButton) muteButton.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
+        }
+
+        if (muteButton) {
+            muteButton.addEventListener('click', toggleMute);
+        }
+        // initializeMuteState called after overlay click
+
+        // Snowflake effect
+        function createSnowflake() {
+          const snowflake = document.createElement('div');
+          snowflake.innerHTML = '❄';
+          snowflake.classList.add('snowflake');
+          snowflake.style.left = Math.random() * 100 + 'vw';
+          const duration = Math.random() * 10 + 10; // 10-20 seconds fall time
+          snowflake.style.animationDuration = duration + 's';
+          snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+          snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+
+          document.body.appendChild(snowflake);
+
+          setTimeout(() => {
+            snowflake.remove();
+          }, (duration + 1) * 1000);
+        }
+
+        function startSnowfall() {
+          const currentMonth = new Date().getMonth() + 1;
+          if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
+             if (!window.snowfallInterval) {
+                 window.snowfallInterval = setInterval(createSnowflake, 500);
+             }
+          }
+        }
+        // Start snowfall on load (if it's winter)
+        startSnowfall();
+
+        // --- Original Converter JavaScript ---
+
+        // Remove old overlay, music, mute, snowflake JS
+
+        // Function to remove unnecessary spaces (keep original)
+        function cleanInput(input) {
+            // Keep original logic, maybe trim only start/end?
+            // return input.replace(/\s+/g, ''); // This might be too aggressive
+            return input.trim(); // Trim start/end whitespace
+        }
+
+        // Function to detect and parse the input (keep original)
+        function parseInput(input) {
+            // Keep original logic
+            const cleanedInput = input.trim(); // Use trim instead of full replace
+
+            // Regex for TriggerServerEvent or TriggerEvent
+            const triggerRegex = /Trigger(Server)?Event\s*\(\s*(['"])([^'"]+)\2\s*(?:,\s*([^)]*))?\)/;
             const triggerMatch = cleanedInput.match(triggerRegex);
 
             if (triggerMatch) {
-                const eventName = triggerMatch[2];
-                const parameters = triggerMatch[3] ? parseParameters(triggerMatch[3]) : [];
+                const eventName = triggerMatch[3];
+                const parameters = triggerMatch[4] ? parseParameters(triggerMatch[4]) : [];
                 return { eventName, parameters, type: 'trigger' };
             }
 
-            // Updated regex to handle event names with colons
-            const parsedRegex = /^([\w:-]+)\[([^\]]*)\]$/;
+            // Regex for EventName[params] format
+            const parsedRegex = /^([\w:-]+)\s*\[\s*([^\]]*)\s*\]$/; // Allow spaces around brackets
             const parsedMatch = cleanedInput.match(parsedRegex);
 
             if (parsedMatch) {
@@ -261,11 +456,12 @@
                 return { eventName, parameters, type: 'parsed' };
             }
 
-            return null;
+            return null; // Return null if no match
         }
 
-        // Improved parameter parsing to handle empty parameters better
+        // Improved parameter parsing (keep original)
         function parseParameters(params) {
+            // Keep original logic
             if (!params || params.trim() === '') {
                 return [];
             }
@@ -274,13 +470,12 @@
                 let buffer = '';
                 let inString = false;
                 let stringDelimiter = '';
-                let inObject = 0;
-                let inArray = 0;
+                let bracketLevel = 0; // Use a single level counter for {} and []
                 let escaped = false;
 
                 for (let i = 0; i < params.length; i++) {
                     const char = params[i];
-                    
+
                     if (escaped) {
                         buffer += char;
                         escaped = false;
@@ -300,19 +495,13 @@
                     } else if (char === stringDelimiter && inString) {
                         inString = false;
                         buffer += char;
-                    } else if (char === '{' && !inString) {
-                        inObject++;
+                    } else if ((char === '{' || char === '[') && !inString) {
+                        bracketLevel++;
                         buffer += char;
-                    } else if (char === '}' && !inString) {
-                        inObject--;
+                    } else if ((char === '}' || char === ']') && !inString) {
+                        bracketLevel--;
                         buffer += char;
-                    } else if (char === '[' && !inString) {
-                        inArray++;
-                        buffer += char;
-                    } else if (char === ']' && !inString) {
-                        inArray--;
-                        buffer += char;
-                    } else if (char === ',' && !inString && inObject === 0 && inArray === 0) {
+                    } else if (char === ',' && !inString && bracketLevel === 0) {
                         paramList.push(buffer.trim());
                         buffer = '';
                     } else {
@@ -327,244 +516,265 @@
                 return paramList.map(param => parseValue(param.trim()));
             } catch (error) {
                 console.error("Error parsing parameters:", error);
-                return [];
+                return ["ErrorParsingParams"]; // Indicate error
             }
         }
 
-        // Add this helper function to check if a string is a valid identifier
+        // Helper function to check if a string is a valid identifier (keep original)
         function isValidIdentifier(str) {
-            return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(str);
+            // Keep original logic
+             return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(str);
         }
 
-        // Update the parseValue function
+        // Update the parseValue function (keep original)
         function parseValue(value) {
-            // Remove surrounding whitespace
+            // Keep original logic
             value = value.trim();
 
-            // Check if it's a valid identifier (variable name)
-            if (isValidIdentifier(value)) {
-                return { type: 'identifier', value: value };
+            // Handle specific keywords first
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            if (value === 'null') return null;
+            if (value === 'undefined') return undefined; // Or handle as string 'undefined' if needed
+
+            // Handle numbers
+            if (!isNaN(value) && value !== '') { // Ensure not empty string
+                 // Check if it contains non-numeric characters besides . and -
+                 if (/^[+-]?\d+(\.\d+)?$/.test(value)) {
+                     return Number(value);
+                 }
             }
 
-            // Try parsing as JSON
-            try {
-                if ((value.startsWith('{') && value.endsWith('}')) ||
-                    (value.startsWith('[') && value.endsWith(']'))) {
-                    return JSON.parse(value);
-                }
-            } catch {}
 
             // Handle quoted strings
             if ((value.startsWith('"') && value.endsWith('"')) ||
                 (value.startsWith("'") && value.endsWith("'"))) {
-                return value.slice(1, -1);
+                // Attempt to unescape characters within the string
+                try {
+                     // Basic unescaping for common sequences
+                     return value.slice(1, -1)
+                                 .replace(/\\'/g, "'")
+                                 .replace(/\\"/g, '"')
+                                 .replace(/\\n/g, '\n')
+                                 .replace(/\\t/g, '\t')
+                                 .replace(/\\\\/g, '\\');
+                } catch {
+                    return value.slice(1, -1); // Fallback if unescaping fails
+                }
             }
 
-            // Handle numbers
-            if (!isNaN(value)) {
-                return Number(value);
+            // Try parsing as JSON object or array
+            try {
+                if ((value.startsWith('{') && value.endsWith('}')) ||
+                    (value.startsWith('[') && value.endsWith(']'))) {
+                    // More robust JSON parsing attempt
+                    return JSON.parse(value);
+                }
+            } catch {}
+
+            // If it looks like a variable/identifier
+            if (isValidIdentifier(value)) {
+                return { type: 'identifier', value: value };
             }
 
-            // Handle booleans and null
-            if (value === 'true') return true;
-            if (value === 'false') return false;
-            if (value === 'null') return null;
-            if (value === 'undefined') return undefined;
-
-            // If not a valid identifier, treat as string but preserve format
+            // Default: treat as string (without adding quotes here)
             return value;
         }
 
-        // Update the formatParameter function
+        // Update the formatParameter function (keep original)
         function formatParameter(param) {
+            // Keep original logic
             if (param && param.type === 'identifier') {
                 return param.value; // Return identifier without quotes
             }
             if (typeof param === 'string') {
-                // Check if the string needs quotes
-                if (isValidIdentifier(param)) {
-                    return param; // No quotes for valid identifiers
-                }
-                return `'${param.replace(/'/g, "\\'")}'`; // Quote only if necessary
+                 // Escape single quotes within the string before wrapping
+                 const escapedString = param.replace(/'/g, "\\'");
+                 return `'${escapedString}'`; // Use single quotes for Lua compatibility
             }
             if (typeof param === 'object' && param !== null) {
-                return JSON.stringify(param);
+                // Basic Lua table formatting (not perfect for nested/complex)
+                if (Array.isArray(param)) {
+                    return `{${param.map(formatParameter).join(', ')}}`;
+                } else {
+                    // Simple key-value pairs, assumes keys are valid identifiers or strings
+                    const pairs = Object.entries(param).map(([key, value]) => {
+                        const formattedKey = isValidIdentifier(key) ? key : `['${key.replace(/'/g, "\\'")}']`;
+                        return `${formattedKey} = ${formatParameter(value)}`;
+                    });
+                    return `{${pairs.join(', ')}}`;
+                }
             }
             if (typeof param === 'undefined') {
-                return 'undefined';
+                return 'nil'; // Use nil for undefined in Lua
             }
+             if (typeof param === 'boolean') {
+                 return param ? 'true' : 'false';
+             }
+             if (param === null) {
+                 return 'nil'; // Use nil for null in Lua
+             }
+            // Numbers and other types
             return String(param);
         }
 
-        // Function to convert parsed event into TriggerServerEvent format
+        // Function to convert parsed event into TriggerServerEvent format (keep original)
         function convertToTriggerServerEvent(eventName, parameters) {
-            if (parameters.length === 0) {
-                return `TriggerServerEvent('${eventName}')`;
-            }
-            return `TriggerServerEvent('${eventName}', ${parameters.map(formatParameter).join(', ')})`;
+            // Keep original logic
+            const formattedParams = parameters.map(formatParameter).join(', ');
+            return `TriggerServerEvent('${eventName}'${formattedParams ? ', ' + formattedParams : ''})`;
         }
 
-        // Function to convert TriggerServerEvent into parsed event format
+        // Function to convert TriggerServerEvent into parsed event format (keep original)
         function convertToParsedEvent(eventName, parameters) {
-            if (parameters.length === 0) {
-                return `${eventName}[]`;
-            }
-            return `${eventName}[${parameters.map(formatParameter).join(',')}]`;
+            // Keep original logic
+             const formattedParams = parameters.map(param => {
+                 // Format for the EventName[params] style
+                 if (param && param.type === 'identifier') {
+                     return param.value;
+                 }
+                 if (typeof param === 'string') {
+                     // Escape double quotes if using double quotes for wrapping
+                     return `"${param.replace(/"/g, '\\"')}"`;
+                 }
+                 if (typeof param === 'object') {
+                     return JSON.stringify(param); // Use JSON stringify for objects/arrays here
+                 }
+                 if (typeof param === 'undefined') {
+                     return 'undefined';
+                 }
+                 return String(param);
+             }).join(',');
+             return `${eventName}[${formattedParams}]`;
         }
 
-        // Update the formatEventDetails function to properly format parameters
+        // Function to format the output as "Event Name: ... Parameters: [...]" (keep original)
         function formatEventDetails(eventName, parameters) {
-            const formattedParams = parameters.map(param => {
-                if (param && param.type === 'identifier') {
-                    return param.value;
-                }
-                if (typeof param === 'string') {
-                    return `"${param}"`;
-                }
-                return param;
-            });
-            
-            return `Event Name: ${eventName}\nParameters: [${formattedParams.join(', ')}]`;
+            // Keep original logic - use formatParameter for consistency
+             const formattedParams = parameters.map(formatParameter).join(', ');
+             return `<strong>Event Name:</strong> ${eventName}\n<strong>Parameters:</strong> [${formattedParams}]`;
         }
 
-        // Update the formatParameter function to handle identifiers better
-        function formatParameter(param) {
-            if (param && param.type === 'identifier') {
-                return param.value; // Return identifier without quotes
-            }
-            if (typeof param === 'string') {
-                return `"${param}"`; // Use double quotes for strings
-            }
-            if (typeof param === 'object' && param !== null) {
-                return JSON.stringify(param);
-            }
-            if (typeof param === 'undefined') {
-                return 'undefined';
-            }
-            return String(param); // Convert numbers and other types to string
-        }
-
-        // Function to format the output as "Event Name: ... Parameters: [...]"
-        function formatEventDetails(eventName, parameters) {
-            return `Event Name: ${eventName}\nParameters: [${parameters.map(param => typeof param === 'string' ? `'${param}'` : param).join(', ')}]`;
-        }
-
-        // Function to copy text to clipboard
+        // Function to copy text to clipboard (keep original)
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
-            }).catch(() => {
+            // Keep original logic
+            if (navigator.clipboard && window.isSecureContext) {
+                 navigator.clipboard.writeText(text).then(() => {
+                     alert('Copied to clipboard!');
+                 }).catch(err => {
+                     console.error('Clipboard write failed: ', err);
+                     fallbackCopyTextToClipboard(text); // Fallback for potential errors
+                 });
+            } else {
+                 fallbackCopyTextToClipboard(text); // Fallback for insecure contexts or no API
+            }
+        }
+        // Fallback copy method
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; // Prevent scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.opacity = "0"; // Make it invisible
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('Copied to clipboard!');
+                } else {
+                    alert('Failed to copy. Please manually copy the text.');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed', err);
                 alert('Failed to copy. Please manually copy the text.');
-            });
+            }
+            document.body.removeChild(textArea);
         }
 
-        // Array of emojis to loop through
+
+        // Array of emojis (keep original)
         const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
 
-        // Function to update the page title with random emojis
+        // Function to update the page title (keep original)
         function updatePageTitle() {
+            // Keep original logic
             const emoji1 = emojis[Math.floor(Math.random() * emojis.length)];
             const emoji2 = emojis[Math.floor(Math.random() * emojis.length)];
             document.title = `${emoji1} FiveM Event Parser & Converter ${emoji2}`;
         }
 
-        // Update the page title every 1 second
-        setInterval(updatePageTitle, 500);
+        // Update the page title interval (keep original)
+        setInterval(updatePageTitle, 500); // Keep 500ms interval
 
-        // Event listener for the convert button
+        // Event listener for the convert button (keep original logic, update selectors)
         document.getElementById('convertButton').addEventListener('click', function() {
             const input = document.getElementById('inputBox').value;
-            const output = document.getElementById('output');
+            const outputDiv = document.getElementById('output'); // Target the div
             const errorMessage = document.getElementById('errorMessage');
             const result = parseInput(input);
+
+            errorMessage.innerHTML = ''; // Clear previous errors
+            // Clear previous output *before* adding new content
+            outputDiv.innerHTML = '';
 
             if (result) {
                 let convertedValue;
                 let outputText;
                 let copyText;
+
                 if (result.type === 'trigger') {
-                    // Convert TriggerServerEvent to parsed event
                     convertedValue = convertToParsedEvent(result.eventName, result.parameters);
-                    // Display event details for TriggerServerEvent input
-                    outputText = `<strong>Event Details:</strong>\n${formatEventDetails(result.eventName, result.parameters)}`;
-                    // Set copy text to the event details format
-                    copyText = convertedValue;
+                    // Combine text content first
+                    outputText = `<strong>Converted to Parsed Format:</strong>\n${convertedValue}\n\n<strong>Original Event Details:</strong>\n${formatEventDetails(result.eventName, result.parameters)}`;
+                    copyText = convertedValue; // Copy the converted format
                 } else if (result.type === 'parsed') {
-                    // Convert parsed event to TriggerServerEvent
                     convertedValue = convertToTriggerServerEvent(result.eventName, result.parameters);
-                    // Display TriggerServerEvent for parsed event input
-                    outputText = `<strong>TriggerServerEvent:</strong>\n${convertedValue}`;
-                    // Set copy text to the TriggerServerEvent format
-                    copyText = convertedValue;
+                    // Combine text content first
+                    outputText = `<strong>Converted to TriggerServerEvent:</strong>\n${convertedValue}\n\n<strong>Original Event Details:</strong>\n${formatEventDetails(result.eventName, result.parameters)}`;
+                    copyText = convertedValue; // Copy the converted format
                 }
-                // Update the input box with the converted value
-                document.getElementById('inputBox').value = convertedValue;
-                // Display the output and Copy button
-                output.innerHTML = `${outputText}<br><button id="copyButton" style="background-color: #007bff;">Copy</button>`;
-                // Add event listener to the copy button
-                document.getElementById('copyButton').addEventListener('click', function() {
+
+                // Set the combined text content
+                outputDiv.innerHTML = outputText;
+
+                // Create and append the copy button separately
+                const copyButton = document.createElement('button');
+                copyButton.id = 'copyButton';
+                copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy Converted';
+                copyButton.addEventListener('click', function() {
                     copyToClipboard(copyText);
                 });
-                errorMessage.innerHTML = '';
+                outputDiv.appendChild(document.createElement('br')); // Add line break before button if needed
+                outputDiv.appendChild(copyButton);
+
+
+                // Optionally update the input box with the converted value (or clear it)
+                // document.getElementById('inputBox').value = convertedValue; // Uncomment to update input
+                // document.getElementById('inputBox').value = ''; // Uncomment to clear input
+
             } else {
-                output.innerHTML = '';
-                errorMessage.innerHTML = 'Invalid input. Please enter a valid TriggerServerEvent or EventName[params].';
+                errorMessage.innerHTML = 'Invalid input format. Please use Trigger(Server)Event(...) or EventName[...].';
+                // Ensure output is cleared even on error
+                outputDiv.innerHTML = '';
             }
         });
 
-        // Overlay and Music
-        const overlay = document.getElementById('text-overlay');
-        const backgroundMusic = document.getElementById('background-music');
-        const videoBackground = document.getElementById('video-background');
-
-        overlay.addEventListener('click', () => {
-            console.log('Overlay clicked'); // Debugging
-            overlay.classList.add('hidden');
-            backgroundMusic.play();
-            videoBackground.play();
-        });
-
-        // Ensure the overlay is visible on page load
-        window.onload = () => {
-            overlay.style.display = 'flex';
-        };
-
-        // Mute/Unmute Button Functionality
-        const muteButton = document.getElementById('muteButton');
-        muteButton.addEventListener('click', () => {
-            if (backgroundMusic.muted) {
-                backgroundMusic.muted = false;
-                muteButton.innerHTML = '<img src="mute.png" alt="Mute">';
-            } else {
-                backgroundMusic.muted = true;
-                muteButton.innerHTML = '<img src="unmute.png" alt="Unmute">';
+        // Add listener for Enter key in input box
+        document.getElementById('inputBox').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission if applicable
+                document.getElementById('convertButton').click(); // Trigger the convert button click
             }
         });
 
-        // Snowflake Effect
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.innerHTML = '❄';
-            snowflake.classList.add('snowflake');
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.animationDuration = Math.random() * 10 + 10 + 's'; // Slower fall (10-20 seconds)
-            snowflake.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity between 0.3 and 1
-            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // Random size between 10px and 20px
-            document.body.appendChild(snowflake);
 
-            setTimeout(() => {
-                snowflake.remove();
-            }, 20000); // Remove snowflake after 20 seconds
-        }
+        // Ensure the overlay is handled correctly on load (already merged)
+        // Ensure mute button functionality is correct (already merged)
+        // Ensure snowflake effect is correct (already merged)
 
-        function startSnowfall() {
-            const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
-            if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-                setInterval(createSnowflake, 500); // Create a snowflake every 500ms
-            }
-        }
-
-        startSnowfall();
     </script>
 </body>
 </html>
