@@ -6,385 +6,445 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 Chomik Trigger Creator 🚀</title>
     <link rel="shortcut icon" href="chomik.jpg" type="image/jpeg">
+    <!-- Use Fira Code font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Include Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @font-face {
-            font-family: Gotham;
-            src: url(Gotham_Bold.otf);
+        /* Define theme colors */
+        :root {
+          --bg-color: #0a0a0a;
+          --container-bg: rgba(0, 0, 0, 0.5);
+          --text-color: #c0c0c0; /* Light gray for general text */
+          --primary-color: #7400d9; /* Purple from html.html */
+          --accent-color: #7a03e0; /* Slightly different purple for accents */
+          --border-color: rgba(122, 3, 224, 0.5); /* Purple border */
+          --border-radius: 0.4rem; /* 6.4px */
+          --font-family: 'Fira Code', monospace;
+          --input-bg: #1a1a1a; /* Darker input background */
+        }
+
+        /* Basic page styling */
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          font-family: var(--font-family);
+          background-color: var(--bg-color);
+          color: var(--text-color);
+          opacity: 0;
+          animation: fadeIn 1.5s forwards;
+          overflow-x: hidden; /* Prevent horizontal scroll */
+          overflow-y: auto; /* Allow vertical scroll if needed */
+        }
+
+        /* Add global custom cursor style */
+        * {
+          cursor: url(jojo/hqizezkx5r.cur) 0 0, auto !important;
+          box-sizing: border-box; /* Include padding and border in element's total width and height */
         }
 
         /* Video Background */
-        #video-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensures the video covers the entire background */
-            z-index: -1; /* Places the video behind other content */
+        #video-bg { /* Changed ID */
+          position: fixed;
+          right: 0;
+          bottom: 0;
+          min-width: 100%;
+          min-height: 100%;
+          width: auto;
+          height: auto;
+          z-index: -10;
+          object-fit: cover;
+          filter: blur(2px) brightness(100%); /* Match html.html filter */
         }
 
-        body {
-            background-color: #121212; /* Fallback background color */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: Gotham;
-            color: #ffffff; /* Light text */
-            margin: 0;
+        /* Click to Start Overlay Styles */
+        #text-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 10002; /* Ensure it's above other content */
+          cursor: pointer; /* Use default pointer for the overlay itself */
+          transition: opacity 0.5s ease;
+          opacity: 1; /* Start visible */
+        }
+        #text-overlay.hidden {
+          opacity: 0;
+          pointer-events: none; /* Disable interaction after hiding */
+        }
+        #click-text {
+          color: white;
+          font-size: 2em;
+          font-weight: bold;
+          font-family: var(--font-family); /* Match page font */
         }
 
+        /* Main content wrapper - centered */
+        .main-wrapper {
+          display: flex;
+          min-height: 100vh;
+          padding: 2rem 0 2rem 0; /* Adjusted top padding */
+          width: 100%;
+          justify-content: center;
+          align-items: center; /* Center vertically */
+        }
+
+        /* Main content container - similar to max-w-[42rem] */
+        .container {
+          max-width: 42rem;
+          width: 90%; /* Fallback for smaller screens */
+          margin: 0 auto; /* Center the container */
+          padding: 0 1rem; /* px-4 equivalent */
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem; /* gap-3 equivalent */
+        }
+
+        /* General component styling */
+        .component {
+          background-color: var(--container-bg);
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          padding: 1.5rem; /* Increased padding */
+          backdrop-filter: blur(5px); /* Optional blur */
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          width: 100%; /* Ensure component takes full width of container */
+        }
+
+        /* Mute button styling */
+        #mute-button {
+          position: fixed;
+          top: 15px; /* Adjusted position */
+          right: 15px;
+          background-color: transparent;
+          border: none;
+          color: var(--text-color);
+          font-size: 1.25rem; /* Adjusted size for icons */
+          cursor: url('GTA 5 Web Cursor.cur'), pointer; /* Specific cursor */
+          z-index: 1001; /* Above other elements */
+          transition: transform 0.3s ease, color 0.3s ease;
+          padding: 5px; /* Add some padding for easier clicking */
+          line-height: 1; /* Ensure icon vertical alignment */
+        }
+
+        #mute-button:hover {
+          transform: scale(1.1);
+          color: var(--accent-color);
+        }
+
+        /* Form Specific Styles */
         #triggerForm {
-            position: relative; /* Make the container a reference for absolute positioning */
             display: flex;
             flex-direction: column;
-            align-items: center;
-            background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent dark container background */
-            padding: 20px; /* Reduced padding */
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 90%; /* Adjusted width */
-            max-width: 400px; /* Smaller max-width */
+            align-items: center; /* Center items within the form */
+            gap: 1rem; /* Space between form elements */
         }
 
         h1 {
-            font-family: Gotham, sans-serif; /* Use Gotham font or fallback to sans-serif */
-            font-size: 2em; /* Adjust font size to fit in one line */
-            color: #007fff; /* Blue color to match the theme */
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
-            margin-bottom: 20px; /* Space below the heading */
-            text-transform: uppercase; /* Uppercase text */
-            letter-spacing: 2px; /* Add some spacing between letters */
-            white-space: nowrap; /* Prevent text from wrapping to the next line */
+            font-family: var(--font-family);
+            font-size: 1.8em; /* Adjusted size */
+            color: var(--primary-color);
+            text-shadow: 0 0 5px rgba(116, 0, 217, 0.5);
+            margin-bottom: 1rem; /* Space below heading */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
         }
 
         label {
-            position: relative;
-            right: 7px;
-            color: #ffffff; /* Light text */
+            color: var(--text-color);
+            font-size: 0.9em;
+            width: 100%; /* Make labels take full width */
+            text-align: left; /* Align label text left */
+            margin-bottom: -0.5rem; /* Reduce space below label */
         }
 
-        input {
-            background-color: #333; /* Dark input background */
-            border: none;
-            color: #ffffff; /* Light text */
+        input[type="text"],
+        input[type="number"] {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             padding: 10px;
-            border-radius: 5px;
-            font-family: Gotham;
-            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
             width: 100%;
+            transition: border-color 0.3s ease;
         }
 
-        input:focus {
+        input[type="text"]:focus,
+        input[type="number"]:focus {
             outline: none;
-            border: 1px solid #007fff; /* Blue border on focus */
+            border-color: var(--accent-color); /* Highlight border on focus */
         }
 
-        button {
-            background-color: #007fff; /* Blue button */
+        input::placeholder {
+            color: rgba(192, 192, 192, 0.6); /* Lighter placeholder text */
+        }
+
+        button[type="button"] {
+            background-color: var(--primary-color);
             color: white;
             outline: none;
-            border: none;
+            border: 1px solid var(--border-color);
             padding: 10px 20px;
             width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: Gotham;
+            border-radius: var(--border-radius);
+            cursor: pointer; /* Use default pointer for button */
+            font-family: var(--font-family);
             margin-top: 10px;
+            transition: filter 0.3s ease;
+            font-weight: 600;
         }
 
-        button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+        button[type="button"]:hover {
+            filter: brightness(1.25);
         }
 
         /* Loop Checkboxes Container */
         .loop-checkboxes {
             display: flex;
-            align-items: center; /* Align checkboxes vertically */
-            gap: 20px; /* Add space between checkboxes */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            align-items: center;
+            justify-content: center; /* Center checkboxes */
+            gap: 15px; /* Space between checkboxes */
             margin-bottom: 10px;
+            width: 100%;
         }
 
         /* Checkbox Labels */
-        #iloop, #forLoopLabel, #untilCheckmarkLabel {
+        .loop-checkboxes label {
             display: flex;
-            align-items: center; /* Align text and checkbox vertically */
-            gap: 5px; /* Add space between checkbox and text */
-            color: #ffffff; /* Light text */
-            cursor: pointer;
+            align-items: center;
+            gap: 8px; /* Space between checkbox and text */
+            color: var(--text-color);
+            cursor: pointer; /* Use default pointer */
+            font-size: 0.9em;
+            width: auto; /* Don't force full width */
+            margin-bottom: 0; /* Reset margin */
+            position: relative; /* Needed for tooltip */
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--primary-color); /* Style the checkbox color */
+            cursor: pointer; /* Use default pointer */
+            width: 16px;
+            height: 16px;
         }
 
         /* Tooltip Styles */
         [data-tooltip] {
             position: relative;
-            cursor: pointer;
         }
 
         [data-tooltip]::after {
-            content: attr(data-tooltip); /* Display the tooltip text */
+            content: attr(data-tooltip);
             position: absolute;
-            bottom: 100%; /* Position above the label */
+            bottom: 120%; /* Position above the label */
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(30, 30, 30, 0.9); /* Dark background */
-            color: #ffffff; /* Light text */
-            padding: 8px;
-            border-radius: 5px;
-            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.9); /* Dark background */
+            color: var(--primary-color); /* Purple text */
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            font-size: 0.8em;
+            font-weight: 600;
             white-space: pre-line; /* Preserve line breaks */
-            opacity: 0; /* Hide by default */
+            opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            z-index: 1000; /* Ensure it's on top */
-            min-width: 200px; /* Set a minimum width */
-            text-align: left; /* Align text to the left */
+            z-index: 1000;
+            min-width: 220px; /* Minimum width */
+            text-align: left;
+            border: 1px solid var(--border-color);
         }
 
         [data-tooltip]:hover::after {
-            opacity: 1; /* Show on hover */
+            opacity: 1;
             visibility: visible;
         }
 
-        #delay::placeholder {
-            color: rgb(219, 219, 219);
+        /* Conditional Input Containers */
+        #loopCountContainer,
+        #conditionContainer,
+        #bindContainer,
+        .delay-container { /* Use a class for delay */
+            width: 100%;
+            display: flex; /* Use flex for alignment */
+            flex-direction: column; /* Stack label and input */
+            gap: 0.5rem; /* Space between label and input */
         }
 
-        #loopCountContainer {
-            margin-bottom: 10px;
+        #bindContainer {
+            background-color: rgba(0, 0, 0, 0.2); /* Slightly different background */
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+            gap: 1rem; /* Increase gap inside bind container */
         }
 
-        #loopCount::placeholder {
-            color: rgb(219, 219, 219);
-        }
-
-        #conditionContainer {
-            margin-bottom: 10px;
-        }
-
-        #condition::placeholder {
-            color: rgb(219, 219, 219);
+        #bindContainer input {
+            margin-bottom: 0; /* Remove default margin */
         }
 
         p {
-            color: #ffffff; /* Light text */
-            margin: 10px 0;
-            font-size: 14px; /* Smaller text */
+            color: var(--text-color);
+            margin: 5px 0;
+            font-size: 0.9em; /* Smaller text */
+            text-align: center;
         }
 
         a {
-            color: #7289da; /* Discord blue color */
+            color: var(--accent-color); /* Use accent color for links */
             text-decoration: none;
-            font-size: 14px; /* Smaller text */
+            font-size: 0.9em; /* Smaller text */
+            transition: color 0.3s ease;
         }
 
         a:hover {
             text-decoration: underline;
+            color: var(--primary-color);
         }
 
         .redirect-link {
-            color: #00ff00; /* Green color */
+            color: #00ff00; /* Keep green for emphasis */
             margin-top: 10px;
-            font-size: 14px; /* Smaller text */
-        }
-
-        /* Overlay Styles */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); /* Semi-transparent black */
-            backdrop-filter: blur(10px); /* Add blur effect */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            color: white;
-            z-index: 1000; /* Ensure it's on top */
-            cursor: pointer;
-        }
-
-        #overlay.hidden {
-            display: none; /* Hide the overlay */
-        }
-
-        /* Mute Button */
-        #muteButton {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(30, 30, 30, 0.8); /* Same as container */
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 10px; /* Same as container */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Same as container */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999; /* Ensure it's under the overlay but above other content */
-            width: 44px; /* Fixed width for a square button */
-            height: 44px; /* Fixed height for a square button */
-        }
-
-        #muteButton img {
-            width: 24px;
-            height: 24px;
-            display: block; /* Ensure the image is centered */
-            margin: auto; /* Center the image within the button */
         }
 
         /* Snowflake Styling */
         .snowflake {
-            position: absolute;
-            top: -10%;
-            color: #fff;
-            font-size: 1em;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear infinite;
-            opacity: 0.8; /* Slightly transparent */
+          position: fixed; /* Use fixed to cover the viewport */
+          top: -10%;
+          color: #fff;
+          font-size: 1em;
+          user-select: none;
+          pointer-events: none;
+          animation: fall linear infinite;
+          opacity: 0.8;
+          z-index: 9998; /* Ensure snowflakes are behind overlay/nav but above background */
         }
 
         @keyframes fall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg); /* Fall to the bottom of the page */
-            }
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(110vh) rotate(360deg);
+            opacity: 0; /* Fade out at the bottom */
+          }
         }
 
-        /* Slower animation for snowflakes */
-        .snowflake {
-            animation-duration: 10s; /* Slower fall */
+        /* Fade-in animations */
+        @keyframes fadeIn {
+          to { opacity: 1; }
         }
 
-        #bindContainer {
-            background-color: rgba(30, 30, 30, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        
-        #bindContainer input {
-            margin-bottom: 10px;
-            background-color: #333;
-            color: #ffffff;
-        }
     </style>
 </head>
 <body>
     <!-- Video Background -->
-    <video id="video-background" autoplay muted loop>
-        <source src="background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+    <video autoplay muted loop playsinline id="video-bg"> <!-- Changed ID and added playsinline -->
+        <source src="background.mp4" type="video/mp4"> <!-- Kept original video source -->
+        Your browser does not support HTML5 video.
     </video>
 
-    <!-- Overlay -->
-    <div id="overlay">
-        Click anywhere to start
+    <!-- Click to Start Overlay -->
+    <div id="text-overlay">
+        <p id="click-text">Click to Start</p>
     </div>
 
-    <!-- Mute Button (Moved outside the form) -->
-    <button id="muteButton">
-        <img src="mute.png" alt="Mute">
+    <!-- Mute button -->
+    <button id="mute-button" aria-label="Toggle sound">
+      <i class="fas fa-volume-high"></i> <!-- Default icon -->
     </button>
 
-    <!-- Form -->
-    <form id="triggerForm" autocomplete="off">
-        <!-- Replace Logo with Text -->
-        <h1>Trigger Creator</h1>
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Form as a component -->
+            <form id="triggerForm" class="component" autocomplete="off">
+                <h1><i class="fas fa-bolt"></i> Trigger Creator</h1> <!-- Added icon -->
 
-        <label for="param1">First Parameter:</label>
-        <input type="text" id="param1" name="param1" required>
-    
-        <br>
-    
-        <label for="param2">Second Parameter:</label>
-        <input type="text" id="param2" name="param2" required>
-    
-        <br>
+                <label for="param1">Trigger Name:</label> <!-- Changed label text -->
+                <input type="text" id="param1" name="param1" required placeholder="e.g., esx:giveInventoryItem">
 
-        <!-- Loop Checkboxes Container -->
-        <div class="loop-checkboxes">
-            <label id="iloop" for="whileLoop" data-tooltip="Repeats indefinitely until manually stopped. Example in Lua:
-while true do
-    -- Code here
-end">
-                <input type="checkbox" id="whileLoop" name="whileLoop">
-                While Loop
-            </label>
+                <label for="param2">Trigger Parameters (JSON Array):</label> <!-- Changed label text -->
+                <input type="text" id="param2" name="param2" required placeholder='e.g., ["item_id", "item_count"]'>
 
-            <label id="forLoopLabel" for="forLoop" data-tooltip="Repeats a specific number of times. Example in Lua:
-for i = 1, 10 do
-    -- Code here
-end">
-                <input type="checkbox" id="forLoop" name="forLoop">
-                For Loop
-            </label>
+                <!-- Loop Checkboxes Container -->
+                <div class="loop-checkboxes">
+                    <label for="whileLoop" data-tooltip="Repeats indefinitely until manually stopped. Example in Lua:&#10;while true do&#10;    -- Code here&#10;end">
+                        <input type="checkbox" id="whileLoop" name="whileLoop">
+                        While Loop
+                    </label>
 
-            <label id="untilCheckmarkLabel" for="untilCheckmark" data-tooltip="Repeats until a specific condition is met. Example in Lua:
-repeat
-    -- Code here
-until condition">
-                <input type="checkbox" id="untilCheckmark" name="untilCheckmark">
-                Repeat Until
-            </label>
+                    <label for="forLoop" data-tooltip="Repeats a specific number of times. Example in Lua:&#10;for i = 1, 10 do&#10;    -- Code here&#10;end">
+                        <input type="checkbox" id="forLoop"" name="forLoop">
+                        For Loop
+                    </label>
 
-            <label id="bindCheckLabel" for="bindCheck" data-tooltip="Adds key binding to start/stop the trigger. Example:
-Press key to start running the trigger
-Press another key to stop">
-                <input type="checkbox" id="bindCheck" name="bindCheck">
-                Bind Keys
-            </label>
+                    <label for="untilCheckmark" data-tooltip="Repeats until a specific condition is met. Example in Lua:&#10;repeat&#10;    -- Code here&#10;until condition">
+                        <input type="checkbox" id="untilCheckmark" name="untilCheckmark">
+                        Repeat Until
+                    </label>
+
+                    <label for="bindCheck" data-tooltip="Adds key binding to start/stop the trigger. Example:&#10;Press key to start running the trigger&#10;Press another key to stop">
+                        <input type="checkbox" id="bindCheck" name="bindCheck">
+                        Bind Keys
+                    </label>
+                </div>
+
+                <!-- Delay Input (for While Loop) -->
+                <div class="delay-container" style="display: none;"> <!-- Changed class and added container -->
+                    <label for="delay">Delay (seconds):</label>
+                    <input type="number" id="delay" name="delay" placeholder="Enter delay in seconds (e.g., 0.5)">
+                </div>
+
+                <!-- Loop Count Input (for For Loop) -->
+                <div id="loopCountContainer" style="display: none;">
+                    <label for="loopCount">Number of Repetitions:</label>
+                    <input type="number" id="loopCount" name="loopCount" placeholder="Enter number of repetitions (e.g., 10)">
+                </div>
+
+                <!-- Condition Input (for Repeat Until) -->
+                <div id="conditionContainer" style="display: none;">
+                    <label for="condition">Condition:</label>
+                    <input type="text" id="condition" name="condition" placeholder="Enter Lua condition (e.g., x > 10)">
+                </div>
+
+                <!-- Bind Input Container -->
+                <div id="bindContainer" style="display: none;">
+                    <label for="startKey">Start Key (A-Z):</label>
+                    <input type="text" id="startKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to start (e.g., E)">
+
+                    <label for="stopKey">Stop Key (A-Z):</label>
+                    <input type="text" id="stopKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to stop (e.g., Y)">
+
+                    <label for="bindDelay">Trigger Delay (seconds):</label>
+                    <input type="number" id="bindDelay" placeholder="Delay between triggers (e.g., 1)">
+                </div>
+
+                <button type="button" onclick="change()">Generate Trigger</button>
+
+                <p>A Free Chomik Trigger Creator</p>
+                <p><a target="_blank" href="https://discord.gg/3pYc4cRCGP">Join My Discord</a></p>
+                <p><a href="index.html" class="redirect-link">Return to main page</a></p> <!-- Updated link -->
+            </form>
         </div>
-
-        <!-- Loop Count Input (for For Loop) -->
-        <div id="loopCountContainer" style="display: none;">
-            <label for="loopCount">Number of Repetitions:</label>
-            <input type="number" id="loopCount" name="loopCount" placeholder="Enter number of repetitions">
-        </div>
-
-        <!-- Condition Input (for Repeat Until) -->
-        <div id="conditionContainer" style="display: none;">
-            <label for="condition">Condition:</label>
-            <input type="text" id="condition" name="condition" placeholder="Enter condition (e.g., x > 10)">
-        </div>
-    
-        <!-- Delay Input (for While Loop) -->
-        <div class="delay"></div>
-    
-        <br>
-
-        <!-- Bind Input Container -->
-        <div id="bindContainer" style="display: none;">
-            <label for="startKey">Start Key:</label>
-            <input type="text" id="startKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to start [E]">
-            
-            <label for="stopKey">Stop Key:</label>
-            <input type="text" id="stopKey" maxlength="1" style="text-transform: uppercase;" placeholder="Key to stop [Y]">
-            
-            <label for="bindDelay">Trigger Delay (seconds):</label>
-            <input type="number" id="bindDelay" placeholder="Delay between triggers">
-        </div>
-
-        <button type="button" onclick="change()">Generate Trigger</button> <!-- Changed type to "button" -->
-
-        <br>
-
-        <p>A Free Chomik Trigger Creator</p>
-        <p><a target="_blank" href="https://discord.gg/3pYc4cRCGP">Join My Discord</a></p>
-        <p><a href="index.html" class="redirect-link">Return to main page</a></p>
-    </form>
+    </div>
 
     <!-- Audio Element -->
-    <audio id="background-music" src="jojo1.mp3" loop></audio>
+    <audio id="background-music" src="jojo1.mp3" loop preload="auto"></audio> <!-- Added preload -->
 
     <script>
-        // Add this constant at the top of your script section
+        // Constants and Validation (Keep original)
         const CONTROL_KEYS = {
             A: 34, B: 29, C: 26, D: 35, E: 38, F: 23, G: 47, H: 74,
             I: 311, J: 199, K: 311, L: 182, M: 244, N: 249, O: 245,
@@ -400,32 +460,60 @@ Press another key to stop">
             return CONTROL_KEYS[key];
         }
 
-        // Function to handle checkbox selection
+        // Checkbox Handling (Keep original logic, adapt show() slightly)
         function handleCheckboxChange() {
             let whileLoop = document.getElementById('whileLoop');
             let forLoop = document.getElementById('forLoop');
             let untilCheckmark = document.getElementById('untilCheckmark');
             let bindCheck = document.getElementById('bindCheck');
+            const checkboxes = [whileLoop, forLoop, untilCheckmark, bindCheck];
 
             // Uncheck all other checkboxes except the current one
             if (this.checked) {
-                [whileLoop, forLoop, untilCheckmark, bindCheck].forEach(checkbox => {
+                checkboxes.forEach(checkbox => {
                     if (checkbox !== this) {
                         checkbox.checked = false;
                     }
                 });
             }
-
             show(); // Update the visibility of input fields
         }
 
-        // Attach event listeners to all checkboxes
         document.getElementById('whileLoop').addEventListener('change', handleCheckboxChange);
         document.getElementById('forLoop').addEventListener('change', handleCheckboxChange);
         document.getElementById('untilCheckmark').addEventListener('change', handleCheckboxChange);
         document.getElementById('bindCheck').addEventListener('change', handleCheckboxChange);
 
-        // Function to generate the trigger code
+        // Show/Hide Input Fields (Adapt for new delay container)
+        function show() {
+            let whileLoop = document.getElementById('whileLoop').checked;
+            let forLoop = document.getElementById('forLoop').checked;
+            let untilCheckmark = document.getElementById('untilCheckmark').checked;
+            let bindCheck = document.getElementById('bindCheck').checked;
+            let loopCountContainer = document.getElementById('loopCountContainer');
+            let delayContainer = document.querySelector('.delay-container'); // Select by class
+            let conditionContainer = document.getElementById('conditionContainer');
+            let bindContainer = document.getElementById('bindContainer');
+
+            // Hide all conditional containers initially
+            delayContainer.style.display = 'none';
+            loopCountContainer.style.display = 'none';
+            conditionContainer.style.display = 'none';
+            bindContainer.style.display = 'none';
+
+            // Show the relevant container based on the checked box
+            if (whileLoop) {
+                delayContainer.style.display = 'flex'; // Use flex for consistency
+            } else if (forLoop) {
+                loopCountContainer.style.display = 'flex';
+            } else if (untilCheckmark) {
+                conditionContainer.style.display = 'flex';
+            } else if (bindCheck) {
+                bindContainer.style.display = 'flex';
+            }
+        }
+
+        // Trigger Generation Logic (Keep original 'change' function)
         function change() {
             let triggerName = document.querySelector('#param1').value;
             let triggerParams = document.querySelector('#param2').value;
@@ -434,30 +522,46 @@ Press another key to stop">
             let untilCheckmark = document.getElementById('untilCheckmark').checked;
             let bindCheck = document.getElementById('bindCheck').checked;
             let loopCountInput = document.getElementById('loopCount');
-            let delayInput = document.getElementById('delay');
+            let delayInput = document.getElementById('delay'); // Get delay input
             let conditionInput = document.getElementById('condition');
             let startKeyInput = document.getElementById('startKey');
             let stopKeyInput = document.getElementById('stopKey');
             let bindDelayInput = document.getElementById('bindDelay');
 
             if (!triggerName) {
-                return alert('Please enter the first parameter.');
-            } else if (!triggerParams) {
-                return alert('Please enter the second parameter.');
+                return alert('Please enter the Trigger Name.');
             }
+            // Basic JSON validation for params
+            try {
+                JSON.parse(triggerParams);
+            } catch (e) {
+                 if (!triggerParams.startsWith('[') || !triggerParams.endsWith(']')) {
+                     // Try wrapping if it doesn't look like an array
+                     try {
+                         triggerParams = `[${triggerParams.split(',').map(p => JSON.stringify(p.trim())).join(',')}]`;
+                         JSON.parse(triggerParams); // Re-validate
+                         document.querySelector('#param2').value = triggerParams; // Update input field if corrected
+                     } catch (e2) {
+                         return alert('Please enter valid JSON Array Parameters (e.g., ["param1", 123, true]) or comma-separated values.');
+                     }
+                 } else {
+                    return alert('Please enter valid JSON Array Parameters (e.g., ["param1", 123, true]).');
+                 }
+            }
+
 
             let codeGenerated;
 
             if (whileLoop) {
                 let delay = delayInput ? delayInput.value : 0;
 
-                if (!delay || isNaN(delay)) {
-                    return alert('Invalid Number in Delay.');
+                if (delay === '' || isNaN(delay) || delay < 0) { // Check if empty or not a non-negative number
+                    return alert('Invalid Number in Delay. Please enter 0 or a positive number.');
                 }
 
                 codeGenerated = `CreateThread(function()\n`;
                 codeGenerated += `    while true do\n`;
-                codeGenerated += `        Wait(${delay} * 1000)\n`;
+                codeGenerated += `        Wait(${parseFloat(delay)} * 1000)\n`; // Use parseFloat
                 codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
                 codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
                 codeGenerated += `    end\n`;
@@ -465,27 +569,29 @@ Press another key to stop">
             } else if (forLoop) {
                 let loopCount = loopCountInput.value;
 
-                if (!loopCount || isNaN(loopCount) || loopCount <= 0) {
-                    return alert('Please enter a valid number of repetitions.');
+                if (!loopCount || isNaN(loopCount) || parseInt(loopCount) <= 0) { // Use parseInt
+                    return alert('Please enter a valid positive number of repetitions.');
                 }
 
-                codeGenerated = `for i = 1, ${loopCount} do\n`;
-                codeGenerated += `    CreateThread(function()\n`;
+                codeGenerated = `CreateThread(function()\n`; // Wrap in thread for safety
+                codeGenerated += `    for i = 1, ${parseInt(loopCount)} do\n`;
                 codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
                 codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
-                codeGenerated += `    end)\n`;
-                codeGenerated += `end`;
+                codeGenerated += `        Wait(0) -- Yield to prevent freezing\n`;
+                codeGenerated += `    end\n`;
+                codeGenerated += `end)`;
             } else if (untilCheckmark) {
-                let condition = conditionInput ? conditionInput.value : '';
+                let condition = conditionInput ? conditionInput.value.trim() : '';
 
                 if (!condition) {
-                    return alert('Please enter a valid condition.');
+                    return alert('Please enter a valid Lua condition.');
                 }
 
                 codeGenerated = `CreateThread(function()\n`;
                 codeGenerated += `    repeat\n`;
                 codeGenerated += `        local params = json.decode('${triggerParams}')\n`;
                 codeGenerated += `        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
+                codeGenerated += `        Wait(0) -- Yield to prevent freezing\n`;
                 codeGenerated += `    until ${condition}\n`;
                 codeGenerated += `end)`;
             } else if (bindCheck) {
@@ -494,7 +600,7 @@ Press another key to stop">
                 let bindDelay = bindDelayInput ? bindDelayInput.value : 0;
 
                 if (!startKey || !stopKey) {
-                    return alert('Please enter valid start and stop keys.');
+                    return alert('Please enter valid start and stop keys (A-Z).');
                 }
 
                 if (startKey === stopKey) {
@@ -505,13 +611,14 @@ Press another key to stop">
                 let stopKeyCode = validateKeyInput(stopKey);
 
                 if (!startKeyCode || !stopKeyCode) {
-                    return;
+                    return; // validateKeyInput shows the alert
                 }
 
-                if (!bindDelay || isNaN(bindDelay)) {
-                    return alert('Invalid Number in Trigger Delay.');
+                if (bindDelay === '' || isNaN(bindDelay) || bindDelay < 0) { // Check if empty or not a non-negative number
+                    return alert('Invalid Number in Trigger Delay. Please enter 0 or a positive number.');
                 }
 
+                // (Keep the generated code for bindCheck the same as original)
                 codeGenerated = `local isRunning = false\n\n`;
                 codeGenerated += `function notify(message)\n`;
                 codeGenerated += `    SetNotificationTextEntry("STRING")\n`;
@@ -535,12 +642,17 @@ Press another key to stop">
                 codeGenerated += `        Wait(0)\n\n`;
                 codeGenerated += `        local playerPed = PlayerPedId()\n`;
                 codeGenerated += `        local playerCoords = GetEntityCoords(playerPed)\n\n`;
+                codeGenerated += `        if IsDisabledControlJustPressed(1, ${stopKeyCode}) then -- Check stop key first\n`;
+                codeGenerated += `            notify("Script Terminated")\n`;
+                codeGenerated += `            isRunning = false\n`;
+                codeGenerated += `            return\n`;
+                codeGenerated += `        end\n\n`;
                 codeGenerated += `        if isRunning then\n`;
                 codeGenerated += `            DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Press ${startKey} to stop | ${stopKey} to exit script")\n`;
                 codeGenerated += `        else\n`;
                 codeGenerated += `            DrawText3D(playerCoords.x, playerCoords.y, playerCoords.z + 1.0, "Press ${startKey} to start running | ${stopKey} to exit script")\n`;
                 codeGenerated += `        end\n\n`;
-                codeGenerated += `        if IsControlJustPressed(1, ${startKeyCode}) then\n`;
+                codeGenerated += `        if IsDisabledControlJustPressed(1, ${startKeyCode}) then\n`; // Use IsDisabledControlJustPressed
                 codeGenerated += `            if isRunning then\n`;
                 codeGenerated += `                isRunning = false\n`;
                 codeGenerated += `                notify("Stopped")\n`;
@@ -551,141 +663,133 @@ Press another key to stop">
                 codeGenerated += `                    while isRunning do\n`;
                 codeGenerated += `                        local params = json.decode('${triggerParams}')\n`;
                 codeGenerated += `                        TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
-                codeGenerated += `                        Wait(${bindDelay} * 1000)\n`;
+                codeGenerated += `                        Wait(${parseFloat(bindDelay)} * 1000)\n`; // Use parseFloat
                 codeGenerated += `                    end\n`;
                 codeGenerated += `                end)\n`;
                 codeGenerated += `            end\n`;
-                codeGenerated += `        end\n\n`;
-                codeGenerated += `        if IsControlJustPressed(1, ${stopKeyCode}) then\n`;
-                codeGenerated += `            notify("Script Terminated")\n`;
-                codeGenerated += `            isRunning = false\n`;
-                codeGenerated += `            return\n`;
                 codeGenerated += `        end\n`;
+                // Removed the second stop key check as it's handled at the top
                 codeGenerated += `    end\n`;
                 codeGenerated += `end)`;
+
             } else {
+                // Default case: No loop/bind selected - trigger once
                 codeGenerated = `CreateThread(function()\n`;
                 codeGenerated += `    local params = json.decode('${triggerParams}')\n`;
                 codeGenerated += `    TriggerServerEvent('${triggerName}', table.unpack(params))\n`;
                 codeGenerated += `end)`;
             }
 
-            navigator.clipboard.writeText(codeGenerated);
-            alert('✔ - Trigger has been copied to your clipboard!');
+            navigator.clipboard.writeText(codeGenerated)
+                .then(() => {
+                    alert('✔ - Trigger has been copied to your clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('❌ - Failed to copy trigger. Check console for errors.');
+                });
         }
 
-        // Function to show/hide the delay, loop count, and condition input fields
-        function show() {
-            let whileLoop = document.getElementById('whileLoop').checked;
-            let forLoop = document.getElementById('forLoop').checked;
-            let untilCheckmark = document.getElementById('untilCheckmark').checked;
-            let bindCheck = document.getElementById('bindCheck').checked;
-            let loopCountContainer = document.getElementById('loopCountContainer');
-            let delayContainer = document.querySelector('.delay');
-            let conditionContainer = document.getElementById('conditionContainer');
-            let bindContainer = document.getElementById('bindContainer');
+        // --- New/Merged JavaScript from index.html ---
 
-            if (whileLoop) {
-                delayContainer.innerHTML = `<br><input type="text" id="delay" placeholder="Delay [IN SECONDS]" required>`;
-                loopCountContainer.style.display = 'none';
-                conditionContainer.style.display = 'none';
-                bindContainer.style.display = 'none';
-            } else if (forLoop) {
-                loopCountContainer.style.display = 'block';
-                delayContainer.innerHTML = '';
-                conditionContainer.style.display = 'none';
-                bindContainer.style.display = 'none';
-            } else if (untilCheckmark) {
-                conditionContainer.style.display = 'block';
-                loopCountContainer.style.display = 'none';
-                delayContainer.innerHTML = '';
-                bindContainer.style.display = 'none';
-            } else if (bindCheck) {
-                bindContainer.style.display = 'block';
-                loopCountContainer.style.display = 'none';
-                delayContainer.innerHTML = '';
-                conditionContainer.style.display = 'none';
-            } else {
-                loopCountContainer.style.display = 'none';
-                delayContainer.innerHTML = '';
-                conditionContainer.style.display = 'none';
-                bindContainer.style.display = 'none';
-            }
+        // Click to start overlay
+        const overlay = document.getElementById('text-overlay');
+        const clickText = document.getElementById('click-text');
+        const backgroundMusic = document.getElementById('background-music'); // Use correct ID
+        const videoBg = document.getElementById('video-bg');
+
+        // Video cycling (optional - keeping single loop for now)
+        // const backgroundVideos = ["background.mp4"]; // Add more if needed
+        // let currentVideoIndex = 0;
+        // function playNextVideo() { ... }
+        // videoBg.addEventListener('ended', playNextVideo);
+
+        if (overlay && clickText && backgroundMusic && videoBg) {
+            overlay.addEventListener('click', function() {
+                overlay.classList.add('hidden');
+                initializeMuteState(); // Initialize mute state based on localStorage
+                backgroundMusic.play().catch(error => {
+                    console.log("Background music autoplay failed:", error);
+                    // Autoplay might be blocked, user interaction (like click) usually enables it.
+                });
+                videoBg.play().catch(error => {
+                    console.log("Background video autoplay failed:", error);
+                });
+            }, { once: true });
+        } else {
+            console.error("Overlay, click text, background music, or video background element not found.");
+            if(overlay) overlay.style.display = 'none'; // Hide overlay if elements are missing
         }
 
-        // Emoji Random Generator for Title
-        const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
+        // Mute button functionality
+        const muteButton = document.getElementById('mute-button');
+        const muteIcon = muteButton.querySelector('i');
+        // Select all audio elements if there were more, otherwise just the one
+        const audioElements = [backgroundMusic]; // Use an array
+        let isMuted = localStorage.getItem('muted') === 'true'; // Load initial state
 
-        function updateTitle() {
-            const randomEmoji1 = emojis[Math.floor(Math.random() * emojis.length)];
-            const randomEmoji2 = emojis[Math.floor(Math.random() * emojis.length)];
-            document.title = `${randomEmoji1} Chomik Trigger Creator ${randomEmoji2}`;
+        function updateMuteStatus(muted) {
+          isMuted = muted;
+          audioElements.forEach(audio => {
+            if (audio) audio.muted = isMuted; // Check if audio element exists
+          });
+          if (muteIcon) muteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high'; // Update icon
+          localStorage.setItem('muted', isMuted); // Save state
+          if (muteButton) muteButton.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
         }
 
-        // Update the title every 1 second
-        setInterval(updateTitle, 500);
+        function toggleMute() {
+          updateMuteStatus(!isMuted);
+        }
 
-        // Overlay Functionality
-        const overlay = document.getElementById('overlay');
-        const backgroundMusic = document.getElementById('background-music');
-        const videoBackground = document.getElementById('video-background');
+        function initializeMuteState() {
+          // Apply initial mute state without saving it again
+          isMuted = localStorage.getItem('muted') === 'true';
+          audioElements.forEach(audio => {
+            if (audio) audio.muted = isMuted;
+          });
+           if (muteIcon) muteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+           if (muteButton) muteButton.setAttribute('aria-label', isMuted ? 'Unmute sound' : 'Mute sound');
+        }
 
-        overlay.addEventListener('click', () => {
-            overlay.classList.add('hidden'); /* Hide the overlay on click */
-            backgroundMusic.play(); /* Play music when overlay is clicked */
-            videoBackground.play(); /* Play the background video */
-        });
+        if (muteButton) {
+            muteButton.addEventListener('click', toggleMute);
+        }
+        // Don't call initializeMuteState here, call it after overlay click
 
-        // Mute Button Functionality
-        const muteButton = document.getElementById('muteButton');
-
-        muteButton.addEventListener('click', () => {
-            if (backgroundMusic.muted) {
-                backgroundMusic.muted = false;
-                muteButton.innerHTML = '<img src="mute.png" alt="Mute">';
-            } else {
-                backgroundMusic.muted = true;
-                muteButton.innerHTML = '<img src="unmute.png" alt="Unmute">';
-            }
-        });
-
-        // Snowflake Effect
+        // Snowflake effect
         function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.innerHTML = '❄';
-            snowflake.classList.add('snowflake');
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.animationDuration = Math.random() * 10 + 10 + 's'; // Slower fall (10-20 seconds)
-            snowflake.style.opacity = Math.random() * 0.7 + 0.3; // Random opacity between 0.3 and 1
-            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // Random size between 10px and 20px
-            document.body.appendChild(snowflake);
+          const snowflake = document.createElement('div');
+          snowflake.innerHTML = '❄';
+          snowflake.classList.add('snowflake');
+          snowflake.style.left = Math.random() * 100 + 'vw';
+          const duration = Math.random() * 10 + 10; // 10-20 seconds fall time
+          snowflake.style.animationDuration = duration + 's';
+          snowflake.style.opacity = Math.random() * 0.5 + 0.3; // 0.3 - 0.8 opacity
+          snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // 10px - 20px size
 
-            setTimeout(() => {
-                snowflake.remove();
-            }, 20000); // Remove snowflake after 20 seconds
+          document.body.appendChild(snowflake);
+
+          // Remove snowflake after animation duration + buffer
+          setTimeout(() => {
+            snowflake.remove();
+          }, (duration + 1) * 1000);
         }
 
         function startSnowfall() {
-            const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
-            if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-                setInterval(createSnowflake, 500); // Create a snowflake every 500ms
-            }
+          const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
+          // Only snow in December, January, February
+          if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
+            setInterval(createSnowflake, 500); // Create a snowflake every 500ms
+          }
         }
 
+        // Start snowfall on load (if it's winter)
         startSnowfall();
 
-        // Add this to your existing JavaScript
-        document.getElementById('bindCheck').addEventListener('change', function() {
-            document.getElementById('bindContainer').style.display = 
-                this.checked ? 'block' : 'none';
-            
-            if (this.checked) {
-                // Disable other options when bind is selected
-                document.getElementById('whileLoop').checked = false;
-                document.getElementById('forLoop').checked = false;
-                document.getElementById('untilCheckmark').checked = false;
-            }
-        });
+        // Initial call to set correct input visibility on page load
+        document.addEventListener('DOMContentLoaded', show);
+
     </script>
 </body>
 </html>
