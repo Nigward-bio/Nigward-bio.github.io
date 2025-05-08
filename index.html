@@ -34,9 +34,9 @@
     "mainEntity": {
       "@type": "Person",
       "name": "Lua.o_o",
-      "url": "YOUR_WEBSITE_URL", // Replace with your actual site URL
+      "url": "https://www.chomik.site",
       "description": "Skid Master | Explorer of Lua | C++ Learner | HTML Tinkerer | FiveM Exploiter | AI Project Creator",
-      "image": "html_files/jtni8ymtkl.gif", // Path to your profile avatar
+      "image": "html_files/jtni8ymtkl.gif",
       "sameAs": [
         "https://discord.gg/7FPCThJuHk",
         "https://github.com/Lua-1111",
@@ -150,8 +150,6 @@
       backdrop-filter: blur(5px); /* Optional blur */
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-
 
     /* Navigation bar styling - Simplified */
     nav {
@@ -545,6 +543,233 @@
       padding: 10px;
       border-radius: 5px;
       overflow-x: auto; /* Allow scrolling if needed */
+      /* Default animation, will be overridden when active */
+      animation: asciiPulse 2.5s infinite ease-in-out; 
+    }
+
+    @keyframes asciiPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.9;
+        text-shadow: 0 0 5px var(--primary-color);
+      }
+      50% {
+        transform: scale(1.02);
+        opacity: 1;
+        text-shadow: 0 0 10px var(--accent-color);
+      }
+    }
+
+    /* Special styling for active contact section */
+    #contact-section.contact-section-active {
+      animation: componentGlow 2s infinite alternate;
+    }
+
+    #contact-section.contact-section-active h2 i,
+    #contact-section.contact-section-active .discord-contact-info i {
+      animation: iconPulse 1.5s infinite alternate;
+    }
+
+    #contact-section.contact-section-active pre {
+      animation: asciiGlitch 0.3s infinite steps(1, end), asciiColorShift 4s infinite linear;
+    }
+
+    @keyframes componentGlow {
+      from {
+        box-shadow: 0 0 5px var(--border-color), 0 0 10px var(--border-color), 0 0 15px var(--accent-color);
+      }
+      to {
+        box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color), 0 0 30px var(--primary-color);
+      }
+    }
+
+    @keyframes iconPulse {
+      from {
+        text-shadow: 0 0 3px var(--accent-color);
+        transform: scale(1);
+      }
+      to {
+        text-shadow: 0 0 8px var(--primary-color), 0 0 12px var(--accent-color);
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes asciiGlitch {
+      0%, 100% {
+        transform: translate(0, 0);
+        opacity: 1;
+      }
+      20% {
+        transform: translate(-2px, 1px) skewX(-3deg);
+        opacity: 0.95;
+      }
+      40% {
+        transform: translate(1px, -1px) skewX(2deg);
+        opacity: 0.98;
+      }
+      60% {
+        transform: translate(2px, 2px) skewX(-1deg);
+        opacity: 0.9;
+      }
+      80% {
+        transform: translate(-1px, -2px) skewX(3deg);
+        opacity: 0.96;
+      }
+    }
+    
+    @keyframes asciiColorShift {
+      0%, 100% {
+        color: var(--primary-color);
+        text-shadow: 0 0 5px var(--primary-color);
+      }
+      50% {
+        color: var(--accent-color);
+        text-shadow: 0 0 8px var(--accent-color);
+      }
+    }
+
+    /* Skills Section Styling */
+    .skills-container {
+      margin-top: 1.5rem;
+    }
+    .skills-container h3 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.5em;
+      text-shadow: 0 0 5px var(--primary-color);
+    }
+    .skill-item {
+      margin-bottom: 1rem;
+    }
+    .skill-name {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--text-color);
+      font-size: 0.9em;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    .progress-bar {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.3); /* Darker background for progress bar */
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      height: 1.25rem; /* h-5 */
+      overflow: hidden; /* Ensure fill stays within bounds */
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
+      background-size: 200% 200%;
+      animation: gradientShift 3s ease infinite;
+      border-radius: var(--border-radius);
+      width: 0; /* Initial width, animated by transition */
+      transition: width 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 0 3px var(--accent-color);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .skill-item:hover .progress-bar-fill {
+      filter: brightness(1.2);
+    }
+    .skill-item:hover .skill-name {
+      color: var(--accent-color);
+      transform: translateX(2px);
+    }
+
+    /* Age Counter Styling (inline now) */
+    #live-age {
+      font-weight: 500;
+    }
+    #live-age span {
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Interests Section Styling */
+    .interests-container {
+      margin-top: 2rem;
+    }
+    .interests-container h3 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.5em;
+      text-shadow: 0 0 5px var(--primary-color);
+    }
+    .interests-list {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+    .interest-item {
+      background-color: rgba(0, 0, 0, 0.25); /* Slightly more visible background */
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .interest-item:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 5px 12px rgba(122, 3, 224, 0.45);
+    }
+    .interest-icon {
+      font-size: 2.2em; /* Larger icon */
+      color: var(--accent-color);
+      margin-bottom: 0.6rem;
+      filter: drop-shadow(0 0 5px var(--accent-color));
+      transition: transform 0.25s ease;
+    }
+    .interest-item:hover .interest-icon {
+        transform: scale(1.1);
+    }
+    .interest-name {
+      font-size: 0.9em;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+
+    .interest-item-standalone {
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      grid-column: 1 / -1; /* Make it span full width if desired */
+      margin-top: 0.5rem; /* Add some space if it's full width */
+    }
+    .interest-item-standalone .interest-icon {
+      font-size: 2.5em; /* Larger icon */
+      color: var(--accent-color); /* Or a different standout color */
+      margin-bottom: 0.6rem;
+      filter: drop-shadow(0 0 8px var(--accent-color));
+      transition: transform 0.25s ease;
+    }
+    .interest-item-standalone:hover .interest-icon {
+      transform: scale(1.15);
+    }
+    .interest-item-standalone .interest-name {
+      font-size: 1em;
+      color: var(--primary-color); /* Emphasize text */
+      font-weight: 600;
+      text-shadow: 0 0 3px var(--primary-color);
     }
 
     /* Snowflake styling */
@@ -709,26 +934,130 @@
             </div>
             <i class="fas fa-arrow-right link-button-arrow"></i>
           </a>
+          <a href="http://jellyfin.chomik.site" target="_blank" id="jellyfin-link" class="link-button">
+            <div class="link-button-content">
+              <div class="link-button-icon-wrapper">
+                <i class="fas fa-film link-button-icon"></i>
+              </div>
+              <div class="link-button-text">
+                <span class="link-button-title">Jellyfin Server</span>
+                <span class="link-button-url">DM on Discord for access</span>
+              </div>
+            </div>
+            <i class="fas fa-arrow-right link-button-arrow"></i>
+          </a>
         </div>
       </div> <!-- End of main-content -->
 
       <!-- About Section (Initially Hidden) -->
       <div id="about-section" class="component hidden-section">
         <h2>About Me</h2>
-        <p>I am the biggest skid on earth.</p>
-        <p>I'm getting into lockpicking and I know a little bit of Lua, Java, C++, and HTML.</p>
-        <p>Most of my projects are created with AI.</p>
-        <p>I like to exploit FiveM things.</p>
-        <p>I'm a skid, but I try to learn and improve.</p>
-        <p>My goal is to become a better programmer and create useful tools.</p>
+        <p>I am the biggest skid on earth, and I am currently <span id="live-age">Calculating...</span> old! Speaking of reaching for the stars (sometimes literally!), my Python code, developed with <strong>Mission Space Lab program</strong>, has officially achieved <strong>FLIGHT STATUS!</strong> It's pretty wild to think it'll be running experiments aboard the International Space Station (ISS) between April and May 2025. We're expecting the mission data and our team certificates around June 2025. Beyond space missions, I'll soon be getting an Anycubic Kobra S1 3D printer and plan to live stream my prints. And yes, I'm also a huge fan of movies and manga.</p>
+        <p>I'm currently studying Mechanical Engineering. I'm getting into lockpicking, and I know a little bit of Lua, Java, C++, Python, DuckyScript, and HTML. I even won a Flipper Zero!</p>
+        <p>Most of my projects are created with AI, but I'm striving to improve my own coding skills.</p>
+        <p>I like to exploit FiveM things and explore cybersecurity concepts.</p>
+        <p>My goal is to become a better programmer and engineer, creating useful tools and innovative projects. When I'm not dreaming about space or tinkering with code, you might find me trying to convince my 3D printer that it, too, can reach for the stars (or at least print a perfect Benchy on the first try!).</p>
+
+        <div class="skills-container">
+          <h3>My Skills</h3>
+          <div class="skill-item">
+            <span class="skill-name">Lua Scripting</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="70%">70%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Python</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="60%">60%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">HTML & CSS</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="55%">55%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">C++ (Learning)</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="30%">30%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">DuckyScript</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="65%">65%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">FiveM Exploiting</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="85%">85%</div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">AI Prompting</span>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" data-progress="90%">90%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="interests-container">
+          <h3>My Interests</h3>
+          <ul class="interests-list">
+            <li class="interest-item">
+              <i class="fas fa-key interest-icon"></i>
+              <span class="interest-name">Lockpicking</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-user-secret interest-icon"></i>
+              <span class="interest-name">Cybersecurity</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-robot interest-icon"></i>
+              <span class="interest-name">AI Exploration</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-terminal interest-icon"></i>
+              <span class="interest-name">Scripting</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-microchip interest-icon"></i>
+              <span class="interest-name">Hardware Tinkering</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-print interest-icon"></i>
+              <span class="interest-name">3D Printing</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-film interest-icon"></i>
+              <span class="interest-name">Movies</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-book-open interest-icon"></i>
+              <span class="interest-name">Manga</span>
+            </li>
+            <li class="interest-item">
+              <i class="fas fa-cogs interest-icon"></i>
+              <span class="interest-name">Mechanical Eng.</span>
+            </li>
+          </ul>
+          <!-- Standalone Interest Item -->
+          <div class="interest-item-standalone">
+            <i class="fab fa-usb interest-icon"></i> <!-- Or a more specific Flipper Zero icon if available, or custom SVG -->
+            <span class="interest-name">Flipper Zero & DuckyScript Wizardry</span>
+          </div>
+        </div>
         
       </div>
 
       <!-- Contact Section (Initially Hidden) -->
       <div id="contact-section" class="component hidden-section">
-        <h2>Contact</h2>
+        <h2><i class="fas fa-id-card"></i> Contact</h2>
         <p>Contact me on Discord:</p>
-        <p>Lua.O_O</p>
+        <p class="discord-contact-info"><i class="fab fa-discord"></i> Lua.O_O</p>
         <pre>
       ██╗      ██╗   ██╗  █████╗
       ██║      ██║   ██║ ██╔══██╗
@@ -1249,17 +1578,72 @@
     const mainContent = document.getElementById('main-content');
     const aboutSection = document.getElementById('about-section');
     const contactSection = document.getElementById('contact-section');
+    const liveAgeElement = document.getElementById('live-age');
+    let ageUpdateInterval;
+    let isContactSectionActive = false;
+
+    function calculateAge() {
+      const birthDate = new Date(2008, 5, 21, 0, 0, 0); // Month is 0-indexed (5 = June)
+      const now = new Date();
+      
+      const diffInMilliseconds = now.getTime() - birthDate.getTime();
+      const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.2425; // Average milliseconds in a year
+
+      const ageInYears = diffInMilliseconds / millisecondsInYear;
+
+      if (liveAgeElement) {
+        liveAgeElement.innerHTML = 
+          `<span>${ageInYears.toFixed(15)}</span> years`;
+      }
+    }
 
     function showSection(sectionToShow) {
       mainContent.style.display = 'none';
       aboutSection.style.display = 'none';
       contactSection.style.display = 'none';
+      
+      // Cleanup for contact section if it was active
+      if (isContactSectionActive && contactSection) {
+        contactSection.classList.remove('contact-section-active');
+      }
+      isContactSectionActive = false;
+
+      // Reset progress bars first to ensure animation restarts
+      document.querySelectorAll('#about-section .progress-bar-fill').forEach(fill => {
+        fill.style.transition = 'none'; // Temporarily disable transition for reset
+        fill.style.width = '0%';
+      });
+      
+      if (ageUpdateInterval) {
+        clearInterval(ageUpdateInterval);
+        ageUpdateInterval = null;
+      }
 
       if (sectionToShow) {
         sectionToShow.style.display = (sectionToShow === mainContent) ? 'flex' : 'block';
         if (sectionToShow === mainContent) {
           mainContent.style.flexDirection = 'column';
           mainContent.style.gap = '0.75rem';
+        }
+        // Animate progress bars when about section is shown
+        if (sectionToShow === aboutSection) {
+          // Use a timeout to allow the DOM to update and re-enable transition
+          setTimeout(() => {
+            document.querySelectorAll('#about-section .progress-bar-fill').forEach(fill => {
+              fill.style.transition = 'width 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.3s ease'; // Re-enable transition
+              fill.style.width = fill.getAttribute('data-progress');
+            });
+          }, 50); // Small delay for rendering and transition re-application
+          
+          calculateAge(); // Initial calculation
+          ageUpdateInterval = setInterval(calculateAge, 1000); // Update every second
+        }
+      }
+      
+      if (sectionToShow === contactSection) {
+        isContactSectionActive = true;
+        if (contactSection) {
+            contactSection.classList.add('contact-section-active');
         }
       }
     }
