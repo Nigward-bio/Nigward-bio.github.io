@@ -1054,30 +1054,54 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
 
         spamControls.set(webhook, true); // Mark as running
 
+        // Add status indicator
+        const statusElement = container.closest('.webhook').querySelector('.webhook-status');
+        if (statusElement) {
+            statusElement.textContent = '🔥 Spamming...';
+            statusElement.style.color = '#ff4444';
+        }
+
         while (spamControls.get(webhook)) { // Check flag in loop
             try {
                 const content = spamInput.value || 'www.chomik.site @everyone';
-                await fetch(webhook, {
+                
+                const response = await fetch(webhook, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                    headers: { 
+                        'Content-Type': 'application/json',
+                    },                    body: JSON.stringify({
                         content: content,
                         username: 'Chomik Webhook Spammer',
-                        avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public',
-                        allowed_mentions: { parse: ['everyone', 'here'] } // Allow both
+                        avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public'
                     })
                 });
-                // Add a small, slightly variable delay
-                await new Promise(r => setTimeout(r, 50 + Math.random() * 100));
+
+                if (DEBUG_MODE) {
+                    console.log(`Spam request sent. Status: ${response.status}`);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.log(`Response error: ${errorText}`);
+                    }
+                }
+
+                // Respect Discord's rate limits - wait at least 1 second between messages
+                await new Promise(r => setTimeout(r, 1000 + Math.random() * 500));
+
             } catch (error) {
                 console.error('Spam error:', error);
-                // Optional: Stop spamming on error or add retry logic
-                // stopSpam(webhook, stopBtn); // Example: stop on error
-                await new Promise(r => setTimeout(r, 1000)); // Wait longer on error
+                if (DEBUG_MODE) console.log(`Error details:`, error);
+                
+                // Wait longer on error to avoid hitting rate limits
+                await new Promise(r => setTimeout(r, 2000));
             }
         }
-    }
 
+        // Reset status when stopped
+        if (statusElement) {
+            statusElement.textContent = '🟢 Working';
+            statusElement.style.color = '#00ff00';
+        }
+    }
 
     function stopSpam(webhook, stopBtn) {
         // Keep original logic, ensure querySelectors are correct
@@ -1085,12 +1109,19 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
         spamControls.delete(webhook); // Clean up map entry
 
         const container = stopBtn.closest('.webhook-controls');
-         if (!container) return;
+        if (!container) return;
         const spamBtn = container.querySelector('.spam-btn');
         const currentStopBtn = container.querySelector('.stop-btn'); // Ensure we target the correct stop button
 
         if (spamBtn) spamBtn.style.display = 'inline-block'; // Show spam button
         if (currentStopBtn) currentStopBtn.style.display = 'none'; // Hide stop button
+
+        // Reset status
+        const statusElement = container.closest('.webhook').querySelector('.webhook-status');
+        if (statusElement) {
+            statusElement.textContent = '🟢 Working';
+            statusElement.style.color = '#00ff00';
+        }
     }
 
     async function checkWebhook(webhook, webhookId) { // Accept webhookId
