@@ -532,244 +532,228 @@
       display: none;
     }
 
-    /* Style for preformatted text in contact section */
-    #contact-section pre {
-      color: var(--primary-color); /* Match theme */
-      text-shadow: 0 0 5px var(--primary-color);
-      font-size: 0.9em; /* Adjust size as needed */
-      margin: 1rem 0;
-      text-align: center; /* Center the ASCII art */
-      background-color: rgba(0, 0, 0, 0.2); /* Optional subtle background */
-      padding: 10px;
-      border-radius: 5px;
-      overflow-x: auto; /* Allow scrolling if needed */
-      /* Default animation, will be overridden when active */
-      animation: asciiPulse 2.5s infinite ease-in-out; 
-    }
+    /* Hide default controls dots if needed */
+    .control-dots{display:none}
 
-    @keyframes asciiPulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.9;
-        text-shadow: 0 0 5px var(--primary-color);
-      }
-      50% {
-        transform: scale(1.02);
-        opacity: 1;
-        text-shadow: 0 0 10px var(--accent-color);
-      }
-    }
-
-    /* Special styling for active contact section */
-    #contact-section.contact-section-active {
-      animation: componentGlow 2s infinite alternate;
-    }
-
-    #contact-section.contact-section-active h2 i,
-    #contact-section.contact-section-active .discord-contact-info i {
-      animation: iconPulse 1.5s infinite alternate;
-    }
-
-    #contact-section.contact-section-active pre {
-      animation: asciiGlitch 0.3s infinite steps(1, end), asciiColorShift 4s infinite linear;
-    }
-
-    @keyframes componentGlow {
-      from {
-        box-shadow: 0 0 5px var(--border-color), 0 0 10px var(--border-color), 0 0 15px var(--accent-color);
-      }
-      to {
-        box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color), 0 0 30px var(--primary-color);
-      }
-    }
-
-    @keyframes iconPulse {
-      from {
-        text-shadow: 0 0 3px var(--accent-color);
-        transform: scale(1);
-      }
-      to {
-        text-shadow: 0 0 8px var(--primary-color), 0 0 12px var(--accent-color);
-        transform: scale(1.1);
-      }
-    }
-
-    @keyframes asciiGlitch {
-      0%, 100% {
-        transform: translate(0, 0);
-        opacity: 1;
-      }
-      20% {
-        transform: translate(-2px, 1px) skewX(-3deg);
-        opacity: 0.95;
-      }
-      40% {
-        transform: translate(1px, -1px) skewX(2deg);
-        opacity: 0.98;
-      }
-      60% {
-        transform: translate(2px, 2px) skewX(-1deg);
-        opacity: 0.9;
-      }
-      80% {
-        transform: translate(-1px, -2px) skewX(3deg);
-        opacity: 0.96;
-      }
+    /* About Section Posts Styling */
+    .about-posts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 1rem;
     }
     
-    @keyframes asciiColorShift {
-      0%, 100% {
-        color: var(--primary-color);
-        text-shadow: 0 0 5px var(--primary-color);
-      }
-      50% {
-        color: var(--accent-color);
-        text-shadow: 0 0 8px var(--accent-color);
-      }
-    }
-
-    /* Skills Section Styling */
-    .skills-container {
-      margin-top: 1.5rem;
-    }
-    .skills-container h3 {
-      color: var(--primary-color);
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 1.5em;
-      text-shadow: 0 0 5px var(--primary-color);
-    }
-    .skill-item {
-      margin-bottom: 1rem;
-    }
-    .skill-name {
-      display: block;
-      margin-bottom: 0.25rem;
-      color: var(--text-color);
-      font-size: 0.9em;
-      transition: color 0.3s ease, transform 0.3s ease;
-    }
-    .progress-bar {
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.3); /* Darker background for progress bar */
+    .about-post {
+      background-color: var(--container-bg);
       border-radius: var(--border-radius);
       border: 1px solid var(--border-color);
-      height: 1.25rem; /* h-5 */
-      overflow: hidden; /* Ensure fill stays within bounds */
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--primary-color));
-      background-size: 200% 200%;
-      animation: gradientShift 3s ease infinite;
-      border-radius: var(--border-radius);
-      width: 0; /* Initial width, animated by transition */
-      transition: width 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.3s ease;
+    
+    .about-post::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .about-post:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .about-post:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(122, 3, 224, 0.2);
+    }
+    
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .post-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8em;
-      color: white;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.2), 0 0 3px var(--accent-color);
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .skill-item:hover .progress-bar-fill {
-      filter: brightness(1.2);
-    }
-    .skill-item:hover .skill-name {
-      color: var(--accent-color);
-      transform: translateX(2px);
-    }
-
-    /* Age Counter Styling (inline now) */
-    #live-age {
-      font-weight: 500;
-    }
-    #live-age span {
-      color: var(--accent-color);
-      font-weight: bold;
-    }
-
-    /* Interests Section Styling */
-    .interests-container {
-      margin-top: 2rem;
-    }
-    .interests-container h3 {
-      color: var(--primary-color);
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 1.5em;
-      text-shadow: 0 0 5px var(--primary-color);
-    }
-    .interests-list {
-      list-style: none;
-      padding: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 0.75rem;
-    }
-    .interest-item {
-      background-color: rgba(0, 0, 0, 0.25); /* Slightly more visible background */
       border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 1rem 0.75rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      flex-shrink: 0;
     }
-    .interest-item:hover {
-      transform: translateY(-4px) scale(1.03);
-      box-shadow: 0 5px 12px rgba(122, 3, 224, 0.45);
-    }
-    .interest-icon {
-      font-size: 2.2em; /* Larger icon */
+    
+    .post-icon i {
       color: var(--accent-color);
-      margin-bottom: 0.6rem;
-      filter: drop-shadow(0 0 5px var(--accent-color));
-      transition: transform 0.25s ease;
+      font-size: 1.2em;
+      filter: drop-shadow(0 0 3px var(--accent-color));
     }
-    .interest-item:hover .interest-icon {
-        transform: scale(1.1);
-    }
-    .interest-name {
-      font-size: 0.9em;
-      color: var(--text-color);
-      font-weight: 500;
-    }
-
-    .interest-item-standalone {
-      padding: 1rem 0.75rem;
+    
+    .post-meta {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      grid-column: 1 / -1; /* Make it span full width if desired */
-      margin-top: 0.5rem; /* Add some space if it's full width */
+      gap: 0.25rem;
     }
-    .interest-item-standalone .interest-icon {
-      font-size: 2.5em; /* Larger icon */
-      color: var(--accent-color); /* Or a different standout color */
-      margin-bottom: 0.6rem;
-      filter: drop-shadow(0 0 8px var(--accent-color));
-      transition: transform 0.25s ease;
+    
+    .post-title {
+      color: var(--primary-color);
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 0;
+      text-shadow: 0 0 3px var(--primary-color);
     }
-    .interest-item-standalone:hover .interest-icon {
-      transform: scale(1.15);
+    
+    .post-date {
+      color: var(--text-color);
+      font-size: 0.8em;
+      opacity: 0.8;
     }
-    .interest-item-standalone .interest-name {
-      font-size: 1em;
-      color: var(--primary-color); /* Emphasize text */
+    
+    .post-content {
+      color: var(--text-color);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    
+    .post-content p {
+      margin: 0 0 1rem 0;
+    }
+    
+    .post-content p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .post-tag {
+      background-color: rgba(122, 3, 224, 0.1);
+      color: var(--accent-color);
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.8em;
+      border: 1px solid var(--accent-color);
+      transition: all 0.3s ease;
+    }
+    
+    .post-tag:hover {
+      background-color: var(--accent-color);
+      color: var(--bg-color);
+      transform: translateY(-1px);
+    }
+    
+    .highlight-text {
+      color: var(--primary-color);
       font-weight: 600;
       text-shadow: 0 0 3px var(--primary-color);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--text-color);
+      font-size: 0.9em;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(122, 3, 224, 0.3);
+      border-top: 4px solid var(--accent-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Post Images */
+    .post-image {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin: 1rem 0;
+      object-fit: cover;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .post-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(122, 3, 224, 0.3);
+    }
+    
+    /* Post Reactions */
+    .post-reactions {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    
+    .reaction-button {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-color);
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 60px;
+      justify-content: center;
+    }
+    
+    .reaction-button:hover {
+      background: rgba(122, 3, 224, 0.2);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+    
+    .reaction-button.active {
+      background: var(--accent-color);
+      color: var(--bg-color);
+      border-color: var(--accent-color);
+    }
+    
+    .reaction-button.active:hover {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    .reaction-emoji {
+      font-size: 1.1em;
+    }
+    
+    .reaction-count {
+      font-weight: 600;
+      font-size: 0.9em;
     }
 
     /* Snowflake styling */
@@ -795,11 +779,15 @@
         opacity: 0; /* Fade out at the bottom */
       }
     }
+
+    @media screen and (max-width: 768px) {
+      /* Mobile specific styles can be added here if needed */
+    }
   </style>
 </head>
 <body>
   <!-- Video Background -->
-  <video autoplay muted playsinline id="video-bg">
+  <video autoplay muted playsinline id="video-bg" preload="metadata">
     <source src="html_files/d1ka4hvf27_part1.mov" type="video/mp4"> <!-- Set initial video -->
     Your browser does not support HTML5 video.
   </video>
@@ -815,7 +803,6 @@
       <li><a href="#home" id="home-link">Home</a></li>
       <li><a href="#main" id="main-link">Main</a></li>
       <li><a href="#about" id="about-link">About</a></li>
-      <li><a href="#contact" id="contact-link">Contact</a></li>
     </ul>
     <!-- Mute button -->
     <button id="mute-button" aria-label="Toggle sound">
@@ -824,8 +811,8 @@
   </nav>
 
   <!-- Audio Elements -->
-  <audio id="player-audio-element" src="html_files/k07sau5fvp.mp3" preload="auto"></audio>
-  <audio id="second-track-element" src="html_files/z5603ozumx.mp3" preload="auto"></audio>
+  <audio id="player-audio-element" src="html_files/k07sau5fvp.mp3" preload="none"></audio>
+  <audio id="second-track-element" src="html_files/z5603ozumx.mp3" preload="none"></audio>
 
   <!-- Main Content Wrapper -->
   <div class="main-wrapper">
@@ -951,121 +938,229 @@
 
       <!-- About Section (Initially Hidden) -->
       <div id="about-section" class="component hidden-section">
-        <h2>About Me</h2>
-        <p>I am the biggest skid on earth, and I am currently <span id="live-age">Calculating...</span> old! Speaking of reaching for the stars (sometimes literally!), my Python code, developed with <strong>Mission Space Lab program</strong>, has officially achieved <strong>FLIGHT STATUS!</strong> It's pretty wild to think my code will be running on International Space Station (ISS) between April and May 2025. We're expecting the mission data and our team certificates around June 2025. Beyond space missions, I'll soon be getting an Anycubic Kobra S1 3D printer and plan to live stream my prints. And yes, I'm also a huge fan of movies and manga.</p>
-        <p>I'm currently studying Mechanical Engineering. I'm getting into lockpicking, and I know a little bit of Lua, Java, C++, Python, DuckyScript, and HTML.</p>
-        <p>Most of my projects are created with AI, but I'm striving to improve my own coding skills.</p>
-        <p>I like to exploit FiveM things and explore cybersecurity concepts.</p>
-        <p>My goal is to become a better programmer and engineer, creating useful tools and innovative projects. When I'm not dreaming about space or tinkering with code, you might find me trying to convince my 3D printer that it, too, can reach for the stars (or at least print a perfect Benchy on the first try!).</p>
-
-        <div class="skills-container">
-          <h3>My Skills</h3>
-          <div class="skill-item">
-            <span class="skill-name">Lua Scripting</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="70%">70%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">Python</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="60%">60%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">HTML & CSS</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="55%">55%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">C++ (Learning)</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="30%">30%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">DuckyScript</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="65%">65%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">FiveM Exploiting</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="85%">85%</div>
-            </div>
-          </div>
-          <div class="skill-item">
-            <span class="skill-name">AI Prompting</span>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" data-progress="90%">90%</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="interests-container">
-          <h3>My Interests</h3>
-          <ul class="interests-list">
-            <li class="interest-item">
-              <i class="fas fa-key interest-icon"></i>
-              <span class="interest-name">Lockpicking</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-user-secret interest-icon"></i>
-              <span class="interest-name">Cybersecurity</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-robot interest-icon"></i>
-              <span class="interest-name">AI Exploration</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-terminal interest-icon"></i>
-              <span class="interest-name">Scripting</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-microchip interest-icon"></i>
-              <span class="interest-name">Hardware Tinkering</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-print interest-icon"></i>
-              <span class="interest-name">3D Printing</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-film interest-icon"></i>
-              <span class="interest-name">Movies</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-book-open interest-icon"></i>
-              <span class="interest-name">Manga</span>
-            </li>
-            <li class="interest-item">
-              <i class="fas fa-cogs interest-icon"></i>
-              <span class="interest-name">Mechanical Eng.</span>
-            </li>
-          </ul>
-          <!-- Standalone Interest Item -->
-          <div class="interest-item-standalone">
-            <i class="fab fa-usb interest-icon"></i> <!-- Or a more specific Flipper Zero icon if available, or custom SVG -->
-            <span class="interest-name">Flipper Zero & DuckyScript Wizardry</span>
-          </div>
+        <div class="loading-spinner" style="display: none;">
+          <div class="spinner"></div>
+          <span>Loading posts...</span>
         </div>
         
-      </div>
-
-      <!-- Contact Section (Initially Hidden) -->
-      <div id="contact-section" class="component hidden-section">
-        <h2><i class="fas fa-id-card"></i> Contact</h2>
-        <p>Contact me on Discord:</p>
-        <p class="discord-contact-info"><i class="fab fa-discord"></i> Lua.O_O</p>
-        <pre>
-      ██╗      ██╗   ██╗  █████╗
-      ██║      ██║   ██║ ██╔══██╗
-      ██║      ██║   ██║ ███████║
-      ██║      ██║   ██║ ██╔══██║
-      ███████╗ ╚██████╔╝ ██║  ██║
-      ╚══════╝  ╚═════╝  ╚═╝  ╚═╝
-        </pre>
+        <h2><i class="fas fa-user-astronaut"></i> About Me</h2>
+        
+        <div class="about-posts-container">          <!-- Personal Info Post (NOW FIRST) -->
+          <div class="about-post" data-post-id="personal-info">
+            <div class="post-header">
+              <div class="post-icon">
+                <i class="fas fa-user-ninja"></i>
+              </div>
+              <div class="post-meta">
+                <h3 class="post-title">The Skid Master Chronicles</h3>
+                <div class="post-date">Life Update • Current</div>
+              </div>
+            </div>
+            <div class="post-content">
+              <p>I am the biggest skid on earth, and I am currently <span id="live-age">Calculating...</span> old! 🎂</p>
+              <img data-src="https://i.pinimg.com/564x/89/50/9f/89509f6a7b7b5c3e2b5c1c7c7b6c5b5c.jpg" alt="High School Student" class="post-image">
+              <p>Just passed my <span class="highlight-text">first year of high school</span> - feeling pretty good about that milestone! Currently diving deep into <span class="highlight-text">CAD software</span> to create my own 3D models instead of just downloading them from Thingiverse.</p>
+              <p>Still actively <span class="highlight-text">cheating in FiveM</span> because why not? 😈 Most of my projects are created with AI assistance, but I'm constantly striving to improve my own coding skills and become more independent in my development journey.</p>
+            </div>
+            <div class="post-reactions">
+              <button class="reaction-button" onclick="toggleReaction(this, '👍')">
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🎉')">
+                <span class="reaction-emoji">🎉</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '💪')">
+                <span class="reaction-emoji">💪</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🔥')">
+                <span class="reaction-emoji">🔥</span>
+                <span class="reaction-count">0</span>
+              </button>
+            </div>
+              <div class="post-tags">
+                <span class="post-tag">High School</span>
+                <span class="post-tag">CAD</span>
+                <span class="post-tag">FiveM</span>
+                <span class="post-tag">Student Life</span>
+              </div>
+            </div>          <!-- 3D Printer Post -->
+          <div class="about-post" data-post-id="3d-printer">
+            <div class="post-header">
+              <div class="post-icon">
+                <i class="fas fa-print"></i>
+              </div>
+              <div class="post-meta">
+                <h3 class="post-title">🖨️ 3D Printing Journey Begins!</h3>
+                <div class="post-date">June 2025 • Maker Life</div>
+              </div>
+            </div>
+            <div class="post-content">
+              <p>Got my hands on the <span class="highlight-text">Anycubic Kobra S1</span> in June and I'm absolutely loving it! 🎉</p>
+              <img data-src="https://www.notebookcheck.net/fileadmin/_processed_/9/b/csm_anycubickobras1combo_c0d8383b4d.jpg" alt="Anycubic Kobra S1 3D Printer" class="post-image">
+              <p>Already racked up <span class="highlight-text">100+ hours of printing time</span> and this machine is a beast! The auto-leveling feature is a game-changer, and the print quality is incredible for the price point.</p>
+              <p>Been printing everything from functional tools to cosplay parts. The learning curve was steep but totally worth it. Planning to live stream some of my longer prints soon!</p>
+            </div>
+            <div class="post-reactions">
+              <button class="reaction-button" onclick="toggleReaction(this, '🖨️')">
+                <span class="reaction-emoji">🖨️</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '👍')">
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🔥')">
+                <span class="reaction-emoji">🔥</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '⚡')">
+                <span class="reaction-emoji">⚡</span>
+                <span class="reaction-count">0</span>
+              </button>
+            </div>
+              <div class="post-tags">
+                <span class="post-tag">3D Printing</span>
+                <span class="post-tag">Anycubic</span>
+                <span class="post-tag">Maker</span>
+                <span class="post-tag">Kobra S1</span>
+              </div>
+            </div>          <!-- Cosplay Post -->
+          <div class="about-post" data-post-id="cosplay">
+            <div class="post-header">
+              <div class="post-icon">
+                <i class="fas fa-mask"></i>
+              </div>
+              <div class="post-meta">
+                <h3 class="post-title">🌟 Star-Lord Cosplay Build</h3>
+                <div class="post-date">Current Project • Comic Con 2026</div>
+              </div>
+            </div>
+            <div class="post-content">
+              <p>Working on building a <span class="highlight-text">Star-Lord cosplay</span> for the next Comic Con in Prague (March 2026)! 🚀</p>
+              <img data-src="https://cdn.thingiverse.com/assets/41/84/32/17/06/large_display_bd8668b6-5094-4c0e-9d8f-8e7b4b5c5a1e.png" alt="Star-Lord Helmet from Thingiverse" class="post-image">
+              <p>Using this amazing <a href="https://www.thingiverse.com/thing:3767836" target="_blank" rel="noopener noreferrer" class="highlight-text">helmet design from Thingiverse</a> as the centerpiece. The print took 23 hours but came out absolutely perfect! Now working on post-processing, painting, and adding electronics for the glowing elements.</p>
+              <p>The goal is to have the complete costume ready months before the convention. This is my first major cosplay project and I'm learning so much about prop-making and finishing techniques!</p>
+            </div>
+            <div class="post-reactions">
+              <button class="reaction-button" onclick="toggleReaction(this, '🌟')">
+                <span class="reaction-emoji">🌟</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🚀')">
+                <span class="reaction-emoji">🚀</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '👍')">
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🔥')">
+                <span class="reaction-emoji">🔥</span>
+                <span class="reaction-count">0</span>
+              </button>
+            </div>
+              <div class="post-tags">
+                <span class="post-tag">Cosplay</span>
+                <span class="post-tag">Star-Lord</span>
+                <span class="post-tag">Comic Con</span>
+                <span class="post-tag">Prague</span>
+                <span class="post-tag">Props</span>
+              </div>
+            </div>
+                <!-- Space Mission Post -->
+          <div class="about-post" data-post-id="space-mission">
+            <div class="post-header">
+              <div class="post-icon">
+                <i class="fas fa-rocket"></i>
+              </div>
+              <div class="post-meta">
+                <h3 class="post-title">🚀 Code Reaches the Stars!</h3>
+                <div class="post-date">Mission Space Lab • 2025</div>
+              </div>
+            </div>
+            <div class="post-content">
+              <p>My Python code has officially achieved <span class="highlight-text">FLIGHT STATUS</span> and will be running on the International Space Station (ISS) between April and May 2025! 🛰️</p>
+              <img data-src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=500&h=300&fit=crop" alt="International Space Station" class="post-image">
+              <p>This incredible achievement came through the <span class="highlight-text">Mission Space Lab program</span>, where my team and I developed code that will actually execute in space. We're expecting mission data and team certificates around June 2025.</p>
+            </div>
+            <div class="post-reactions">
+              <button class="reaction-button" onclick="toggleReaction(this, '🚀')">
+                <span class="reaction-emoji">🚀</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🌟')">
+                <span class="reaction-emoji">🌟</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '👍')">
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🔥')">
+                <span class="reaction-emoji">🔥</span>
+                <span class="reaction-count">0</span>
+              </button>
+            </div>
+              <div class="post-tags">
+                <span class="post-tag">Python</span>
+                <span class="post-tag">Space</span>
+                <span class="post-tag">ISS</span>
+                <span class="post-tag">Achievement</span>
+              </div>
+            </div>
+                <!-- Technical Skills Post -->
+          <div class="about-post" data-post-id="technical-skills">
+            <div class="post-header">
+              <div class="post-icon">
+                <i class="fas fa-code"></i>
+              </div>
+              <div class="post-meta">
+                <h3 class="post-title">Technical Arsenal</h3>
+                <div class="post-date">Skills • Updated 2025</div>
+              </div>
+            </div>
+            <div class="post-content">
+              <p>My programming journey spans multiple languages and domains:</p>
+              <img data-src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&h=300&fit=crop" alt="Code on multiple screens" class="post-image">
+              <p>• <span class="highlight-text">Lua Scripting</span> - My main expertise, especially for FiveM exploitation<br>
+              • <span class="highlight-text">Python</span> - Space-grade code that's literally going to orbit Earth!<br>
+              • <span class="highlight-text">C++</span> - Currently learning and expanding my knowledge<br>
+              • <span class="highlight-text">HTML/CSS</span> - Building web experiences like this site<br>
+              • <span class="highlight-text">DuckyScript</span> - Hardware hacking and automation<br>
+              • <span class="highlight-text">CAD Software</span> - Learning to create my own 3D models</p>
+            </div>
+            <div class="post-reactions">
+              <button class="reaction-button" onclick="toggleReaction(this, '💻')">
+                <span class="reaction-emoji">💻</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '👍')">
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '🔥')">
+                <span class="reaction-emoji">🔥</span>
+                <span class="reaction-count">0</span>
+              </button>
+              <button class="reaction-button" onclick="toggleReaction(this, '⚡')">
+                <span class="reaction-emoji">⚡</span>
+                <span class="reaction-count">0</span>
+              </button>
+            </div>
+              <div class="post-tags">
+                <span class="post-tag">Lua</span>
+                <span class="post-tag">Python</span>
+                <span class="post-tag">C++</span>
+                <span class="post-tag">HTML</span>
+                <span class="post-tag">DuckyScript</span>
+                <span class="post-tag">CAD</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Hidden GIFs for troll effect -->
@@ -1101,37 +1196,164 @@
                  .replace(/>/g, "&gt;");
     }
 
-    // Click to start overlay
+    // Add filterText function to prevent errors
+    function filterText(text) {
+      if (!text) return '';
+      return text.replace(/<script.*?>.*?<\/script>/gi, '') // Remove script tags
+                 .replace(/</g, "&lt;") // Escape HTML tags
+                 .replace(/>/g, "&gt;");
+    }
+
+    // Emoji Reactions with localStorage
+    function toggleReaction(button, emoji) {
+      const postId = button.closest('.about-post').dataset.postId || 'default';
+      const reactionKey = `reactions-${postId}-${emoji}`;
+      const userReactionKey = `user-reaction-${postId}-${emoji}`;
+      
+      // Get current reaction count
+      let currentCount = parseInt(localStorage.getItem(reactionKey) || '0');
+      const userReacted = localStorage.getItem(userReactionKey) === 'true';
+      
+      // Toggle user reaction
+      if (userReacted) {
+        currentCount = Math.max(0, currentCount - 1);
+        localStorage.removeItem(userReactionKey);
+        button.classList.remove('active');
+      } else {
+        currentCount++;
+        localStorage.setItem(userReactionKey, 'true');
+        button.classList.add('active');
+      }
+      
+      // Update count in localStorage
+      localStorage.setItem(reactionKey, currentCount.toString());
+      
+      // Update button display
+      const countSpan = button.querySelector('.reaction-count');
+      if (countSpan) {
+        countSpan.textContent = currentCount;
+      }
+      
+      // Add visual feedback
+      button.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        button.style.transform = '';
+      }, 200);
+    }
+    
+    // Load stored reactions
+    function loadReactions() {
+      document.querySelectorAll('.about-post').forEach(post => {
+        const postId = post.dataset.postId || 'default';
+        
+        post.querySelectorAll('.reaction-button').forEach(button => {
+          const emoji = button.textContent.trim().split(' ')[0];
+          const reactionKey = `reactions-${postId}-${emoji}`;
+          const userReactionKey = `user-reaction-${postId}-${emoji}`;
+          
+          // Load count
+          const count = parseInt(localStorage.getItem(reactionKey) || '0');
+          const countSpan = button.querySelector('.reaction-count');
+          if (countSpan) {
+            countSpan.textContent = count;
+          }
+          
+          // Load user reaction state
+          if (localStorage.getItem(userReactionKey) === 'true') {
+            button.classList.add('active');
+          }
+        });
+      });
+    }
+    
+    // Lazy loading for sections
+    let aboutContentLoaded = false;
+    let contactContentLoaded = false;
+    
+    async function loadAboutSection() {
+      if (aboutContentLoaded) return;
+      
+      const aboutSection = document.getElementById('about-section');
+      const loadingSpinner = aboutSection.querySelector('.loading-spinner');
+      
+      if (loadingSpinner) {
+        loadingSpinner.style.display = 'block';
+      }
+      
+      // Simulate loading delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Load images lazily
+      const images = aboutSection.querySelectorAll('img[data-src]');
+      images.forEach(img => {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.style.opacity = '0';
+        img.onload = () => {
+          img.style.transition = 'opacity 0.3s ease';
+          img.style.opacity = '1';
+        };
+      });
+      
+      if (loadingSpinner) {
+        loadingSpinner.style.display = 'none';
+      }
+      
+      // Load reactions after content is loaded
+      loadReactions();
+      
+      aboutContentLoaded = true;
+    }
+
+    // Enhanced video loading with better error handling
     const overlay = document.getElementById('text-overlay');
     const clickText = document.getElementById('click-text');
     const playerAudioElement = document.getElementById('player-audio-element');
     const videoBg = document.getElementById('video-bg');
     const backgroundVideos = [
-        "html_files/d1ka4hvf27_part1.mov", // Replace with your first video path
-        "html_files/d1ka4hvf27_part2.mov", // Replace with your second video path
-        "html_files/d1ka4hvf27_part3.mov"  // Replace with your third video path
+        "html_files/d1ka4hvf27_part1.mov",
+        "html_files/d1ka4hvf27_part2.mov",
+        "html_files/d1ka4hvf27_part3.mov"
     ];
     let currentVideoIndex = 0;
+    let videoLoadTimeout;
 
     function playNextVideo() {
-        currentVideoIndex = (currentVideoIndex + 1) % backgroundVideos.length; // Loop back to 0
+        if (videoLoadTimeout) clearTimeout(videoLoadTimeout);
+        
+        currentVideoIndex = (currentVideoIndex + 1) % backgroundVideos.length;
         videoBg.src = backgroundVideos[currentVideoIndex];
-        videoBg.load(); // Important: load the new source
+        videoBg.load();
+        
+        // Set timeout for video loading
+        videoLoadTimeout = setTimeout(() => {
+            console.warn("Video loading timeout, trying next video");
+            playNextVideo();
+        }, 10000); // 10 second timeout
+        
         videoBg.play().catch(error => {
             console.error("Error playing next background video:", error);
-            // Attempt to play again after a short delay if needed, or handle error
+            // Try next video on error
+            setTimeout(playNextVideo, 1000);
         });
     }
 
     videoBg.addEventListener('ended', playNextVideo);
+    videoBg.addEventListener('loadeddata', () => {
+        if (videoLoadTimeout) clearTimeout(videoLoadTimeout);
+    });
 
     if (overlay && clickText && playerAudioElement && videoBg) {
         overlay.addEventListener('click', function() {
             overlay.classList.add('hidden');
             initializeMuteState();
+            
+            // Load audio only when needed
+            playerAudioElement.load();
             playerAudioElement.play().catch(error => {
                 console.log("Background music autoplay failed:", error);
             });
+            
             videoBg.play().catch(error => {
                 console.log("Background video autoplay failed:", error);
             });
@@ -1354,7 +1576,16 @@
 
       async function fetchDiscordData() {
         try {
-          const response = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`);
+          // Add timeout to prevent hanging
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+          
+          const response = await fetch(`https://api.lanyard.rest/v1/users/${discordId}`, {
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -1366,6 +1597,27 @@
           }
         } catch (error) {
           console.error('Error fetching Discord status:', error);
+          // Show fallback content
+          statusContainer.innerHTML = `
+            <div class="discord-presence-card">
+              <div class="discord-presence-top">
+                <div class="discord-user-info">
+                  <div class="discord-avatar-wrapper">
+                    <img src="html_files/jtni8ymtkl.gif" alt="Avatar" class="discord-avatar">
+                    <div class="discord-status-indicator offline"></div>
+                  </div>
+                  <div class="discord-user-details">
+                    <div class="discord-name-badges">
+                      <span class="discord-username">@lua.o_o</span>
+                    </div>
+                  </div>
+                </div>
+                <a href="https://discord.com/users/640885363866337284" target="_blank" class="discord-add-button">
+                  Add on Discord <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          `;
         }
       }
 
@@ -1481,9 +1733,9 @@
 
     enhanceDiscordStatus();
 
-    // Function to update Discord server counts
+    // Enhanced Discord server counts with better error handling
     async function updateServerCounts() {
-        const inviteCode = 'wXPr48bDEJ'; // Your invite code
+        const inviteCode = 'wXPr48bDEJ';
         const onlineCountElement = document.getElementById('online-count');
         const memberCountElement = document.getElementById('member-count');
 
@@ -1493,19 +1745,27 @@
         }
 
         try {
-            // Using a CORS proxy because Discord API blocks direct browser requests
-            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`)}`);
+            // Use fetch with timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+            
+            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`)}`, {
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
             if (!response.ok) {
                  throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             const data = await response.json();
-            const contents = JSON.parse(data.contents); // AllOrigins wraps the response
+            const contents = JSON.parse(data.contents);
 
             if (contents.approximate_presence_count && contents.approximate_member_count) {
                 onlineCountElement.textContent = `${contents.approximate_presence_count} Online`;
                 memberCountElement.textContent = `${contents.approximate_member_count} Members`;
             } else {
-                 // Handle cases where counts might be missing (e.g., widget disabled)
                  onlineCountElement.textContent = `? Online`;
                  memberCountElement.textContent = `? Members`;
                  console.warn("Could not retrieve server counts. Is the server widget enabled?");
@@ -1550,7 +1810,7 @@
     muteButton.addEventListener('click', toggleMute);
     initializeMuteState();
 
-    // Background Music Loop Logic
+    // Enhanced background music with better loading
     const player = document.getElementById('player-audio-element');
     const secondTrack = document.getElementById('second-track-element');
     const tracks = [
@@ -1558,29 +1818,45 @@
         { element: secondTrack, src: "html_files/z5603ozumx.mp3" }
     ];
     let currentTrackIndex = 0;
+    let audioLoadTimeout;
 
     function playNextTrack() {
+        if (audioLoadTimeout) clearTimeout(audioLoadTimeout);
+        
         tracks[currentTrackIndex].element.pause();
         tracks[currentTrackIndex].element.currentTime = 0;
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-        tracks[currentTrackIndex].element.play().catch(e => console.log("Error playing next track:", e));
+        
+        const nextTrack = tracks[currentTrackIndex].element;
+        nextTrack.load(); // Load the audio
+        
+        // Set timeout for audio loading
+        audioLoadTimeout = setTimeout(() => {
+            console.warn("Audio loading timeout, trying next track");
+            playNextTrack();
+        }, 8000); // 8 second timeout
+        
+        nextTrack.play().catch(e => {
+            console.log("Error playing next track:", e);
+            setTimeout(playNextTrack, 1000); // Try next track after delay
+        });
     }
 
     tracks.forEach(track => {
         track.element.addEventListener('ended', playNextTrack);
+        track.element.addEventListener('loadeddata', () => {
+            if (audioLoadTimeout) clearTimeout(audioLoadTimeout);
+        });
     });
 
     // Navigation Logic
     const homeLink = document.getElementById('home-link');
     const mainLink = document.getElementById('main-link');
     const aboutLink = document.getElementById('about-link');
-    const contactLink = document.getElementById('contact-link');
     const mainContent = document.getElementById('main-content');
     const aboutSection = document.getElementById('about-section');
-    const contactSection = document.getElementById('contact-section');
     const liveAgeElement = document.getElementById('live-age');
     let ageUpdateInterval;
-    let isContactSectionActive = false;
 
     function calculateAge() {
       const birthDate = new Date(2008, 5, 21, 0, 0, 0); // Month is 0-indexed (5 = June)
@@ -1600,13 +1876,6 @@
     function showSection(sectionToShow) {
       mainContent.style.display = 'none';
       aboutSection.style.display = 'none';
-      contactSection.style.display = 'none';
-      
-      // Cleanup for contact section if it was active
-      if (isContactSectionActive && contactSection) {
-        contactSection.classList.remove('contact-section-active');
-      }
-      isContactSectionActive = false;
 
       // Reset progress bars first to ensure animation restarts
       document.querySelectorAll('#about-section .progress-bar-fill').forEach(fill => {
@@ -1625,26 +1894,24 @@
           mainContent.style.flexDirection = 'column';
           mainContent.style.gap = '0.75rem';
         }
-        // Animate progress bars when about section is shown
+        
+        // Handle lazy loading for about section
         if (sectionToShow === aboutSection) {
-          // Use a timeout to allow the DOM to update and re-enable transition
-          setTimeout(() => {
-            document.querySelectorAll('#about-section .progress-bar-fill').forEach(fill => {
-              fill.style.transition = 'width 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.3s ease'; // Re-enable transition
-              fill.style.width = fill.getAttribute('data-progress');
-            });
-          }, 50); // Small delay for rendering and transition re-application
-          
-          calculateAge(); // Initial calculation
-          ageUpdateInterval = setInterval(calculateAge, 1000); // Update every second
+          loadAboutSection().then(() => {
+            // Animate progress bars after content is loaded
+            setTimeout(() => {
+              document.querySelectorAll('#about-section .progress-bar-fill').forEach(fill => {
+                fill.style.transition = 'width 1.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.3s ease';
+                fill.style.width = fill.getAttribute('data-progress');
+              });
+            }, 50);
+            
+            calculateAge();
+            ageUpdateInterval = setInterval(calculateAge, 1000);
+          });
         }
-      }
-      
-      if (sectionToShow === contactSection) {
-        isContactSectionActive = true;
-        if (contactSection) {
-            contactSection.classList.add('contact-section-active');
-        }
+        
+        // Contact section has been removed
       }
     }
 
@@ -1668,18 +1935,29 @@
       window.location.hash = '#about';
     });
 
-    contactLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showSection(contactSection);
-      window.location.hash = '#contact';
-    });
+    // Contact section removed
 
-    showSection(mainContent);
-    if (window.location.hash !== '#main') {
+    // Handle direct navigation via hash
+    window.addEventListener('hashchange', function() {
+      const hash = window.location.hash;
+      if (hash === '#about') {
+        showSection(aboutSection);
+      } else {
+        showSection(mainContent);
+      }
+    });
+    
+    // Check hash on initial page load
+    if (window.location.hash === '#about') {
+      showSection(aboutSection);
+    } else {
+      showSection(mainContent);
+      if (window.location.hash !== '#main') {
         window.history.replaceState(null, null, '#main');
+      }
     }
 
-    // Snowflake effect
+    // Optimized snowflake effect
     function createSnowflake() {
       const snowflake = document.createElement('div');
       snowflake.innerHTML = '❄';
@@ -1693,14 +1971,33 @@
       document.body.appendChild(snowflake);
 
       setTimeout(() => {
-        snowflake.remove();
+        if (snowflake.parentNode) {
+          snowflake.remove();
+        }
       }, (duration + 1) * 1000);
     }
 
     function startSnowfall() {
       const currentMonth = new Date().getMonth() + 1;
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-        setInterval(createSnowflake, 500);
+        // Limit snowflakes to prevent performance issues
+        let snowflakeCount = 0;
+        const maxSnowflakes = 50;
+        
+        const snowInterval = setInterval(() => {
+          if (snowflakeCount < maxSnowflakes) {
+            createSnowflake();
+            snowflakeCount++;
+            
+            // Remove count after snowflake duration
+            setTimeout(() => {
+              snowflakeCount--;
+            }, 21000); // Max duration + 1 second
+          }
+        }, 500);
+        
+        // Store interval for cleanup if needed
+        window.snowInterval = snowInterval;
       }
     }
 
