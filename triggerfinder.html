@@ -1017,7 +1017,7 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
                     <option value="||@everyone||">Spoiler @everyone</option>
                     <option value="||@here||">Spoiler @here</option>
                   </select>
-                  <input type="text" class="webhook-spam-input" placeholder="www.chomik.site">
+                  <input type="text" class="webhook-spam-input" placeholder="www.lu4.app">
                 </div>
                  <div style="display: flex; gap: 8px; flex-wrap: wrap;"> <!-- Wrap buttons -->
                     <button class="spam-btn" onclick="startInfiniteSpam('${webhook}', this)"><i class="fas fa-infinity"></i> Spam</button>
@@ -1063,7 +1063,7 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
 
         while (spamControls.get(webhook)) { // Check flag in loop
             try {
-                const content = spamInput.value || 'www.chomik.site @everyone';
+                const content = spamInput.value || 'www.lu4.app @everyone';
                 
                 const response = await fetch(webhook, {
                     method: 'POST',
@@ -1176,7 +1176,7 @@ __      ____      ____      __  ___ | |__    ___   _ __ ___  (_)| | __    ___ (_
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    content: '**YOUR WEBHOOK HAS BEEN NUKED BY www.chomik.site** @everyone\nJoin us: https://discord.gg/wXPr48bDEJ',
+                    content: '**YOUR WEBHOOK HAS BEEN NUKED BY www.lu4.app** @everyone\nJoin us: https://discord.gg/wXPr48bDEJ',
                     username: 'Chomik Webhook Nuker',
                     avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public',
                     allowed_mentions: { parse: ['everyone'] }
