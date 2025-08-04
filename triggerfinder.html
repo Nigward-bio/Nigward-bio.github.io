@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Include Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Enhanced styles -->
+  <link rel="stylesheet" href="enhanced-styles.css">
   <style>
     /* Define theme colors */
     :root {
@@ -121,22 +123,35 @@
     /* Mute button styling */
     #mute-button { /* Use consistent ID */
       position: fixed;
-      top: 15px;
-      right: 15px;
-      background-color: transparent;
-      border: none;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(116, 0, 217, 0.8), rgba(122, 3, 224, 0.8));
+      border: 2px solid var(--border-color);
       color: var(--text-color);
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       cursor: url('GTA 5 Web Cursor.cur'), pointer; /* Specific cursor */
       z-index: 1001;
-      transition: transform 0.3s ease, color 0.3s ease;
-      padding: 5px;
-      line-height: 1;
+      transition: all 0.3s ease;
+      padding: 12px;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(116, 0, 217, 0.3);
     }
 
     #mute-button:hover {
-      transform: scale(1.1);
-      color: var(--accent-color);
+      transform: scale(1.1) rotate(5deg);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      box-shadow: 0 6px 25px rgba(116, 0, 217, 0.5);
+      border-color: var(--accent-color);
+    }
+
+    #mute-button:active {
+      transform: scale(0.95);
     }
 
     /* Finder Specific Styles - Adapted to Theme */
@@ -197,20 +212,43 @@
 
     /* General Button Styling */
     button {
-      padding: 10px 20px;
-      background-color: var(--primary-color);
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
       color: white;
       border: 1px solid var(--border-color);
       cursor: pointer;
       border-radius: var(--border-radius);
       font-family: var(--font-family);
-      transition: filter 0.3s ease;
+      transition: all 0.3s ease;
       font-weight: 600;
       outline: none;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:hover::before {
+      width: 300px;
+      height: 300px;
     }
 
     button:hover {
-      filter: brightness(1.25);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(116, 0, 217, 0.4);
     }
 
     button:disabled {
@@ -218,16 +256,18 @@
       border-color: #444;
       cursor: not-allowed;
       filter: brightness(0.7);
+      transform: none;
+      box-shadow: none;
     }
 
-    .dropdown {
-      position: relative;
-      display: inline-block;
-      z-index: 1001;
+    button:disabled::before {
+      display: none;
     }
 
-    /* Dropdown button uses general button style */
-    .dropdown button { }
+    /* Dropdown button inherits general button styles */
+    .dropdown button {
+      min-width: 120px;
+    }
 
     .dropdown-content {
       display: none;
@@ -284,33 +324,88 @@
     /* Fixed Height for Results Container */
     #results-container {
       margin-top: 1rem;
-      height: 300px;
+      height: 350px;
       overflow-y: auto;
       border: 1px solid var(--border-color);
       padding: 10px;
       background-color: rgba(0, 0, 0, 0.2); /* Slightly transparent background */
       border-radius: var(--border-radius);
       text-align: left; /* Align trigger text left */
+      position: relative;
+    }
+
+    /* Custom scrollbar for results container */
+    #results-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    #results-container::-webkit-scrollbar-track {
+      background: var(--input-bg);
+      border-radius: 4px;
+    }
+    #results-container::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 4px;
+    }
+    #results-container::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-color);
     }
 
     .trigger {
       background: var(--input-bg); /* Darker background for each item */
-      padding: 10px;
+      padding: 15px;
       border: 1px solid var(--border-color);
       margin-bottom: 10px;
       border-radius: var(--border-radius);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(116, 0, 217, 0.3);
+      border-color: var(--accent-color);
+    }
+
+    .trigger::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .trigger:hover::before {
+      opacity: 1;
     }
 
     .trigger .full-trigger {
       color: var(--text-color); /* Regular text color */
       font-weight: bold;
       word-break: break-all; /* Break long trigger names */
+      font-family: var(--font-family);
+      font-size: 0.95em;
+      line-height: 1.4;
+      margin-bottom: 8px;
     }
 
     .trigger .folder {
       color: var(--accent-color); /* Use accent color for folder */
-      font-size: 0.9em;
+      font-size: 0.85em;
       margin-top: 5px;
+      opacity: 0.8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .trigger .folder::before {
+      content: '📁';
+      font-size: 12px;
     }
 
     #download-btn {
@@ -366,6 +461,11 @@
       scrollbar-width: thin;
       scrollbar-color: var(--primary-color) var(--input-bg); /* Themed scrollbar */
       text-align: left; /* Align content left */
+      display: none; /* Hidden by default */
+    }
+
+    .webhook-container.visible {
+      display: block; /* Show when has visible class */
     }
 
     /* Webkit scrollbar styles */
@@ -464,16 +564,70 @@
 
     /* Style webhook buttons smaller */
     .webhook-controls button {
-        padding: 6px 12px;
+        padding: 8px 16px;
         font-size: 0.9em;
+        min-width: 80px;
     }
     .webhook-controls .spam-btn,
     .webhook-controls .stop-btn {
-        min-width: 80px; /* Ensure enough space for text/icon */
+        min-width: 90px; /* Ensure enough space for text/icon */
+    }
+
+    /* Fade-in animations */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Typing effect for messages */
+    .typing-effect {
+      overflow: hidden;
+      border-right: 2px solid var(--primary-color);
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--primary-color); }
+    }
+
+    /* Enhanced progress bar */
+    #progress-bar {
+      width: 0%;
+      height: 30px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      text-align: center;
+      line-height: 30px;
+      color: white;
+      border-radius: 0;
+      transition: width 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
 
 
-    /* Snowflake Styling - Copied from skidTriggerCreator */
+    /* Snowflake Styling - Enhanced */
     .snowflake {
       position: fixed;
       top: -10%;
@@ -484,6 +638,13 @@
       animation: fall linear infinite;
       opacity: 0.8;
       z-index: 9998; /* Below overlay/mute, above background */
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .snowflake.special {
+      color: var(--primary-color);
+      text-shadow: 0 0 15px var(--primary-color);
+      font-size: 1.5em;
     }
 
     @keyframes fall {
@@ -497,9 +658,97 @@
       }
     }
 
-    /* Fade-in animations */
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    /* Pulse animation for special elements */
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Add glowing effect to main title */
+    h1 {
+      font-family: var(--font-family);
+      font-size: 1.8em;
+      color: var(--primary-color);
+      text-shadow: 0 0 20px rgba(116, 0, 217, 0.8), 0 0 40px rgba(116, 0, 217, 0.4);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    /* Stats display */
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(116, 0, 217, 0.1);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-item {
+      text-align: center;
+      color: var(--text-color);
+    }
+
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: var(--primary-color);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8em;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Enhanced search input */
+    #search,
+    #folder-input {
+      flex: 1;
+      padding: 12px 16px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-family: var(--font-family);
+      min-width: 150px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    #search:focus,
+    #folder-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 15px rgba(116, 0, 217, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(116, 0, 217, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
   </style>
@@ -527,6 +776,30 @@
       <!-- Finder App as a component -->
       <div id="finder-app" class="component"> <!-- Changed ID, added class -->
         <h1><i class="fas fa-search"></i> Lu4 Trigger Finder</h1> <!-- Added icon -->
+
+        <!-- Stats Container -->
+        <div class="stats-container" id="stats-container">
+          <div class="stat-item">
+            <span class="stat-number" id="triggers-count">0</span>
+            <span class="stat-label">Triggers</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="webhooks-count">0</span>
+            <span class="stat-label">Webhooks</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="files-count">0</span>
+            <span class="stat-label">Files Scanned</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="shops-count">0</span>
+            <span class="stat-label">Shops</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="coords-count">0</span>
+            <span class="stat-label">Coordinates</span>
+          </div>
+        </div>
 
         <!-- Search and Filter Row -->
         <div class="search-filter-row">
@@ -600,6 +873,7 @@
     const DEBUG_MODE = true;
     let allTriggers = []; // Store all triggers for search functionality
     let allShops = []; // Store all shops for download functionality
+    let allCoords = []; // Store all coordinates found
 
     // Remove dynamic title emoji logic
     // const emojis = [...]
@@ -666,11 +940,20 @@
     }
     // initializeMuteState called after overlay click
 
-    // Snowflake effect
+    // Enhanced snowflake effect
     function createSnowflake() {
       const snowflake = document.createElement('div');
-      snowflake.innerHTML = '❄'; // Use innerHTML for Font Awesome or text
-      snowflake.classList.add('snowflake');
+      const isSpecial = Math.random() < 0.1; // 10% chance for special snowflake
+      
+      if (isSpecial) {
+        snowflake.innerHTML = '✨'; // Special sparkle
+        snowflake.classList.add('snowflake', 'special');
+      } else {
+        const symbols = ['❄', '❅', '❆', '*'];
+        snowflake.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+        snowflake.classList.add('snowflake');
+      }
+      
       snowflake.style.left = Math.random() * 100 + 'vw';
       const duration = Math.random() * 10 + 10; // 10-20 seconds fall time
       snowflake.style.animationDuration = duration + 's';
@@ -689,7 +972,7 @@
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
         // Check if interval already running to avoid duplicates if script reloads
         if (!window.snowfallInterval) {
-             window.snowfallInterval = setInterval(createSnowflake, 500);
+             window.snowfallInterval = setInterval(createSnowflake, 300);
         }
       }
     }
@@ -700,6 +983,108 @@
 
     // Removed old overlay, mute, video, snowflake JS
 
+    // Function definitions first
+    // Enhanced stats update function with animation
+    function updateStats() {
+      const triggersCount = document.getElementById('triggers-count');
+      const webhooksCount = document.getElementById('webhooks-count');
+      const filesCount = document.getElementById('files-count');
+      const shopsCount = document.getElementById('shops-count');
+      const coordsCount = document.getElementById('coords-count');
+      
+      // Animate the numbers
+      if (triggersCount) animateCounter(triggersCount, allTriggers.length);
+      if (webhooksCount) {
+        const uniqueWebhooks = document.querySelectorAll('.webhook').length;
+        animateCounter(webhooksCount, uniqueWebhooks);
+      }
+      if (shopsCount) animateCounter(shopsCount, allShops.length);
+      if (coordsCount) animateCounter(coordsCount, allCoords.length);
+    }
+
+    // Counter animation
+    function animateCounter(element, target) {
+      const start = parseInt(element.textContent) || 0;
+      const duration = 1000;
+      const startTime = performance.now();
+      
+      function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const current = Math.floor(start + (target - start) * progress);
+        
+        element.textContent = current;
+        
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        }
+      }
+      
+      requestAnimationFrame(updateCounter);
+    }
+
+    // Enhanced message display function
+    function showMessage(text, type = 'success', typing = false) {
+      const messageDiv = document.getElementById('message');
+      if (!messageDiv) return;
+      
+      messageDiv.className = type;
+      
+      if (typing) {
+        messageDiv.classList.add('typing-effect');
+        messageDiv.textContent = '';
+        let i = 0;
+        const typewriter = () => {
+          if (i < text.length) {
+            messageDiv.textContent += text.charAt(i);
+            i++;
+            setTimeout(typewriter, 30); // Reduced from 50ms to 30ms for smoother typing
+          } else {
+            setTimeout(() => messageDiv.classList.remove('typing-effect'), 1000);
+          }
+        };
+        typewriter();
+      } else {
+        messageDiv.textContent = text;
+      }
+    }
+
+    // Add loading indicator
+    function showLoading(show = true) {
+      const searchButton = document.getElementById('search-button');
+      if (!searchButton) return;
+      
+      if (show) {
+        searchButton.innerHTML = '<div class="loading"></div> Processing...';
+        searchButton.disabled = true;
+      } else {
+        searchButton.innerHTML = '<i class="fas fa-search"></i> Search';
+        searchButton.disabled = false;
+      }
+    }
+
+    // Notification system
+    function showNotification(message, type = 'info', duration = 3000) {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, duration);
+    }
+
+    // Element references
     const folderInput = document.getElementById('folder-input');
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
@@ -709,200 +1094,28 @@
     const downloadButton = document.getElementById('download-btn');
     const filters = document.querySelectorAll('#filters input[type="checkbox"]');
 
-    // ... existing functions (extractTriggers, extractShops, findShopsFile, displayTriggers, extractWebhooks, displayWebhooks, startInfiniteSpam, stopSpam, checkWebhook, nukeWebhook, insertMention) ...
-    // Ensure these functions use the correct element IDs if they were changed.
+    // Initialize stats (now that function is defined)
+    updateStats();
 
-    // Handle Folder Input (ensure it uses updated element variables if needed)
-    folderInput.addEventListener('change', async (event) => {
-        const files = Array.from(event.target.files);
-        progressContainer.style.display = 'block';
-        progressBar.style.width = '0%';
-        progressBar.textContent = '0%';
-        resultsContainer.innerHTML = ''; // Clear previous results
-        document.getElementById('webhooks-list').innerHTML = ''; // Clear previous webhooks
-        allTriggers = [];
-        allShops = [];
-        let allWebhooks = new Set(); // Use Set to avoid duplicates
-
-        try {
-            const shopsFile = findShopsFile(files);
-            if (shopsFile) {
-                if (DEBUG_MODE) console.log('Found shops file:', shopsFile.webkitRelativePath);
-                const text = await shopsFile.text();
-                allShops = extractShops(text);
-                 if (DEBUG_MODE) console.log('Extracted shops:', allShops.length, allShops);
-            }
-
-            const remainingFiles = files.filter(f => f !== shopsFile);
-            const totalFiles = remainingFiles.length;
-            const batchSize = 20; // Slightly larger batch size
-            let processedCount = 0;
-
-            for (let i = 0; i < totalFiles; i += batchSize) {
-                const batch = remainingFiles.slice(i, i + batchSize);
-
-                await Promise.all(batch.map(async file => {
-                    // Process only .lua and .js files, ignore others silently
-                    if (file.name.endsWith('.lua') || file.name.endsWith('.js')) {
-                        try {
-                            const text = await file.text();
-                            const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/');
-
-                            const triggers = extractTriggers(text, folderPath);
-                            allTriggers.push(...triggers);
-
-                            const webhooks = extractWebhooks(text);
-                            webhooks.forEach(webhook => allWebhooks.add(webhook));
-                        } catch (readError) {
-                            if (DEBUG_MODE) console.warn(`Could not read file: ${file.webkitRelativePath}`, readError);
-                            // Optionally display a warning to the user
-                        }
-                    }
-                    processedCount++;
-                }));
-
-                const progress = (processedCount / totalFiles) * 100;
-                progressBar.style.width = `${Math.min(progress, 100)}%`;
-                progressBar.textContent = `${Math.round(Math.min(progress, 100))}%`;
-
-                // Yield to the event loop to keep UI responsive
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-        } catch (error) {
-            console.error('Processing error:', error);
-            document.getElementById('message').textContent = 'An error occurred during processing.';
-            document.getElementById('message').className = 'error';
-        }
-
-        progressContainer.style.display = 'none';
-        downloadButton.disabled = allTriggers.length === 0 && allShops.length === 0; // Enable if triggers OR shops found
-        displayTriggers(allTriggers);
-        displayWebhooks(Array.from(allWebhooks)); // Display unique webhooks
-
-        // Display summary message
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = `Found ${allTriggers.length} triggers, ${allWebhooks.size} webhooks, and ${allShops.length} shop definitions.`;
-        messageDiv.className = 'success';
-
-    });
-
-    // Search Functionality (no changes needed if using `allTriggers` and `displayTriggers`)
-    searchButton.addEventListener('click', () => {
-        const query = searchInput.value.toLowerCase();
-        const filteredTriggers = allTriggers.filter(trigger =>
-            trigger.trigger.toLowerCase().includes(query) ||
-            trigger.folder.toLowerCase().includes(query)
-        );
-        displayTriggers(filteredTriggers); // Display filtered results
-        // Optionally update message
-        document.getElementById('message').textContent = `Displaying ${filteredTriggers.length} triggers matching "${searchInput.value}".`;
-        document.getElementById('message').className = 'success';
-    });
-    // Allow searching on Enter key press
-    searchInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            searchButton.click();
-        }
-    });
-
-
-    // Filter Functionality (no changes needed if using `allTriggers` and `displayTriggers`)
-    filters.forEach(filter => {
-        filter.addEventListener('change', () => {
-            const activeFilters = Array.from(filters)
-                .filter(f => f.checked)
-                .map(f => f.value);
-
-            let filteredTriggers;
-
-            if (activeFilters.length === 0) {
-                filteredTriggers = allTriggers; // Show all if no filters
-            } else {
-                filteredTriggers = allTriggers.filter(trigger =>
-                    activeFilters.some(filterKeyword => trigger.trigger.toLowerCase().includes(filterKeyword))
-                );
-            }
-            displayTriggers(filteredTriggers); // Display filtered results
-            // Optionally update message
-            document.getElementById('message').textContent = `Displaying ${filteredTriggers.length} triggers based on active filters.`;
-            document.getElementById('message').className = 'success';
-        });
-    });
-
-
-    // Download Button (no changes needed if using `allTriggers` and `allShops`)
-    downloadButton.addEventListener('click', () => {
-      // ... (keep existing ASCII art and text generation logic) ...
-            const asciiArt = `
-===================================================================
-                        LU4.APP TRIGGER FINDER
-===================================================================
-                   Find triggers and webhooks in scripts
-                        www.lu4.app
-                  https://discord.gg/wXPr48bDEJ
-===================================================================
-`;
-
-      const triggersText = allTriggers.length > 0
-        ? allTriggers.map(trigger => `Trigger: ${trigger.trigger}\nFolder: ${trigger.folder}\n--------------------------`).join('\n')
-        : "No triggers found.";
-
-      const shopsText = allShops.length > 0
-        ? allShops.map(shop => {
-            const uniqueLocations = [...new Set(shop.locations)];
-            const locations = uniqueLocations.length > 0 ? uniqueLocations.map(loc => `    ${loc}`).join('\n') : "    No locations specified.";
-            const items = shop.items.length > 0 ? shop.items.map(item => {
-              const currencyText = item.currency && item.currency !== 'money' ? `, Currency: ${item.currency}` : '';
-              return `    - ${item.name} (Price: ${item.price}${currencyText})`;
-            }).join('\n') : "    No items specified.";
-
-            return `Shop Definition: ${shop.type} (${shop.name || 'Unnamed'})\n\n  Locations:\n${locations}\n\n  Items:\n${items}\n--------------------------`;
-          }).join('\n')
-        : "No shop definitions found.";
-
-      const fullText = `${asciiArt}\n\n--- Triggers ---\n${triggersText}\n\n--- Shops and Locations ---\n${shopsText}`;
-
-      const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' }); // Specify charset
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'lu4_finder_results.txt'; // More descriptive filename
-      document.body.appendChild(a); // Append to body for Firefox compatibility
-      a.click();
-      document.body.removeChild(a); // Clean up
-      URL.revokeObjectURL(url);
-    });
-
-    // Ensure all original helper functions are present and correct
-    // extractTriggers, extractShops, findShopsFile, displayTriggers,
-    // extractWebhooks, displayWebhooks, startInfiniteSpam, stopSpam,
-    // checkWebhook, nukeWebhook, insertMention
-
-    // Make sure these functions are defined correctly as in the original file
+    // Helper functions for the trigger finder
     function extractTriggers(content, folderPath) {
-      const triggerRegex = /(?:RegisterNetEvent|TriggerEvent|TriggerServerEvent)\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g; // Capture only the event name
-      const clientTriggerRegex = /TriggerEvent\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g; // Specifically client-side triggers
-      const serverTriggerRegex = /TriggerServerEvent\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g; // Specifically server-side triggers
+      // Blacklist RegisterNetEvent and only capture TriggerEvent and TriggerServerEvent
+      const triggerRegex = /(?:TriggerEvent|TriggerServerEvent)\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g;
+      const clientTriggerRegex = /TriggerEvent\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g;
+      const serverTriggerRegex = /TriggerServerEvent\s*\(\s*['"]([^'"]+)['"](?:,[^)]*)?\)/g;
 
       const triggers = [];
       let match;
 
-      // Generic trigger capture
+      // Generic trigger capture (excluding RegisterNetEvent)
       while ((match = triggerRegex.exec(content)) !== null) {
         triggers.push({
           trigger: match[1], // Just the event name
           fullLine: match[0], // Keep the full line for context if needed
           folder: folderPath,
-          type: match[0].startsWith('TriggerServerEvent') ? 'Server' : 'Client/Shared' // Basic type detection
+          type: match[0].startsWith('TriggerServerEvent') ? 'Server' : 'Client'
         });
       }
-       // Refine type detection (simple approach)
-       triggers.forEach(t => {
-           if (t.type === 'Client/Shared' && t.fullLine.startsWith('TriggerEvent')) {
-               t.type = 'Client';
-           }
-       });
-
 
       // Remove duplicates based on trigger name and folder
       const uniqueTriggers = Array.from(new Map(triggers.map(t => [`${t.folder}-${t.trigger}`, t])).values());
@@ -912,6 +1125,65 @@
           trigger: t.fullLine, // Display the full line
           folder: t.folder
       }));
+    }
+
+    // Enhanced coords extraction function
+    function extractCoords(content, folderPath) {
+      const coords = [];
+      
+      // Comprehensive coordinate patterns
+      const coordPatterns = [
+        // Vector3 patterns
+        /vector3\s*\(\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)/gi,
+        // Vector4 patterns (includes heading)
+        /vector4\s*\(\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)/gi,
+        // Table/object coordinate patterns
+        /{\s*x\s*=\s*(-?\d+\.?\d*)\s*,\s*y\s*=\s*(-?\d+\.?\d*)\s*,\s*z\s*=\s*(-?\d+\.?\d*)/gi,
+        // Array coordinate patterns
+        /{\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*}/g,
+        // Blip creation coordinates
+        /AddBlipForCoord\s*\(\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)/gi,
+        // SetEntityCoords patterns
+        /SetEntityCoords\s*\([^,]+,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)/gi,
+      ];
+
+      coordPatterns.forEach((pattern, patternIndex) => {
+        let match;
+        while ((match = pattern.exec(content)) !== null) {
+          let x, y, z, h = 0;
+          
+          if (patternIndex === 0) { // vector3
+            [, x, y, z] = match;
+          } else if (patternIndex === 1) { // vector4
+            [, x, y, z, h] = match;
+          } else if (patternIndex === 2) { // table format
+            [, x, y, z] = match;
+          } else if (patternIndex === 3) { // array format
+            [, x, y, z] = match;
+          } else if (patternIndex === 4 || patternIndex === 5) { // blip or entity coords
+            [, x, y, z] = match;
+          }
+
+          // Filter out invalid coordinates (too large/small values)
+          const xNum = parseFloat(x);
+          const yNum = parseFloat(y);
+          const zNum = parseFloat(z);
+          
+          if (Math.abs(xNum) < 10000 && Math.abs(yNum) < 10000 && Math.abs(zNum) < 1000) {
+            coords.push({
+              x: xNum,
+              y: yNum,
+              z: zNum,
+              h: h ? parseFloat(h) : 0,
+              folder: folderPath,
+              context: match[0],
+              type: patternIndex === 1 ? 'vector4' : patternIndex === 0 ? 'vector3' : 'other'
+            });
+          }
+        }
+      });
+
+      return coords;
     }
 
     function extractShops(content) {
@@ -944,7 +1216,6 @@
         }
     }
 
-
     function findShopsFile(files) {
       // Keep original logic
       return files.find(f => {
@@ -964,16 +1235,53 @@
             return;
         }
         if (triggers.length === 0) {
-            resultsContainer.innerHTML = '<p style="text-align: center; font-style: italic;">No triggers found matching criteria.</p>';
+            resultsContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: var(--text-color); opacity: 0.7;">
+                    <i class="fas fa-search" style="font-size: 3em; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p style="font-size: 1.2em; margin: 0;">No triggers found matching criteria</p>
+                    <p style="font-size: 0.9em; margin-top: 0.5rem; opacity: 0.8;">Try adjusting your search or filters</p>
+                </div>
+            `;
             return;
         }
-        // Keep original display logic
-        resultsContainer.innerHTML = triggers.map(trigger => `
-            <div class="trigger">
-            <div class="full-trigger">${trigger.trigger}</div>
-            <div class="folder">Folder: ${trigger.folder}</div>
+        
+        // Enhanced display with copy functionality and better styling
+        resultsContainer.innerHTML = triggers.map((trigger, index) => `
+            <div class="trigger" data-index="${index}">
+                <div class="trigger-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: var(--primary-color); font-size: 0.8em; font-weight: bold;">#${index + 1}</span>
+                    <button class="copy-btn" onclick="copyTrigger('${trigger.trigger.replace(/'/g, "\\'")}', this)" 
+                            style="padding: 4px 8px; font-size: 0.7em; background: var(--primary-color); border: none; border-radius: 3px; color: white; cursor: pointer;">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="full-trigger">${trigger.trigger}</div>
+                <div class="folder">Folder: ${trigger.folder}</div>
             </div>
         `).join('');
+    }
+
+    // Copy trigger function
+    function copyTrigger(triggerText, button) {
+        navigator.clipboard.writeText(triggerText).then(() => {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            button.style.background = '#00cc66';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = 'var(--primary-color)';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            button.innerHTML = '<i class="fas fa-times"></i> Failed';
+            button.style.background = '#ff4444';
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                button.style.background = 'var(--primary-color)';
+            }, 2000);
+        });
     }
 
     function extractWebhooks(content) {
@@ -984,16 +1292,21 @@
 
     function displayWebhooks(webhooks) {
       const webhooksList = document.getElementById('webhooks-list');
-      if (!webhooksList) return; // Exit if container not found
+      const webhooksContainer = document.querySelector('.webhook-container');
+      if (!webhooksList || !webhooksContainer) return;
 
       if (webhooks.length === 0) {
-          webhooksList.innerHTML = '<p style="text-align: center; font-style: italic;">No webhooks found.</p>'; // Message when none found
+          webhooksList.innerHTML = '<p style="text-align: center; font-style: italic;">No webhooks found.</p>';
+          webhooksContainer.classList.remove('visible');
           return;
       }
 
+      // Initially hide container, will show only when working webhooks are confirmed
+      webhooksContainer.classList.remove('visible');
+      let workingWebhooksFound = false;
+
       // Keep original display logic, ensure unique IDs
       webhooksList.innerHTML = webhooks.map((webhook, index) => {
-        // Create a more robust unique ID
         const webhookId = `webhook-${index}-${btoa(webhook).replace(/[^a-zA-Z0-9]/g, '')}`;
         return `
           <div class="webhook" data-webhook-id="${webhookId}">
@@ -1004,7 +1317,7 @@
               <div class="webhook-url">${webhook}</div>
               <div class="webhook-info">Status: <span class="webhook-status">Checking...</span></div>
               <div class="webhook-controls">
-                <div style="display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap;"> <!-- Allow wrap -->
+                <div style="display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap;">
                   <select class="mention-tag" onchange="insertMention(this)">
                     <option value="">Add Mention</option>
                     <option value="@everyone">@everyone</option>
@@ -1014,7 +1327,7 @@
                   </select>
                   <input type="text" class="webhook-spam-input" placeholder="www.lu4.app">
                 </div>
-                 <div style="display: flex; gap: 8px; flex-wrap: wrap;"> <!-- Wrap buttons -->
+                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="spam-btn" onclick="startInfiniteSpam('${webhook}', this)"><i class="fas fa-infinity"></i> Spam</button>
                     <button class="stop-btn" onclick="stopSpam('${webhook}', this)" style="display:none;"><i class="fas fa-stop-circle"></i> Stop</button>
                     <button class="delete-btn" onclick="nukeWebhook('${webhook}')"><i class="fas fa-skull-crossbones"></i> Delete</button>
@@ -1025,10 +1338,22 @@
         `;
       }).join('');
 
-      // Check status for each displayed webhook
-      webhooks.forEach((webhook, index) => {
+      // Check status for each webhook and show container only if working webhooks found
+      let checkedWebhooks = 0;
+      webhooks.forEach(async (webhook, index) => {
          const webhookId = `webhook-${index}-${btoa(webhook).replace(/[^a-zA-Z0-9]/g, '')}`;
-         checkWebhook(webhook, webhookId); // Pass ID to check function
+         const isWorking = await checkWebhook(webhook, webhookId);
+         
+         if (isWorking) {
+           workingWebhooksFound = true;
+           webhooksContainer.classList.add('visible');
+         }
+         
+         checkedWebhooks++;
+         // If all webhooks checked and none working, ensure container stays hidden
+         if (checkedWebhooks === webhooks.length && !workingWebhooksFound) {
+           webhooksContainer.classList.remove('visible');
+         }
       });
     }
 
@@ -1064,7 +1389,8 @@
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                    },                    body: JSON.stringify({
+                    },                    
+                    body: JSON.stringify({
                         content: content,
                         username: 'Lu4 Webhook Spammer',
                         avatar_url: 'https://imagedelivery.net/HL_Fwm__tlvUGLZF2p74xw/b5242d9e-b8db-4957-d35d-76442ed70c00/public'
@@ -1119,30 +1445,31 @@
         }
     }
 
-    async function checkWebhook(webhook, webhookId) { // Accept webhookId
-        // Keep original logic, ensure querySelector uses the passed ID
+    async function checkWebhook(webhook, webhookId) {
         const container = document.querySelector(`[data-webhook-id="${webhookId}"]`);
-        if (!container) return;
+        if (!container) return false;
 
         const statusElement = container.querySelector('.webhook-status');
-        if (!statusElement) return;
+        if (!statusElement) return false;
 
         try {
-            // Use HEAD request for efficiency, fallback to GET if needed
             let response = await fetch(webhook, { method: 'HEAD' });
             if (!response.ok) {
-                 response = await fetch(webhook); // Fallback to GET
+                 response = await fetch(webhook);
             }
 
-            statusElement.textContent = response.ok ? '🟢 Working' : '🔴 Invalid';
-            statusElement.style.color = response.ok ? '#00ff00' : '#ff0000';
+            const isWorking = response.ok;
+            statusElement.textContent = isWorking ? '🟢 Working' : '🔴 Invalid';
+            statusElement.style.color = isWorking ? '#00ff00' : '#ff0000';
+            
+            return isWorking; // Return whether webhook is working
         } catch (error) {
             if (DEBUG_MODE) console.warn(`Webhook check failed for ${webhookId}:`, error);
             statusElement.textContent = '❓ Error Checking';
-            statusElement.style.color = '#ffa500'; // Orange for error
+            statusElement.style.color = '#ffa500';
+            return false;
         }
     }
-
 
     async function nukeWebhook(webhook) {
         // Keep original logic, ensure querySelectors are correct
@@ -1153,17 +1480,14 @@
              return;
         }
 
-
         const statusElement = container.querySelector('.webhook-status');
         const controls = container.querySelector('.webhook-controls');
         if (!statusElement || !controls) return;
-
 
         statusElement.textContent = '⚠️ Nuking...';
         statusElement.style.color = '#ffa500';
         controls.style.opacity = '0.5';
         controls.style.pointerEvents = 'none';
-
 
         try {
             // Send nuke message
@@ -1179,10 +1503,8 @@
             });
             await new Promise(r => setTimeout(r, 500)); // Shorter wait
 
-
             // Attempt DELETE
             const deleteResponse = await fetch(webhook, { method: 'DELETE' });
-
 
             // Check if delete was successful (204 No Content)
             if (deleteResponse.status === 204) {
@@ -1206,7 +1528,6 @@
                  statusElement.style.color = '#ffa500';
             }
 
-
         } catch (error) {
             statusElement.textContent = '❌ Nuke Failed';
             statusElement.style.color = '#ff0000';
@@ -1215,7 +1536,6 @@
             controls.style.opacity = '1';
         }
     }
-
 
     function insertMention(select) {
         // Keep original logic, ensure querySelectors are correct
@@ -1230,7 +1550,186 @@
         input.focus(); // Focus input after insertion
     }
 
+    // ... existing functions (extractTriggers, extractShops, findShopsFile, displayTriggers, extractWebhooks, displayWebhooks, startInfiniteSpam, stopSpam, checkWebhook, nukeWebhook, insertMention) ...
+    // Ensure these functions use the correct element IDs if they were changed.
 
+    // Handle Folder Input (enhanced with better feedback)
+    folderInput.addEventListener('change', async (event) => {
+        const files = Array.from(event.target.files);
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '0%';
+        resultsContainer.innerHTML = ''; // Clear previous results
+        document.getElementById('webhooks-list').innerHTML = ''; // Clear previous webhooks
+        allTriggers = [];
+        allShops = [];
+        let allWebhooks = new Set(); // Use Set to avoid duplicates
+        let processedFiles = 0;
+
+        // Update files count in stats
+        const filesCountEl = document.getElementById('files-count');
+        if (filesCountEl) filesCountEl.textContent = files.length;
+
+        showMessage('Starting scan...', 'success', false);
+
+        try {
+            const shopsFile = findShopsFile(files);
+            if (shopsFile) {
+                if (DEBUG_MODE) console.log('Found shops file:', shopsFile.webkitRelativePath);
+                const text = await shopsFile.text();
+                allShops = extractShops(text);
+                 if (DEBUG_MODE) console.log('Extracted shops:', allShops.length, allShops);
+            }
+
+            const remainingFiles = files.filter(f => f !== shopsFile);
+            const totalFiles = remainingFiles.length;
+            const batchSize = 15; // Optimized batch size
+
+            for (let i = 0; i < totalFiles; i += batchSize) {
+                const batch = remainingFiles.slice(i, i + batchSize);
+
+                await Promise.all(batch.map(async file => {
+                    // Process only .lua and .js files, ignore others silently
+                    if (file.name.endsWith('.lua') || file.name.endsWith('.js')) {
+                        try {
+                            const text = await file.text();
+                            const folderPath = file.webkitRelativePath.split('/').slice(0, -1).join('/');
+
+                            const triggers = extractTriggers(text, folderPath);
+                            allTriggers.push(...triggers);
+
+                            const webhooks = extractWebhooks(text);
+                            webhooks.forEach(webhook => allWebhooks.add(webhook));
+                        } catch (readError) {
+                            if (DEBUG_MODE) console.warn(`Could not read file: ${file.webkitRelativePath}`, readError);
+                        }
+                    }
+                    processedFiles++;
+                }));
+
+                const progress = (processedFiles / totalFiles) * 100;
+                progressBar.style.width = `${Math.min(progress, 100)}%`;
+                progressBar.textContent = `${Math.round(Math.min(progress, 100))}%`;
+
+                // Yield to the event loop to keep UI responsive
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+        } catch (error) {
+            console.error('Processing error:', error);
+            showMessage('An error occurred during processing.', 'error');
+        }
+
+        progressContainer.style.display = 'none';
+        downloadButton.disabled = allTriggers.length === 0 && allShops.length === 0;
+        displayTriggers(allTriggers);
+        displayWebhooks(Array.from(allWebhooks));
+        updateStats();
+
+        // Enhanced summary message
+        const webhookCount = allWebhooks.size;
+        const summary = `Scan complete! Found ${allTriggers.length} triggers, ${webhookCount} webhooks, and ${allShops.length} shop definitions from ${processedFiles} files.`;
+        showMessage(summary, 'success', false);
+    });
+
+    // Enhanced Search Functionality
+    searchButton.addEventListener('click', () => {
+        showLoading(true);
+        
+        setTimeout(() => {
+            const query = searchInput.value.toLowerCase();
+            const filteredTriggers = allTriggers.filter(trigger =>
+                trigger.trigger.toLowerCase().includes(query) ||
+                trigger.folder.toLowerCase().includes(query)
+            );
+            displayTriggers(filteredTriggers);
+            updateStats();
+            
+            const message = query ? 
+                `Found ${filteredTriggers.length} triggers matching "${searchInput.value}"` :
+                `Showing all ${allTriggers.length} triggers`;
+            showMessage(message, 'success');
+            showLoading(false);
+        }, 500); // Small delay to show loading
+    });
+    
+    // Allow searching on Enter key press
+    searchInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            searchButton.click();
+        }
+    });
+
+
+    // Enhanced Filter Functionality
+    filters.forEach(filter => {
+        filter.addEventListener('change', () => {
+            const activeFilters = Array.from(filters)
+                .filter(f => f.checked)
+                .map(f => f.value);
+
+            let filteredTriggers;
+
+            if (activeFilters.length === 0) {
+                filteredTriggers = allTriggers; // Show all if no filters
+            } else {
+                filteredTriggers = allTriggers.filter(trigger =>
+                    activeFilters.some(filterKeyword => trigger.trigger.toLowerCase().includes(filterKeyword))
+                );
+            }
+            displayTriggers(filteredTriggers);
+            
+            const filterText = activeFilters.length > 0 ? 
+                `Filtered by: ${activeFilters.join(', ')}` : 
+                'No filters active';
+            showMessage(`Showing ${filteredTriggers.length} triggers. ${filterText}`, 'success');
+        });
+    });
+
+
+    // Download Button (no changes needed if using `allTriggers` and `allShops`)
+    downloadButton.addEventListener('click', () => {
+      // ... (keep existing ASCII art and text generation logic) ...
+            const asciiArt = `
+===================================================================
+                        LU4.APP TRIGGER FINDER
+===================================================================
+                   Find triggers and webhooks in scripts
+                        www.lu4.app
+                  https://discord.gg/wXPr48bDEJ
+===================================================================
+`;
+
+      const triggersText = allTriggers.length > 0
+        ? allTriggers.map(trigger => `Trigger: ${trigger.trigger}\nFolder: ${trigger.folder}\n--------------------------`).join('\n')
+        : "No triggers found.";
+
+      const shopsText = allShops.length > 0
+        ? allShops.map(shop => {
+            const uniqueLocations = [...new Set(shop.locations)];
+            const locations = uniqueLocations.length > 0 ? uniqueLocations.map(loc => `    ${loc}`).join('\n') : "    No locations specified.";
+            const items = shop.items.length > 0 ? shop.items.map(item => {
+              const currencyText = item.currency && item.currency !== 'money' ? `, Currency: ${item.currency}` : '';
+              return `    - ${item.name} (Price: ${item.price}${currencyText})`;
+            }).join('\n') : "    No items specified.";
+
+            return `Shop Definition: ${shop.type} (${shop.name || 'Unnamed'})\n\n  Locations:\n${locations}\n\n  Items:\n${items}\n--------------------------`;
+          }).join('\n')
+        : "No shop definitions found.";
+
+      const fullText = `${asciiArt}\n\n--- Triggers ---\n${triggersText}\n\n--- Shops and Locations ---\n${shopsText}`;
+
+      const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' }); // Specify charset
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'lu4_finder_results.txt'; // More descriptive filename
+      document.body.appendChild(a); // Append to body for Firefox compatibility
+      a.click();
+      document.body.removeChild(a); // Clean up
+      URL.revokeObjectURL(url);
+    });
+
+    // End of script
   </script>
 </body>
 </html>
