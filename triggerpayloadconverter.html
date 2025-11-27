@@ -416,6 +416,8 @@
                  // Limit snowflakes to prevent performance issues
                  let snowflakeCount = 0;
                  const maxSnowflakes = 50;
+                 // Calculate max duration: Math.random() * 10 + 10 = 10-20 seconds, add 1s buffer
+                 const maxSnowflakeDuration = (20 + 1) * 1000; // 21 seconds in ms
                  
                  window.snowfallInterval = setInterval(() => {
                    if (snowflakeCount < maxSnowflakes) {
@@ -425,7 +427,7 @@
                      // Remove count after snowflake duration
                      setTimeout(() => {
                        snowflakeCount--;
-                     }, 21000); // Max duration + 1 second
+                     }, maxSnowflakeDuration);
                    }
                  }, 500);
              }

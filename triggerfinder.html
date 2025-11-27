@@ -975,6 +975,8 @@
              // Limit snowflakes to prevent performance issues
              let snowflakeCount = 0;
              const maxSnowflakes = 50;
+             // Calculate max duration: Math.random() * 10 + 10 = 10-20 seconds, add 1s buffer
+             const maxSnowflakeDuration = (20 + 1) * 1000; // 21 seconds in ms
              
              window.snowfallInterval = setInterval(() => {
                if (snowflakeCount < maxSnowflakes) {
@@ -984,7 +986,7 @@
                  // Remove count after snowflake duration
                  setTimeout(() => {
                    snowflakeCount--;
-                 }, 21000); // Max duration + 1 second
+                 }, maxSnowflakeDuration);
                }
              }, 300);
         }
@@ -1679,10 +1681,26 @@
         }, 500); // Small delay to show loading
     });
     
+    // Unified search function used by both Enter key and debounced input
+    function performSearch() {
+        const query = searchInput.value.toLowerCase();
+        const filteredTriggers = allTriggers.filter(trigger =>
+            trigger.trigger.toLowerCase().includes(query) ||
+            trigger.folder.toLowerCase().includes(query)
+        );
+        displayTriggers(filteredTriggers);
+        updateStats();
+        
+        const message = query ? 
+            `Found ${filteredTriggers.length} triggers matching "${searchInput.value}"` :
+            `Showing all ${allTriggers.length} triggers`;
+        showMessage(message, 'success');
+    }
+
     // Allow searching on Enter key press
     searchInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-            searchButton.click();
+            performSearch();
         }
     });
 
@@ -1690,11 +1708,7 @@
     const debouncedSearch = debounce(() => {
         const query = searchInput.value.toLowerCase();
         if (query.length >= 2 || query.length === 0) {
-            const filteredTriggers = allTriggers.filter(trigger =>
-                trigger.trigger.toLowerCase().includes(query) ||
-                trigger.folder.toLowerCase().includes(query)
-            );
-            displayTriggers(filteredTriggers);
+            performSearch();
         }
     }, 300);
 
