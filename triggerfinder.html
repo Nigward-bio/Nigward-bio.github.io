@@ -972,7 +972,23 @@
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
         // Check if interval already running to avoid duplicates if script reloads
         if (!window.snowfallInterval) {
-             window.snowfallInterval = setInterval(createSnowflake, 300);
+             // Limit snowflakes to prevent performance issues
+             let snowflakeCount = 0;
+             const maxSnowflakes = 50;
+             // Calculate max duration: Math.random() * 10 + 10 = 10-20 seconds, add 1s buffer
+             const maxSnowflakeDuration = (20 + 1) * 1000; // 21 seconds in ms
+             
+             window.snowfallInterval = setInterval(() => {
+               if (snowflakeCount < maxSnowflakes) {
+                 createSnowflake();
+                 snowflakeCount++;
+                 
+                 // Remove count after snowflake duration
+                 setTimeout(() => {
+                   snowflakeCount--;
+                 }, maxSnowflakeDuration);
+               }
+             }, 300);
         }
       }
     }
@@ -1082,6 +1098,19 @@
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
       }, duration);
+    }
+
+    // Debounce utility function to limit rapid-fire function calls
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
 
     // Element references
@@ -1652,12 +1681,38 @@
         }, 500); // Small delay to show loading
     });
     
+    // Unified search function used by both Enter key and debounced input
+    function performSearch() {
+        const query = searchInput.value.toLowerCase();
+        const filteredTriggers = allTriggers.filter(trigger =>
+            trigger.trigger.toLowerCase().includes(query) ||
+            trigger.folder.toLowerCase().includes(query)
+        );
+        displayTriggers(filteredTriggers);
+        updateStats();
+        
+        const message = query ? 
+            `Found ${filteredTriggers.length} triggers matching "${searchInput.value}"` :
+            `Showing all ${allTriggers.length} triggers`;
+        showMessage(message, 'success');
+    }
+
     // Allow searching on Enter key press
     searchInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
-            searchButton.click();
+            performSearch();
         }
     });
+
+    // Debounced search for real-time filtering as user types
+    const debouncedSearch = debounce(() => {
+        const query = searchInput.value.toLowerCase();
+        if (query.length >= 2 || query.length === 0) {
+            performSearch();
+        }
+    }, 300);
+
+    searchInput.addEventListener('input', debouncedSearch);
 
 
     // Enhanced Filter Functionality

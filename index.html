@@ -1196,14 +1196,6 @@
                  .replace(/>/g, "&gt;");
     }
 
-    // Add filterText function to prevent errors
-    function filterText(text) {
-      if (!text) return '';
-      return text.replace(/<script.*?>.*?<\/script>/gi, '') // Remove script tags
-                 .replace(/</g, "&lt;") // Escape HTML tags
-                 .replace(/>/g, "&gt;");
-    }
-
     // Emoji Reactions with localStorage
     function toggleReaction(button, emoji) {
       const postId = button.closest('.about-post').dataset.postId || 'default';
@@ -1728,7 +1720,7 @@
       }
 
       fetchDiscordData();
-      setInterval(fetchDiscordData, 15000);
+      setInterval(fetchDiscordData, 30000); // Changed from 15s to 30s for better performance
     }
 
     enhanceDiscordStatus();

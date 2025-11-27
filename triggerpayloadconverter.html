@@ -413,7 +413,23 @@
           const currentMonth = new Date().getMonth() + 1;
           if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
              if (!window.snowfallInterval) {
-                 window.snowfallInterval = setInterval(createSnowflake, 500);
+                 // Limit snowflakes to prevent performance issues
+                 let snowflakeCount = 0;
+                 const maxSnowflakes = 50;
+                 // Calculate max duration: Math.random() * 10 + 10 = 10-20 seconds, add 1s buffer
+                 const maxSnowflakeDuration = (20 + 1) * 1000; // 21 seconds in ms
+                 
+                 window.snowfallInterval = setInterval(() => {
+                   if (snowflakeCount < maxSnowflakes) {
+                     createSnowflake();
+                     snowflakeCount++;
+                     
+                     // Remove count after snowflake duration
+                     setTimeout(() => {
+                       snowflakeCount--;
+                     }, maxSnowflakeDuration);
+                   }
+                 }, 500);
              }
           }
         }
@@ -706,8 +722,8 @@
             document.title = `${emoji1} FiveM Event Parser & Converter ${emoji2}`;
         }
 
-        // Update the page title interval (keep original)
-        setInterval(updatePageTitle, 500); // Keep 500ms interval
+        // Update the page title interval (reduce frequency for better performance)
+        setInterval(updatePageTitle, 2000); // Changed from 500ms to 2000ms for efficiency
 
         // Event listener for the convert button (keep original logic, update selectors)
         document.getElementById('convertButton').addEventListener('click', function() {
