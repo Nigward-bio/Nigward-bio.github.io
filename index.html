@@ -2007,31 +2007,33 @@
 
       document.body.appendChild(snowflake);
 
-      // Use animationend event instead of setTimeout for more accurate cleanup
-      snowflake.addEventListener('animationend', function() {
+      // Flag to prevent double cleanup
+      let cleaned = false;
+      
+      function cleanup() {
+        if (cleaned) return;
+        cleaned = true;
         if (snowflake.parentNode) {
           snowflake.remove();
         }
-        activeSnowflakes--;
-      }, { once: true });
+        activeSnowflakes = Math.max(0, activeSnowflakes - 1);
+      }
+
+      // Use animationend event instead of setTimeout for more accurate cleanup
+      snowflake.addEventListener('animationend', cleanup, { once: true });
 
       // Fallback timeout in case animationend doesn't fire
-      setTimeout(() => {
-        if (snowflake.parentNode) {
-          snowflake.remove();
-          activeSnowflakes--;
-        }
-      }, (duration + 2) * 1000);
+      setTimeout(cleanup, (duration + 2) * 1000);
     }
 
     function startSnowfall() {
       const currentMonth = new Date().getMonth() + 1;
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
         // Create snowflakes at a slower rate to reduce CPU usage
-        const snowInterval = setInterval(createSnowflake, 800);
-        
         // Store interval for cleanup if needed
-        window.snowInterval = snowInterval;
+        if (!window.snowInterval) {
+          window.snowInterval = setInterval(createSnowflake, 800);
+        }
       }
     }
 

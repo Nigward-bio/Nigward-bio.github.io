@@ -414,21 +414,23 @@
 
           document.body.appendChild(snowflake);
 
-          // Use animationend event for accurate cleanup
-          snowflake.addEventListener('animationend', function() {
+          // Flag to prevent double cleanup
+          let cleaned = false;
+          
+          function cleanup() {
+            if (cleaned) return;
+            cleaned = true;
             if (snowflake.parentNode) {
               snowflake.remove();
             }
-            activeSnowflakesConverter--;
-          }, { once: true });
+            activeSnowflakesConverter = Math.max(0, activeSnowflakesConverter - 1);
+          }
+
+          // Use animationend event for accurate cleanup
+          snowflake.addEventListener('animationend', cleanup, { once: true });
 
           // Fallback timeout
-          setTimeout(() => {
-            if (snowflake.parentNode) {
-              snowflake.remove();
-              activeSnowflakesConverter--;
-            }
-          }, (duration + 2) * 1000);
+          setTimeout(cleanup, (duration + 2) * 1000);
         }
 
         function startSnowfall() {

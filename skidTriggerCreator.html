@@ -780,28 +780,32 @@
 
           document.body.appendChild(snowflake);
 
-          // Use animationend event for accurate cleanup
-          snowflake.addEventListener('animationend', function() {
+          // Flag to prevent double cleanup
+          let cleaned = false;
+          
+          function cleanup() {
+            if (cleaned) return;
+            cleaned = true;
             if (snowflake.parentNode) {
               snowflake.remove();
             }
-            activeSnowflakesCreator--;
-          }, { once: true });
+            activeSnowflakesCreator = Math.max(0, activeSnowflakesCreator - 1);
+          }
+
+          // Use animationend event for accurate cleanup
+          snowflake.addEventListener('animationend', cleanup, { once: true });
 
           // Fallback timeout
-          setTimeout(() => {
-            if (snowflake.parentNode) {
-              snowflake.remove();
-              activeSnowflakesCreator--;
-            }
-          }, (duration + 2) * 1000);
+          setTimeout(cleanup, (duration + 2) * 1000);
         }
 
         function startSnowfall() {
           const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
           // Only snow in December, January, February
           if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-            setInterval(createSnowflake, 800); // Reduced frequency from 500ms to 800ms
+            if (!window.snowfallInterval) {
+              window.snowfallInterval = setInterval(createSnowflake, 800); // Reduced frequency from 500ms to 800ms
+            }
           }
         }
 
