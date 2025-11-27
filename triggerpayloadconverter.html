@@ -276,6 +276,7 @@
           animation: fall linear infinite;
           opacity: 0.8;
           z-index: 9998;
+          will-change: transform, opacity; /* Performance hint for animations */
         }
 
         @keyframes fall {
@@ -391,8 +392,17 @@
         }
         // initializeMuteState called after overlay click
 
-        // Snowflake effect
+        // Optimized snowflake effect with DOM element limit
+        const MAX_SNOWFLAKES_CONVERTER = 30;
+        let activeSnowflakesConverter = 0;
+
         function createSnowflake() {
+          // Prevent creating too many snowflakes
+          if (activeSnowflakesConverter >= MAX_SNOWFLAKES_CONVERTER) {
+            return;
+          }
+
+          activeSnowflakesConverter++;
           const snowflake = document.createElement('div');
           snowflake.innerHTML = '❄';
           snowflake.classList.add('snowflake');
@@ -404,16 +414,30 @@
 
           document.body.appendChild(snowflake);
 
-          setTimeout(() => {
-            snowflake.remove();
-          }, (duration + 1) * 1000);
+          // Flag to prevent double cleanup
+          let cleaned = false;
+          
+          function cleanup() {
+            if (cleaned) return;
+            cleaned = true;
+            if (snowflake.parentNode) {
+              snowflake.remove();
+            }
+            activeSnowflakesConverter = Math.max(0, activeSnowflakesConverter - 1);
+          }
+
+          // Use animationend event for accurate cleanup
+          snowflake.addEventListener('animationend', cleanup, { once: true });
+
+          // Fallback timeout
+          setTimeout(cleanup, (duration + 2) * 1000);
         }
 
         function startSnowfall() {
           const currentMonth = new Date().getMonth() + 1;
           if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
              if (!window.snowfallInterval) {
-                 window.snowfallInterval = setInterval(createSnowflake, 500);
+                 window.snowfallInterval = setInterval(createSnowflake, 800); // Reduced frequency
              }
           }
         }
@@ -698,16 +722,15 @@
         // Array of emojis (keep original)
         const emojis = ['🚀', '🎮', '🔥', '✨', '💻', '🛠️', '🎉', '🌟', '⚡', '👾', '🕹️', '🎲', '🔧', '🔨', '💥', '🌈', '🌌', '🌠', '🪐', '🌍'];
 
-        // Function to update the page title (keep original)
+        // Function to update the page title - optimized with reduced frequency
         function updatePageTitle() {
-            // Keep original logic
             const emoji1 = emojis[Math.floor(Math.random() * emojis.length)];
             const emoji2 = emojis[Math.floor(Math.random() * emojis.length)];
             document.title = `${emoji1} FiveM Event Parser & Converter ${emoji2}`;
         }
 
-        // Update the page title interval (keep original)
-        setInterval(updatePageTitle, 500); // Keep 500ms interval
+        // Update the page title at a reduced frequency to save CPU cycles
+        setInterval(updatePageTitle, 2000); // Changed from 500ms to 2000ms
 
         // Event listener for the convert button (keep original logic, update selectors)
         document.getElementById('convertButton').addEventListener('click', function() {

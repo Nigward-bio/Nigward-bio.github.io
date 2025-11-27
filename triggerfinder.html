@@ -639,6 +639,7 @@
       opacity: 0.8;
       z-index: 9998; /* Below overlay/mute, above background */
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      will-change: transform, opacity; /* Performance hint for animations */
     }
 
     .snowflake.special {
@@ -940,8 +941,18 @@
     }
     // initializeMuteState called after overlay click
 
-    // Enhanced snowflake effect
+    // Optimized enhanced snowflake effect with DOM element limit
+    const MAX_SNOWFLAKES_FINDER = 35;
+    let activeSnowflakesFinder = 0;
+    const snowflakeSymbols = ['❄', '❅', '❆', '*']; // Cache symbol array
+
     function createSnowflake() {
+      // Prevent creating too many snowflakes
+      if (activeSnowflakesFinder >= MAX_SNOWFLAKES_FINDER) {
+        return;
+      }
+
+      activeSnowflakesFinder++;
       const snowflake = document.createElement('div');
       const isSpecial = Math.random() < 0.1; // 10% chance for special snowflake
       
@@ -949,8 +960,7 @@
         snowflake.innerHTML = '✨'; // Special sparkle
         snowflake.classList.add('snowflake', 'special');
       } else {
-        const symbols = ['❄', '❅', '❆', '*'];
-        snowflake.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+        snowflake.innerHTML = snowflakeSymbols[Math.floor(Math.random() * snowflakeSymbols.length)];
         snowflake.classList.add('snowflake');
       }
       
@@ -962,9 +972,23 @@
 
       document.body.appendChild(snowflake);
 
-      setTimeout(() => {
-        snowflake.remove();
-      }, (duration + 1) * 1000);
+      // Flag to prevent double cleanup
+      let cleaned = false;
+      
+      function cleanup() {
+        if (cleaned) return;
+        cleaned = true;
+        if (snowflake.parentNode) {
+          snowflake.remove();
+        }
+        activeSnowflakesFinder = Math.max(0, activeSnowflakesFinder - 1);
+      }
+
+      // Use animationend event for accurate cleanup
+      snowflake.addEventListener('animationend', cleanup, { once: true });
+
+      // Fallback timeout
+      setTimeout(cleanup, (duration + 2) * 1000);
     }
 
     function startSnowfall() {
@@ -972,7 +996,7 @@
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
         // Check if interval already running to avoid duplicates if script reloads
         if (!window.snowfallInterval) {
-             window.snowfallInterval = setInterval(createSnowflake, 300);
+             window.snowfallInterval = setInterval(createSnowflake, 600); // Reduced from 300ms
         }
       }
     }
@@ -983,28 +1007,48 @@
 
     // Removed old overlay, mute, video, snowflake JS
 
-    // Function definitions first
-    // Enhanced stats update function with animation
-    function updateStats() {
-      const triggersCount = document.getElementById('triggers-count');
-      const webhooksCount = document.getElementById('webhooks-count');
-      const filesCount = document.getElementById('files-count');
-      const shopsCount = document.getElementById('shops-count');
-      const coordsCount = document.getElementById('coords-count');
-      
-      // Animate the numbers
-      if (triggersCount) animateCounter(triggersCount, allTriggers.length);
-      if (webhooksCount) {
-        const uniqueWebhooks = document.querySelectorAll('.webhook').length;
-        animateCounter(webhooksCount, uniqueWebhooks);
+    // Cache DOM elements for stats to avoid repeated lookups
+    const statsElements = {
+      triggersCount: null,
+      webhooksCount: null,
+      filesCount: null,
+      shopsCount: null,
+      coordsCount: null,
+      initialized: false
+    };
+
+    function initStatsElements() {
+      if (!statsElements.initialized) {
+        statsElements.triggersCount = document.getElementById('triggers-count');
+        statsElements.webhooksCount = document.getElementById('webhooks-count');
+        statsElements.filesCount = document.getElementById('files-count');
+        statsElements.shopsCount = document.getElementById('shops-count');
+        statsElements.coordsCount = document.getElementById('coords-count');
+        statsElements.initialized = true;
       }
-      if (shopsCount) animateCounter(shopsCount, allShops.length);
-      if (coordsCount) animateCounter(coordsCount, allCoords.length);
     }
 
-    // Counter animation
+    // Enhanced stats update function with animation
+    function updateStats() {
+      initStatsElements();
+      
+      // Animate the numbers
+      if (statsElements.triggersCount) animateCounter(statsElements.triggersCount, allTriggers.length);
+      if (statsElements.webhooksCount) {
+        const uniqueWebhooks = document.querySelectorAll('.webhook').length;
+        animateCounter(statsElements.webhooksCount, uniqueWebhooks);
+      }
+      if (statsElements.shopsCount) animateCounter(statsElements.shopsCount, allShops.length);
+      if (statsElements.coordsCount) animateCounter(statsElements.coordsCount, allCoords.length);
+    }
+
+    // Counter animation - optimized to skip animation when values are same
     function animateCounter(element, target) {
       const start = parseInt(element.textContent) || 0;
+      
+      // Skip animation if already at target
+      if (start === target) return;
+      
       const duration = 1000;
       const startTime = performance.now();
       
