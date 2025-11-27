@@ -972,7 +972,21 @@
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
         // Check if interval already running to avoid duplicates if script reloads
         if (!window.snowfallInterval) {
-             window.snowfallInterval = setInterval(createSnowflake, 300);
+             // Limit snowflakes to prevent performance issues
+             let snowflakeCount = 0;
+             const maxSnowflakes = 50;
+             
+             window.snowfallInterval = setInterval(() => {
+               if (snowflakeCount < maxSnowflakes) {
+                 createSnowflake();
+                 snowflakeCount++;
+                 
+                 // Remove count after snowflake duration
+                 setTimeout(() => {
+                   snowflakeCount--;
+                 }, 21000); // Max duration + 1 second
+               }
+             }, 300);
         }
       }
     }
@@ -1082,6 +1096,19 @@
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
       }, duration);
+    }
+
+    // Debounce utility function to limit rapid-fire function calls
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
 
     // Element references
@@ -1658,6 +1685,20 @@
             searchButton.click();
         }
     });
+
+    // Debounced search for real-time filtering as user types
+    const debouncedSearch = debounce(() => {
+        const query = searchInput.value.toLowerCase();
+        if (query.length >= 2 || query.length === 0) {
+            const filteredTriggers = allTriggers.filter(trigger =>
+                trigger.trigger.toLowerCase().includes(query) ||
+                trigger.folder.toLowerCase().includes(query)
+            );
+            displayTriggers(filteredTriggers);
+        }
+    }, 300);
+
+    searchInput.addEventListener('input', debouncedSearch);
 
 
     // Enhanced Filter Functionality

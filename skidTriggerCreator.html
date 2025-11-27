@@ -780,7 +780,24 @@
           const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
           // Only snow in December, January, February
           if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-            setInterval(createSnowflake, 500); // Create a snowflake every 500ms
+            // Limit snowflakes to prevent performance issues
+            let snowflakeCount = 0;
+            const maxSnowflakes = 50;
+            
+            const snowInterval = setInterval(() => {
+              if (snowflakeCount < maxSnowflakes) {
+                createSnowflake();
+                snowflakeCount++;
+                
+                // Remove count after snowflake duration
+                setTimeout(() => {
+                  snowflakeCount--;
+                }, 21000); // Max duration + 1 second
+              }
+            }, 500);
+            
+            // Store interval for cleanup if needed
+            window.snowInterval = snowInterval;
           }
         }
 
