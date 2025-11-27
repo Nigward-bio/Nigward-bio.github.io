@@ -328,6 +328,7 @@
           animation: fall linear infinite;
           opacity: 0.8;
           z-index: 9998; /* Ensure snowflakes are behind overlay/nav but above background */
+          will-change: transform, opacity; /* Performance hint for animations */
         }
 
         @keyframes fall {
@@ -757,8 +758,17 @@
         }
         // Don't call initializeMuteState here, call it after overlay click
 
-        // Snowflake effect
+        // Optimized snowflake effect with DOM element limit
+        const MAX_SNOWFLAKES_CREATOR = 30;
+        let activeSnowflakesCreator = 0;
+
         function createSnowflake() {
+          // Prevent creating too many snowflakes
+          if (activeSnowflakesCreator >= MAX_SNOWFLAKES_CREATOR) {
+            return;
+          }
+
+          activeSnowflakesCreator++;
           const snowflake = document.createElement('div');
           snowflake.innerHTML = '❄';
           snowflake.classList.add('snowflake');
@@ -770,17 +780,28 @@
 
           document.body.appendChild(snowflake);
 
-          // Remove snowflake after animation duration + buffer
+          // Use animationend event for accurate cleanup
+          snowflake.addEventListener('animationend', function() {
+            if (snowflake.parentNode) {
+              snowflake.remove();
+            }
+            activeSnowflakesCreator--;
+          }, { once: true });
+
+          // Fallback timeout
           setTimeout(() => {
-            snowflake.remove();
-          }, (duration + 1) * 1000);
+            if (snowflake.parentNode) {
+              snowflake.remove();
+              activeSnowflakesCreator--;
+            }
+          }, (duration + 2) * 1000);
         }
 
         function startSnowfall() {
           const currentMonth = new Date().getMonth() + 1; // Get the current month (1–12)
           // Only snow in December, January, February
           if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-            setInterval(createSnowflake, 500); // Create a snowflake every 500ms
+            setInterval(createSnowflake, 800); // Reduced frequency from 500ms to 800ms
           }
         }
 

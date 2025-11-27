@@ -767,6 +767,7 @@
       animation: fall linear infinite;
       opacity: 0.8;
       z-index: 9998; /* Ensure snowflakes are behind overlay/nav but above background */
+      will-change: transform, opacity; /* Performance hint for animations */
     }
 
     @keyframes fall {
@@ -1196,14 +1197,6 @@
                  .replace(/>/g, "&gt;");
     }
 
-    // Add filterText function to prevent errors
-    function filterText(text) {
-      if (!text) return '';
-      return text.replace(/<script.*?>.*?<\/script>/gi, '') // Remove script tags
-                 .replace(/</g, "&lt;") // Escape HTML tags
-                 .replace(/>/g, "&gt;");
-    }
-
     // Emoji Reactions with localStorage
     function toggleReaction(button, emoji) {
       const postId = button.closest('.about-post').dataset.postId || 'default';
@@ -1281,19 +1274,41 @@
       }
       
       // Simulate loading delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
       
-      // Load images lazily
+      // Use IntersectionObserver for efficient lazy loading of images
       const images = aboutSection.querySelectorAll('img[data-src]');
-      images.forEach(img => {
-        img.src = img.dataset.src;
-        img.removeAttribute('data-src');
-        img.style.opacity = '0';
-        img.onload = () => {
-          img.style.transition = 'opacity 0.3s ease';
-          img.style.opacity = '1';
-        };
-      });
+      
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              img.style.opacity = '0';
+              img.onload = () => {
+                img.style.transition = 'opacity 0.3s ease';
+                img.style.opacity = '1';
+              };
+              observer.unobserve(img);
+            }
+          });
+        }, { rootMargin: '50px' }); // Start loading 50px before image enters viewport
+        
+        images.forEach(img => imageObserver.observe(img));
+      } else {
+        // Fallback for browsers without IntersectionObserver
+        images.forEach(img => {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+          img.style.opacity = '0';
+          img.onload = () => {
+            img.style.transition = 'opacity 0.3s ease';
+            img.style.opacity = '1';
+          };
+        });
+      }
       
       if (loadingSpinner) {
         loadingSpinner.style.display = 'none';
@@ -1734,10 +1749,23 @@
     enhanceDiscordStatus();
 
     // Enhanced Discord server counts with better error handling
+    // Cache DOM elements outside the function to avoid repeated lookups
+    const serverCountElements = {
+      online: null,
+      member: null
+    };
+
     async function updateServerCounts() {
         const inviteCode = 'wXPr48bDEJ';
-        const onlineCountElement = document.getElementById('online-count');
-        const memberCountElement = document.getElementById('member-count');
+        
+        // Cache DOM elements on first call
+        if (!serverCountElements.online) {
+            serverCountElements.online = document.getElementById('online-count');
+            serverCountElements.member = document.getElementById('member-count');
+        }
+
+        const onlineCountElement = serverCountElements.online;
+        const memberCountElement = serverCountElements.member;
 
         if (!onlineCountElement || !memberCountElement) {
             console.error("Count elements not found.");
@@ -1957,8 +1985,17 @@
       }
     }
 
-    // Optimized snowflake effect
+    // Optimized snowflake effect with DOM element pooling
+    const MAX_SNOWFLAKES = 30; // Limit total snowflakes
+    let activeSnowflakes = 0;
+
     function createSnowflake() {
+      // Prevent creating too many snowflakes
+      if (activeSnowflakes >= MAX_SNOWFLAKES) {
+        return;
+      }
+
+      activeSnowflakes++;
       const snowflake = document.createElement('div');
       snowflake.innerHTML = '❄';
       snowflake.classList.add('snowflake');
@@ -1970,31 +2007,28 @@
 
       document.body.appendChild(snowflake);
 
-      setTimeout(() => {
+      // Use animationend event instead of setTimeout for more accurate cleanup
+      snowflake.addEventListener('animationend', function() {
         if (snowflake.parentNode) {
           snowflake.remove();
         }
-      }, (duration + 1) * 1000);
+        activeSnowflakes--;
+      }, { once: true });
+
+      // Fallback timeout in case animationend doesn't fire
+      setTimeout(() => {
+        if (snowflake.parentNode) {
+          snowflake.remove();
+          activeSnowflakes--;
+        }
+      }, (duration + 2) * 1000);
     }
 
     function startSnowfall() {
       const currentMonth = new Date().getMonth() + 1;
       if (currentMonth === 12 || currentMonth === 1 || currentMonth === 2) {
-        // Limit snowflakes to prevent performance issues
-        let snowflakeCount = 0;
-        const maxSnowflakes = 50;
-        
-        const snowInterval = setInterval(() => {
-          if (snowflakeCount < maxSnowflakes) {
-            createSnowflake();
-            snowflakeCount++;
-            
-            // Remove count after snowflake duration
-            setTimeout(() => {
-              snowflakeCount--;
-            }, 21000); // Max duration + 1 second
-          }
-        }, 500);
+        // Create snowflakes at a slower rate to reduce CPU usage
+        const snowInterval = setInterval(createSnowflake, 800);
         
         // Store interval for cleanup if needed
         window.snowInterval = snowInterval;
